@@ -17,6 +17,19 @@
   font-size: 22px;
   line-height: 28px;
   color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+.error-card__message--only {
+  margin-bottom: 30px;
+}
+
+.error-card__sub-message {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
+  color: #B0B0B0;
   margin-bottom: 30px;
 }
 

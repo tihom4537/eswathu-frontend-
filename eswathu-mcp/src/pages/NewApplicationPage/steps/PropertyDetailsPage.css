@@ -1,0 +1,325 @@
+/* ══════════════════════════════════════════════════════════
+   Property Details Page — Step 3
+   ══════════════════════════════════════════════════════════ */
+
+.pd-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+}
+
+/* ── Sections wrapper ────────────────────────────────────── */
+
+.pd-page__sections {
+  padding: 40px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* ══ SECTION 3.1 ════════════════════════════════════════════ */
+
+.pd-s31 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Pre-allocate height so nothing above shifts when address appears */
+.pd-s31-box .section-box__body {
+  min-height: 560px;
+  box-sizing: border-box;
+}
+
+/* Sub-heading ("Location search", "Address of the Property") */
+.pd-s31__sub-heading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* ── Map area ────────────────────────────────────────────── */
+
+.pd-s31__map-area {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Search row: input + button side by side */
+.pd-s31__search-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.pd-s31__search-input {
+  flex: 0 0 480px;
+}
+
+.pd-s31__search-input .input-field__box {
+  width: 100%;
+}
+
+/* Map frame (placeholder) */
+.pd-s31__map-frame {
+  width: 100%;
+  height: 306px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+}
+
+.pd-s31__map-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #E8E8E8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+}
+
+.pd-s31__map-icon {
+  font-size: 48px;
+  color: var(--neutral-500);
+}
+
+.pd-s31__map-text {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--neutral-600);
+}
+
+/* Simulated pin */
+.pd-s31__map-pin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+}
+
+.pd-s31__map-pin .material-icons-outlined {
+  font-size: 40px;
+  color: var(--danger);
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+
+.pd-s31__divider {
+  width: 100%;
+  height: 2px;
+  background: var(--neutral-100);
+  margin: 4px 0;
+}
+
+/* ── Address rows ────────────────────────────────────────── */
+
+.pd-s31__addr-row {
+  display: grid;
+  gap: 30px;
+}
+
+.pd-s31__addr-row--three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.pd-s31__addr-row--two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.pd-s31__addr-row .input-field {
+  width: 100%;
+}
+
+.pd-s31__addr-row .dropdown {
+  width: 100%;
+}
+
+/* Close icon inside frozen inputs — danger colour */
+.pd-s31__close-icon {
+  color: var(--danger) !important;
+}
+
+/* Road type wrapper (dropdown + caption below) */
+.pd-s31__road-type-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pd-s31__road-type-wrap .dropdown {
+  width: 100%;
+}
+
+/* ── Upload section ──────────────────────────────────────── */
+
+.pd-s31__upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.pd-s31__upload-section .caption-message {
+  width: 100%;
+}
+
+.pd-s31__upload-label {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  color: var(--text-dark);
+}
+
+.pd-s31__required {
+  color: var(--danger);
+}
+
+/* Hidden native file input */
+.pd-s31__file-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Document uploaded chip */
+.pd-s31__doc-uploaded {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  max-width: 100%;
+}
+
+.pd-s31__doc-icon {
+  font-size: 24px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.pd-s31__doc-name {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pd-s31__doc-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.pd-s31__doc-remove .material-icons-outlined {
+  font-size: 18px;
+  color: var(--danger);
+}
+
+.pd-s31__doc-remove:hover {
+  opacity: 0.7;
+}
+
+/* ── Image preview (shown only after upload) ────────────── */
+
+.pd-s31__preview-frame {
+  width: 246px;
+  height: 246px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+}
+
+.pd-s31__preview-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.pd-s31__preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Close button on preview — positioned top-right */
+.pd-s31__preview-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid var(--danger) !important;
+  border-radius: 50% !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.pd-s31__preview-close .material-icons-outlined {
+  font-size: 16px;
+  color: var(--danger) !important;
+}
+
+/* ── Actions row ─────────────────────────────────────────── */
+
+.pd-s31__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* ══ SECTION 3.2 ════════════════════════════════════════════ */
+
+.pd-s32__placeholder {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--neutral-600);
+  margin: 0;
+}
+
+/* ══ FULLSCREEN OVERLAYS ═══════════════════════════════════ */
+
+.pd-page__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Spin the ProgressCircle SVG inside overlay */
+.pd-page__overlay .progress-circle__svg {
+  animation: pd-spin 1s linear infinite;
+}
+
+@keyframes pd-spin {
+  to { transform: rotate(360deg); }
+}

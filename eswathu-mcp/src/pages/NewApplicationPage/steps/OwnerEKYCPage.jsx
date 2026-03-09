@@ -12,6 +12,7 @@ import DatePicker from '../../../components/DatePicker/DatePicker';
 import CaptionMessage from '../../../components/CaptionMessage/CaptionMessage';
 import OwnerTable from '../../../components/OwnerTable/OwnerTable';
 import EKYCRedirectScreen from './EKYCRedirectScreen';
+import ErrorMessageCard from '../../../components/ErrorMessageCard/ErrorMessageCard';
 import './OwnerEKYCPage.css';
 
 /* ── Mock data (pre-fetched from Kaveri) ───────────────── */
@@ -108,6 +109,8 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
 
   /* ── eKYC Redirect State ────────────────────────────── */
   const [ekycOwnerIdx, setEkycOwnerIdx] = useState(null);
+  const [ekycAttempts, setEkycAttempts] = useState({}); // { [ownerId]: number }
+  const [ekycError, setEkycError] = useState(false); // show error card on redirect screen
 
   /* ── eKYC Popup / Modal State ───────────────────────── */
   const [popupOwnerIdx, setPopupOwnerIdx] = useState(null);
@@ -198,6 +201,7 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
     // Invalidate ALL completed KYC + mismatch data
     setEkycStatus({});
     setCompletedEkycData({});
+    setEkycAttempts({});
     setMismatchReasons({});
     setDocUploads({});
     setS23Submitted(false);
@@ -206,7 +210,16 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
   /* ── Handlers: Section 2.2 — Do eKYC ───────────────── */
   const handleDoEkyc = (idx) => {
     scrollPosRef.current = window.scrollY;
-    setEkycStatus((prev) => ({ ...prev, [allOwners[idx].id]: 'in-progress' }));
+    const owner = allOwners[idx];
+    const attempts = (ekycAttempts[owner.id] || 0) + 1;
+    setEkycAttempts((prev) => ({ ...prev, [owner.id]: attempts }));
+    // Simulate UIDAI error on first attempt for second owner (index 1)
+    if (idx === 1 && attempts === 1) {
+      setEkycError(true);
+      return;
+    }
+    setEkycStatus((prev) => ({ ...prev, [owner.id]: 'in-progress' }));
+    setEkycError(false);
     setEkycOwnerIdx(idx);
   };
 
@@ -216,6 +229,7 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
     // Open popup for this owner
     setPopupOwnerIdx(ekycOwnerIdx);
     setEkycOwnerIdx(null);
+    setEkycError(false);
     // Restore scroll position so user sees the detail card area
     requestAnimationFrame(() => window.scrollTo(0, scrollPosRef.current));
     // Reset popup form
@@ -231,6 +245,7 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
     const owner = allOwners[ekycOwnerIdx];
     setEkycStatus((prev) => ({ ...prev, [owner.id]: 'pending' }));
     setEkycOwnerIdx(null);
+    setEkycError(false);
     requestAnimationFrame(() => window.scrollTo(0, scrollPosRef.current));
   };
 
@@ -977,6 +992,17 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ── eKYC Error Overlay (shown on main page) ───── */}
+      {ekycError && (
+        <div className="ekyc-error-overlay">
+          <ErrorMessageCard
+            message="There was an error in completing eKYC due to UIDAI server issues, please try again after 15-20 minutes"
+            subMessage="Don't worry, your form progress will not be lost"
+            onOk={() => setEkycError(false)}
+          />
         </div>
       )}
     </div>

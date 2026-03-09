@@ -78,7 +78,7 @@
 /* Focused */
 .input-field--focused .input-field__box,
 .input-field.input-field--focused .input-field__box {
-  border-color: var(--primary);
+  border-color: var(--neutral-400);
   box-shadow: 0 0 0 4px var(--primary-300);
 }
 
@@ -133,4 +133,22 @@
 }
 .input-field__trailing-btn:hover {
   opacity: 0.7;
+}
+
+/* ── Size: Big ──────────────────────────────────────────── */
+.input-field--big .input-field__label {
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.15px;
+}
+
+/* ── Frozen Blue ────────────────────────────────────────── */
+.input-field--frozen-blue .input-field__box {
+  border-color: var(--neutral-400);
+  background: var(--primary-50, #e6f2ff);
+}
+.input-field--frozen-blue .input-field__input {
+  color: var(--text-dark);
+  cursor: not-allowed;
 }

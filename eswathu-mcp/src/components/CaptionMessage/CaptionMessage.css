@@ -8,14 +8,14 @@
 }
 
 .caption-msg__icon {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .caption-msg__text {
   font-family: var(--font-family);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 16px;
+  line-height: 20px;
   letter-spacing: 0.25px;
 }
 

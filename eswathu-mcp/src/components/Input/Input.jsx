@@ -18,21 +18,26 @@ const Input = ({
   infoTooltip,
   disabled = false,
   frozen = false,
+  frozenBlue = false,
+  size = 'default',
   className = '',
   ...rest
 }) => {
   const [focused, setFocused] = useState(false);
 
-  const resolvedState = frozen
-    ? 'frozen'
-    : disabled
-      ? 'disabled'
-      : state;
+  const resolvedState = frozenBlue
+    ? 'frozen-blue'
+    : frozen
+      ? 'frozen'
+      : disabled
+        ? 'disabled'
+        : state;
 
   const wrapperClass = [
     'input-field',
     `input-field--${resolvedState}`,
-    focused && resolvedState !== 'frozen' ? 'input-field--focused' : '',
+    focused && resolvedState !== 'frozen' && resolvedState !== 'frozen-blue' ? 'input-field--focused' : '',
+    size === 'big' ? 'input-field--big' : '',
     className,
   ]
     .filter(Boolean)
@@ -75,8 +80,8 @@ const Input = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          disabled={frozen || disabled}
-          readOnly={frozen}
+          disabled={frozen || frozenBlue || disabled}
+          readOnly={frozen || frozenBlue}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           {...rest}
