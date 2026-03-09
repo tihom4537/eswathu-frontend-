@@ -1,0 +1,60 @@
+﻿/* ── IconButton ───────────────────────────────────────────── */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  padding: 6px;
+  transition: opacity 0.15s ease;
+  outline: none;
+}
+
+.icon-btn:focus-visible {
+  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.25);
+}
+
+.icon-btn:hover:not(:disabled) {
+  opacity: 0.7;
+}
+
+.icon-btn:active:not(:disabled) {
+  opacity: 0.9;
+}
+
+.icon-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Sizes */
+.icon-btn--default {
+  width: 32px;
+  height: 32px;
+}
+.icon-btn--default .material-icons-outlined {
+  font-size: 20px;
+}
+
+.icon-btn--large {
+  width: 66px;
+  height: 66px;
+}
+.icon-btn--large .material-icons-outlined {
+  font-size: 55px;
+}
+
+/* Colours */
+.icon-btn--black .material-icons-outlined {
+  color: var(--text-dark);
+}
+.icon-btn--grey .material-icons-outlined {
+  color: var(--neutral-500);
+}
+.icon-btn--blue .material-icons-outlined {
+  color: var(--primary);
+}

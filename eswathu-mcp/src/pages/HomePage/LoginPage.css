@@ -1,0 +1,175 @@
+/* LoginPage.css */
+
+.page-login {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #fff;
+}
+
+.login-content {
+  flex: 1;
+  padding: 80px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 45px;
+}
+
+.login-body {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* Left image — fills remaining space, shrinks proportionally as screen narrows */
+.login-image {
+  flex: 1 1 0;
+  min-width: 0;
+  height: auto;
+  aspect-ratio: 661 / 537;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--primary-50, #e6f2ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.6;
+  border-radius: 12px;
+  display: block;
+}
+
+/* Right form card — fixed width, never shrinks */
+.login-card {
+  flex: 0 0 440px;
+  width: 440px;
+  background: var(--neutral-0, #ffffff);
+  border: 1px solid #ced4da;
+  border-radius: 12px;
+  padding: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  box-shadow: 0px 4px 6px -2px rgba(33, 33, 33, 0.03),
+              0px 12px 16px -4px rgba(33, 33, 33, 0.08);
+}
+
+/* Post-OTP card stretches to match image height */
+.login-card--stretch {
+  align-self: stretch;
+}
+
+.login-card__radios {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 7px 0;
+  width: 100%;
+}
+
+/* Main input (mobile/BSK/OTP) fills the full card width */
+.login-card__input {
+  width: 100%;
+}
+
+/* Captcha block — 318px matches Figma fixed width */
+.login-captcha {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 318px;
+  max-width: 100%;
+}
+
+.login-captcha__label {
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--text-dark, #212121);
+  letter-spacing: 0.1px;
+}
+
+.login-captcha__row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  height: 66px;
+}
+
+.login-captcha__image {
+  width: 205px;
+  height: 100%;
+  border: 1px solid var(--neutral-400, #c6c6c6);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  overflow: hidden;
+}
+
+.login-captcha__text {
+  font-family: 'Courier New', monospace;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 6px;
+  color: #222;
+  user-select: none;
+  font-style: italic;
+  text-decoration: line-through;
+}
+
+.login-captcha__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 28px;
+}
+
+.login-captcha__btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #666;
+}
+
+.login-captcha__btn:hover {
+  color: var(--primary-source, #0263c5);
+}
+
+.login-captcha__btn .material-icons-outlined {
+  font-size: 16px;
+}
+
+/* OTP timer */
+.login-card__otp-timer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--danger-source, #b7131a);
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+}
+
+.login-card__otp-timer .material-icons-outlined {
+  font-size: 18px;
+}

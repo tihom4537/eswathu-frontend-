@@ -1,0 +1,99 @@
+/* ── DatePicker ──────────────────────────────────────────── */
+
+.datepicker {
+  display: flex;
+  flex-direction: column;
+  width: 358px;
+}
+
+.datepicker__label {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  color: var(--text-dark);
+  margin-bottom: var(--space-xs);
+}
+
+.datepicker__required {
+  color: var(--danger);
+}
+
+.datepicker__box {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  padding-right: 8px;
+  border: 1px solid var(--neutral-400);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  min-height: 43px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.datepicker__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--text-dark);
+}
+
+.datepicker__icon {
+  font-size: 20px;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+/* Hide native browser calendar icon to avoid duplicate */
+.datepicker__input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 36px;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Hover */
+.datepicker--empty .datepicker__box:hover,
+.datepicker--filled .datepicker__box:hover {
+  border-color: var(--primary);
+}
+
+/* Focused */
+.datepicker--focused .datepicker__box {
+  box-shadow: 0 0 0 4px var(--primary-300);
+}
+
+/* Error */
+.datepicker--error .datepicker__box {
+  border-color: var(--danger);
+}
+
+/* Success */
+.datepicker--success .datepicker__box {
+  border-color: var(--success);
+}
+
+/* Frozen */
+.datepicker--frozen .datepicker__box {
+  background: var(--neutral-100);
+}
+.datepicker--frozen .datepicker__input {
+  cursor: not-allowed;
+}
+
+/* Disabled */
+.datepicker--disabled .datepicker__box {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

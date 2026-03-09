@@ -1,0 +1,138 @@
+﻿/* ── Button ───────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  border: none;
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, opacity 0.15s ease;
+  outline: none;
+  white-space: nowrap;
+}
+
+.btn__icon {
+  font-size: 20px;
+}
+
+/* ── Primary (blue) ──────────────────────────────────────── */
+.btn--primary {
+  background: var(--primary);
+  color: var(--text-light);
+}
+.btn--primary:hover:not(:disabled) {
+  box-shadow: var(--shadow-sm);
+}
+.btn--primary:active:not(:disabled) {
+  opacity: 0.9;
+}
+.btn--primary:focus-visible {
+  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.25);
+}
+.btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── White / secondary ───────────────────────────────────── */
+.btn--white {
+  background: var(--white);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+.btn--white:hover:not(:disabled) {
+  box-shadow: var(--shadow-sm);
+}
+.btn--white:active:not(:disabled) {
+  opacity: 0.9;
+}
+.btn--white:focus-visible {
+  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.25);
+}
+.btn--white:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Error / destructive ─────────────────────────────────── */
+.btn--error {
+  background: var(--white);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+.btn--error:hover:not(:disabled) {
+  box-shadow: var(--shadow-sm);
+}
+.btn--error:active:not(:disabled) {
+  opacity: 0.9;
+}
+.btn--error:focus-visible {
+  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.25);
+}
+.btn--error:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Upload file ─────────────────────────────────────────── */
+.btn--upload {
+  background: var(--white);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 8px 16px;
+  min-width: 171px;
+  min-height: 44px;
+}
+.btn--upload .btn__icon {
+  font-size: 28px;
+}
+.btn--upload:hover:not(:disabled) {
+  background: rgba(2, 99, 197, 0.08);
+}
+.btn--upload:active:not(:disabled) {
+  background: rgba(2, 99, 197, 0.24);
+}
+.btn--upload:focus-visible {
+  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.25);
+}
+.btn--upload:disabled {
+  background: #eeeeee;
+  border-color: var(--neutral-600);
+  color: var(--neutral-600);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Homepage CTA — filled (white bg on blue hero) ──────── */
+.btn--cta-filled {
+  background: var(--white);
+  color: var(--primary);
+  min-width: 200px;
+  min-height: 40px;
+}
+.btn--cta-filled:hover:not(:disabled) {
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Homepage CTA — outlined (transparent on blue hero) ──── */
+.btn--cta-outlined {
+  background: transparent;
+  color: var(--text-light);
+  border: 1px solid var(--white);
+  min-width: 200px;
+  min-height: 40px;
+}
+.btn--cta-outlined:hover:not(:disabled) {
+  box-shadow: var(--shadow-sm);
+}

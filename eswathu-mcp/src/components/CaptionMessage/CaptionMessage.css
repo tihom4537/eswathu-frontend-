@@ -1,0 +1,50 @@
+﻿/* ── CaptionMessage ───────────────────────────────────────── */
+
+.caption-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+}
+
+.caption-msg__icon {
+  font-size: 14px;
+}
+
+.caption-msg__text {
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0.25px;
+}
+
+/* Error */
+.caption-msg--error .caption-msg__icon,
+.caption-msg--error .caption-msg__text {
+  color: var(--danger);
+}
+.caption-msg--error .caption-msg__text {
+  font-weight: 500;
+}
+
+/* Success */
+.caption-msg--success .caption-msg__icon,
+.caption-msg--success .caption-msg__text {
+  color: var(--success);
+}
+
+/* Info (neutral) */
+.caption-msg--info .caption-msg__icon,
+.caption-msg--info .caption-msg__text {
+  color: var(--neutral-600);
+}
+
+/* Warning */
+.caption-msg--warning .caption-msg__icon,
+.caption-msg--warning .caption-msg__text {
+  color: #b77224;
+}
+.caption-msg--warning .caption-msg__text {
+  font-weight: 500;
+}

@@ -1,0 +1,54 @@
+﻿/* ── HelpCards ────────────────────────────────────────── */
+
+.help-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--space-2xl);
+  border: 1px solid var(--neutral-100);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  flex: 1;
+}
+
+.help-card__icon {
+  font-size: 48px;
+  color: var(--primary);
+  margin-bottom: var(--space-sm);
+}
+
+.help-card__title {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: var(--text-dark);
+  margin-bottom: var(--space-sm);
+}
+
+.help-card__desc {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--neutral-600);
+  margin-bottom: var(--space-lg);
+  flex: 1;
+}
+
+.help-card__btn {
+  width: 100%;
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: var(--text-light);
+  border: none;
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: auto;
+}
+.help-card__btn:hover {
+  box-shadow: var(--shadow-sm);
+}

@@ -1,0 +1,41 @@
+/* ── StepHeader ────────────────────────────────────────── */
+
+.step-header {
+  width: 100%;
+  background: var(--secondary);
+  padding: 50px 120px;
+}
+
+.step-header__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.step-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.step-header__step {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: #000000;
+  margin: 0;
+}
+
+.step-header__title {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 48px;
+  color: var(--primary);
+  margin: 0;
+}

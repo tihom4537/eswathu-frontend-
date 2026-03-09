@@ -1,0 +1,25 @@
+﻿/* ── PageHeading ───────────────────────────────────────── */
+
+.page-heading {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.page-heading__subtitle {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--text-dark);
+}
+
+.page-heading__title {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 48px;
+  color: var(--primary);
+}

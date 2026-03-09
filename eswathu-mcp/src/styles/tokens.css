@@ -1,0 +1,56 @@
+/* ============================================================
+   Eswathu Design Tokens
+   Source: design-system.md (Figma kJ1WKNyGo5y7tZ2g8mM1vq)
+   ============================================================ */
+
+:root {
+  /* ── Colours ─────────────────────────────────────────────── */
+  --primary:        #0263C5;   /* brand blue — buttons, borders, active states */
+  --primary-50:     #E6F2FF;   /* open section header background */
+  --primary-300:    #68B2FD;   /* focus ring glow */
+
+  --text-dark:      #212121;   /* primary body text */
+  --text-light:     #FFFFFF;   /* text on blue / dark backgrounds */
+  --white:          #FFFFFF;   /* input / card backgrounds */
+
+  --neutral-100:    #DDDDDD;   /* frozen input background; closed section border */
+  --neutral-300:    #B0B0B0;   /* disabled / closed section text and icons */
+  --neutral-400:    #C6C6C6;   /* default input border */
+  --neutral-500:    #868686;   /* placeholder text */
+  --neutral-600:    #727272;   /* caption / helper text */
+
+  --secondary:      #F2F2F2;   /* closed section box background */
+  --secondary-400:  #999999;   /* dropdown placeholder text */
+
+  --danger:         #B7131A;   /* error — borders, icons, text */
+  --success:        #3C9718;   /* success — borders, icons, text */
+  --warning:        #B77224;   /* warning — borders, icons, text */
+
+  /* ── Typography ──────────────────────────────────────────── */
+  --font-family:    'Noto Sans', sans-serif;
+
+  /* ── Spacing ─────────────────────────────────────────────── */
+  --space-xs:   4px;
+  --space-sm:   8px;
+  --space-md:   12px;
+  --space-lg:   16px;
+  --space-xl:   20px;
+  --space-2xl:  24px;
+  --space-3xl:  32px;
+
+  /* ── Border Radius ───────────────────────────────────────── */
+  --radius-none:  0px;
+  --radius-xs:    4px;
+  --radius-md:    8px;
+
+  /* ── Shadows ─────────────────────────────────────────────── */
+  --shadow-sm:    0px 2px 3px 1px rgba(33, 33, 33, 0.12);
+  --shadow-card:  0px 4px 6px -2px rgba(33, 33, 33, 0.03),
+                  0px 12px 16px -4px rgba(33, 33, 33, 0.08);
+
+  /* ── Focus ring (apply via box-shadow) ───────────────────── */
+  --focus-ring:   0 0 0 4px var(--primary-300);
+
+  /* ── Layout ──────────────────────────────────────────────── */
+  --content-max-width: 1200px;
+}

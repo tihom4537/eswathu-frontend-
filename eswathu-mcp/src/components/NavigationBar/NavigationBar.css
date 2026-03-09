@@ -1,0 +1,266 @@
+﻿/* ── NavigationBar ────────────────────────────────────────── */
+
+.navbar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Top bar (accessibility + language) ──────────────────── */
+.navbar__topbar {
+  background: var(--primary);
+  padding: 10px 30px;
+}
+
+.navbar__topbar-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 60px;
+}
+
+.navbar__accessibility {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar__font-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text-light);
+  font-family: var(--font-family);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+}
+.navbar__font-btn--active {
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+
+.navbar__lang {
+  display: flex;
+  gap: 16px;
+}
+
+.navbar__lang-btn {
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--primary);
+  background: var(--white);
+  color: var(--primary);
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+}
+.navbar__lang-btn--active {
+  background: var(--white);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* ── Main bar (logos + title) ────────────────────────────── */
+.navbar__main {
+  background: var(--white);
+  padding: 10px 70px;
+  border-top: 1px solid var(--neutral-100);
+}
+
+.navbar__main-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.navbar__logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+.navbar__logo--eswathu {
+  width: 79px;
+  height: 79px;
+  border-radius: 5px;
+}
+
+.navbar__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navbar__title {
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--text-dark);
+}
+
+.navbar__subtitle {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 28px;
+  color: var(--text-dark);
+}
+
+.navbar__subtitle--light {
+  font-weight: 300;
+}
+
+.navbar__nic-logo {
+  height: 100px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ── Bottom bar ──────────────────────────────────────────── */
+.navbar__bottombar {
+  background: var(--primary-50);
+  padding: 16px 70px;
+  border-top: 1px solid var(--neutral-100);
+}
+
+.navbar__bottombar-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Homepage nav links */
+.navbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.navbar__link {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  color: #151515;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+}
+
+.navbar__link-chevron {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+.navbar__link-chevron--open {
+  transform: rotate(180deg);
+}
+
+.navbar__actions {
+  display: flex;
+  gap: 16px;
+}
+
+/* ── Dropdown menus ──────────────────────────────────────── */
+.navbar__dropdown-wrapper {
+  position: relative;
+}
+
+.navbar__dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 200px;
+  background: var(--white);
+  border: 1px solid var(--neutral-100);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  z-index: 100;
+  padding: 4px 0;
+}
+
+.navbar__dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-dark);
+  cursor: pointer;
+  text-align: left;
+}
+.navbar__dropdown-item:hover {
+  background: var(--primary-50);
+}
+
+/* ── Post-login breadcrumb ───────────────────────────────── */
+.navbar__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar__home-icon {
+  font-size: 20px;
+  color: #151515;
+}
+
+.navbar__crumb {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  color: #151515;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+}
+
+.navbar__user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navbar__username {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  color: #151515;
+}

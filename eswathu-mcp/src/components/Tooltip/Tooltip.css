@@ -1,0 +1,81 @@
+/* ── Tooltip Card ──────────────────────────────────────── */
+
+.tooltip-card {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 30px 15px 15px 15px;
+  width: 380px;
+  box-sizing: border-box;
+}
+
+/* ── Left: label ──────────────────────────────────────── */
+.tooltip-card__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.tooltip-card__label-text {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* ── Right: media + caption ───────────────────────────── */
+.tooltip-card__media {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 171px;
+  flex-shrink: 0;
+}
+
+.tooltip-card__image {
+  width: 171px;
+  height: 126px;
+  object-fit: cover;
+  border: 1px solid #c6c6c6;
+  border-radius: 2px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.tooltip-card__image--placeholder {
+  background: var(--neutral-100, #f5f5f5);
+}
+
+.tooltip-card__caption {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+  width: 171px;
+}
+
+.tooltip-card__caption-icon {
+  font-size: 16px;
+  line-height: 1;
+  color: var(--neutral-600);
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+}
+
+.tooltip-card__caption-text {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--neutral-600);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}

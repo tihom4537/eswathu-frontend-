@@ -1,0 +1,205 @@
+/* ── New Application First Page ─────────────────────────── */
+
+.new-app-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+}
+
+/* ── Steps banner ─────────────────────────────────────── */
+
+.new-app-page__steps-bg {
+  background: var(--secondary);
+  width: 100%;
+  padding: 40px 120px;
+  box-sizing: border-box;
+}
+
+.new-app-page__steps-inner {
+  max-width: var(--content-max-width);
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Sections area ────────────────────────────────────── */
+
+.new-app-page__sections {
+  padding: 40px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* ── Section 0.1 ──────────────────────────────────────── */
+
+.new-app-s01 {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.new-app-s01__mandatory-text {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--text-dark);
+}
+
+.new-app-s01__doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.new-app-s01__doc-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px 0;
+}
+
+.new-app-s01__doc-icon {
+  font-size: 28px;
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.new-app-s01__doc-content {
+  flex: 1;
+}
+
+.new-app-s01__doc-title {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 24px;
+  color: var(--text-dark);
+  margin: 0 0 6px 0;
+}
+
+.new-app-s01__doc-desc {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.new-app-s01__divider {
+  border: none;
+  border-top: 1px solid var(--neutral-400);
+  margin: 0;
+}
+
+/* EC info box — top-align icon for multiline content */
+.new-app-s01__ec-info {
+  align-items: flex-start;
+}
+
+.new-app-s01__ec-info .info-box__icon {
+  margin-top: 4px;
+}
+
+.new-app-s01__link {
+  color: var(--primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── Section 0.2 ──────────────────────────────────────── */
+
+.new-app-s02 {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.new-app-s02__intro {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--text-dark);
+}
+
+.new-app-s02__questionnaire {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.new-app-s02__question-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.new-app-s02__question-label {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--neutral-600);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.new-app-s02__question-text {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.new-app-s02__options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 700px;
+}
+
+.new-app-s02__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* ── Section 0.2 box — pre-allocated fixed height ────── */
+/* Sized to fit 4 options: intro(24) + questionnaire(468) + body padding(64) ≈ 556px
+   min-height: 600px gives a small buffer with no excessive empty space. */
+.new-app-s02-box .section-box__body {
+  min-height: 600px;
+  box-sizing: border-box;
+}
+
+/* Result state */
+.new-app-s02__result {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.new-app-s02__result .hcl {
+  max-width: 640px;
+}
+
+/* ── Proceed CTA ─────────────────────────────────────── */
+.new-app-page__cta {
+  display: flex;
+  justify-content: center;
+  padding: 0 120px 56px;
+  margin-top: 32px;
+  box-sizing: border-box;
+}

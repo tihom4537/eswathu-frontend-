@@ -1,0 +1,545 @@
+/* ══════════════════════════════════════════════════════════
+   Sale Deed Details Page
+   ══════════════════════════════════════════════════════════ */
+
+.sd-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+}
+
+/* ── Heading banner ──────────────────────────────────────── */
+
+/* Stepper is standalone — no extra wrapper needed */
+
+/* ── Sections wrapper ────────────────────────────────────── */
+
+.sd-page__sections {
+  padding: 40px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* ══ SECTION 1.1 ════════════════════════════════════════════ */
+
+.sd-s11 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Pre-allocate height so nothing above shifts as content grows */
+.sd-s11-box .section-box__body {
+  min-height: 480px;
+  box-sizing: border-box;
+}
+
+.sd-s11__q-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sd-s11__question {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.sd-s11__radios {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.sd-s11__yes-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Registration Number row (input + tooltip side by side) */
+.sd-s11__reg-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+}
+
+.sd-s11__reg-input {
+  flex: 0 0 350px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sd-s11__reg-input .input-field {
+  width: 100%;
+}
+
+/* Close trailing icon inside input — error colour */
+.sd-s11__close-icon {
+  color: var(--danger) !important;
+}
+
+.sd-s11__tooltip {
+  flex-shrink: 0;
+}
+
+/* Fetch button row */
+.sd-s11__fetch-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-left: 15px;
+}
+
+/* Success message */
+.sd-s11__success-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sd-s11__success-icon {
+  font-size: 20px;
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.sd-s11__success-text {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--success);
+}
+
+/* CollapseHeader width override */
+.sd-s11__collapse {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ── Kaveri table inside collapse ───────────────────────── */
+
+.kaveri-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Shared cell styles */
+.kaveri-table__label,
+.kaveri-table__value {
+  padding: 10px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.kaveri-table__label {
+  width: 212px;
+  flex-shrink: 0;
+  background: var(--secondary);
+  font-weight: 500;
+  color: var(--text-dark);
+  border-right: 1px solid #808080;
+}
+
+.kaveri-table__value {
+  flex: 1;
+  min-width: 0;
+  background: var(--white);
+  font-weight: 500;
+  color: #666;
+  border-right: 1px solid #212121;
+}
+
+.kaveri-table__value--last {
+  border-right: none;
+}
+
+/* Value spanning remaining 3 columns (schedule description row) */
+.kaveri-table__value--span {
+  flex: 1;
+  min-width: 0;
+  border-right: none;
+}
+
+/* ── Rows ─────────────────────────────────────────────── */
+
+.kaveri-table__row {
+  display: flex;
+  height: 40px;
+  border: 1px solid #666;
+  overflow: hidden;
+}
+
+.kaveri-table__row--mid {
+  border-top: none;
+}
+
+.kaveri-table__row--party-top {
+  border: 1px solid #666;
+}
+
+/* ── Registration table ───────────────────────────────── */
+
+.kaveri-table__registration {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Spacer between sections (30px empty divider) ──────── */
+
+.kaveri-table__spacer {
+  height: 30px;
+  width: 100%;
+}
+
+/* ── Boundaries table ─────────────────────────────────── */
+
+.kaveri-table__boundaries {
+  display: flex;
+  flex-direction: column;
+}
+
+.kaveri-table__bnd-header {
+  display: flex;
+  border: 1px solid #727272;
+  background: var(--secondary);
+}
+
+.kaveri-table__bnd-body {
+  display: flex;
+  border: 1px solid #727272;
+  border-top: none;
+  height: 60px;
+}
+
+.kaveri-table__bnd-label {
+  width: 212px;
+  flex-shrink: 0;
+  padding: 5px 10px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  font-weight: 500;
+  color: var(--text-dark);
+  border-right: 1px solid #808080;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.kaveri-table__bnd-body .kaveri-table__bnd-label {
+  padding: 10px;
+  border-right: 1px solid #666;
+}
+
+.kaveri-table__bnd-cell {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 10px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  font-weight: 500;
+  border-right: 1px solid #666;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.kaveri-table__bnd-header .kaveri-table__bnd-cell {
+  color: var(--text-dark);
+}
+
+.kaveri-table__bnd-body .kaveri-table__bnd-cell {
+  padding: 10px;
+  color: #666;
+}
+
+.kaveri-table__bnd-cell--last {
+  border-right: none;
+}
+
+/* ── Schedule table ───────────────────────────────────── */
+
+.kaveri-table__schedule {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Parties table ────────────────────────────────────── */
+
+.kaveri-table__parties {
+  display: flex;
+  flex-direction: column;
+}
+
+.kaveri-table__party {
+  display: flex;
+  height: 80px;
+}
+
+.kaveri-table__party-left {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.kaveri-table__party-left .kaveri-table__row {
+  height: 40px;
+}
+
+.kaveri-table__party-left .kaveri-table__value--last {
+  border-right: none;
+}
+
+.kaveri-table__party-right {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #666;
+  border-left: none;
+  overflow: hidden;
+}
+
+.kaveri-table__party:first-child .kaveri-table__party-right {
+  border-top: 1px solid #666;
+}
+
+.kaveri-table__party:not(:first-child) .kaveri-table__party-right {
+  border-top: 1px solid #666;
+}
+
+.kaveri-table__party-right .kaveri-table__label {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.kaveri-table__party-right .kaveri-table__value {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-right: none;
+}
+
+/* No Kaveri notice */
+.sd-s11__no-kaveri-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #EFF6FF;
+  border: 1px solid #93C5FD;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  max-width: 680px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--text-dark);
+}
+
+.sd-s11__info-icon {
+  font-size: 20px;
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ══ SECTION 1.2 ════════════════════════════════════════════ */
+
+.sd-s12 {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Pre-allocate height: location(80) + doc details(100) + tables(280) + actions(48) + padding ≈ 600px */
+.sd-s12-box .section-box__body {
+  min-height: 640px;
+  box-sizing: border-box;
+}
+
+.sd-s12__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sd-s12__group-label {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 27px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* 4 columns for location details */
+.sd-s12__four-col {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+.sd-s12__four-col .input-field {
+  width: 100%;
+}
+
+/* Asset Number + Tooltip row */
+.sd-s12__doc-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+}
+
+.sd-s12__asset-input {
+  flex: 0 0 309px;
+  padding: 15px;
+}
+
+.sd-s12__asset-input .input-field {
+  width: 100%;
+}
+
+.sd-s12__tooltip {
+  flex-shrink: 0;
+}
+
+.sd-s12__table {
+  width: 100%;
+}
+
+.sd-s12__table--gap {
+  margin-top: 24px;
+}
+
+/* First column (radio button) */
+.sd-s12__table .data-table__th:first-child,
+.sd-s12__table .data-table__td:first-child {
+  width: 145px;
+  text-align: center;
+}
+
+.sd-s12__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ══ SECTION 1.3 ════════════════════════════════════════════ */
+
+.sd-s13 {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sd-s13__summary-table {
+  width: 100%;
+}
+
+.sd-s13__success-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.sd-s13__success-icon {
+  font-size: 20px;
+  color: var(--success);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sd-s13__success-text {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--success);
+}
+
+.sd-s13__id-row {
+  display: flex;
+  gap: 40px;
+  max-width: 700px;
+}
+
+.sd-s13__id-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 0;
+}
+
+.sd-s13__id-label {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  color: var(--neutral-600);
+}
+
+.sd-s13__id-value {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-dark);
+  background: var(--neutral-100);
+  border-radius: var(--radius-xs);
+  padding: 10px 12px;
+}
+
+.sd-s13__actions {
+  display: flex;
+}
+
+/* ══ SAVE AND PROCEED — centered below all sections ═══════ */
+
+.sd-page__proceed {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px 0;
+  width: 100%;
+}
+
+/* ══ FULLSCREEN OVERLAYS ═══════════════════════════════════ */
+
+.sd-page__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Spin the ProgressCircle SVG inside overlay */
+.sd-page__overlay .progress-circle__svg {
+  animation: sd-spin 1s linear infinite;
+}
+
+@keyframes sd-spin {
+  to { transform: rotate(360deg); }
+}

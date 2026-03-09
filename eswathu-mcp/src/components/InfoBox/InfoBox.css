@@ -1,0 +1,45 @@
+﻿/* ── InfoBox ───────────────────────────────────────────── */
+
+.info-box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--danger);
+}
+
+.info-box__icon {
+  font-size: 30px;
+  flex-shrink: 0;
+  color: var(--danger);
+}
+
+.info-box__text {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-dark);
+}
+
+/* Outline (white background) */
+.info-box--outline {
+  background: var(--white);
+}
+
+/* Blue (outline with blue icon, no red) */
+.info-box--blue {
+  background: var(--white);
+  border-color: var(--primary);
+}
+
+.info-box--blue .info-box__icon {
+  color: var(--primary);
+}
+
+/* Red (pink background) */
+.info-box--red {
+  background: #FFEEEA;
+}

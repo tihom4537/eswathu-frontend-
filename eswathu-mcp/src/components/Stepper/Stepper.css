@@ -1,0 +1,93 @@
+﻿/* ── Stepper ───────────────────────────────────────────── */
+
+.stepper {
+  width: 100%;
+  background: var(--white);
+  padding: 32px 0;
+  border-bottom: 1px solid var(--neutral-100);
+}
+
+.stepper__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepper__step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Connector line */
+.stepper__line {
+  width: 60px;
+  height: 2px;
+  background: var(--neutral-300);
+  margin-right: 8px;
+}
+.stepper__line--filled {
+  background: var(--success);
+}
+
+/* Circle */
+.stepper__circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stepper__circle--upcoming {
+  border: 2px solid var(--neutral-300);
+  background: var(--white);
+}
+
+.stepper__circle--active {
+  border: 2px solid var(--success);
+  background: var(--white);
+}
+
+.stepper__circle--completed {
+  background: var(--success);
+  border: 2px solid var(--success);
+}
+
+.stepper__number {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--neutral-300);
+}
+
+.stepper__circle--active .stepper__number {
+  color: var(--success);
+}
+
+.stepper__check {
+  font-size: 16px;
+  color: var(--text-light);
+}
+
+/* Label */
+.stepper__label {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--neutral-300);
+}
+
+.stepper__label--active {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.stepper__label--completed {
+  color: var(--text-dark);
+}

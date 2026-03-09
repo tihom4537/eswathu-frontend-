@@ -1,0 +1,99 @@
+/* ── HelpCardList ────────────────────────────────────────── */
+
+.hcl {
+  width: 100%;
+  padding: 30px;
+  border: 1px solid #CDE5FE;
+  border-radius: var(--radius-md);
+  background: var(--white);
+  overflow: hidden;
+}
+
+.hcl__subtitle {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--neutral-600);
+  margin-bottom: 4px;
+}
+
+.hcl__title {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.hcl__desc {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+
+.hcl__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hcl__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--secondary);
+  border-radius: var(--radius-md);
+  padding: 5px 10px;
+}
+
+.hcl__check {
+  font-size: 24px;
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+/* ── Document variant ───────────────────────────────────── */
+
+.hcl__doc-section {
+  margin-top: 16px;
+}
+
+.hcl__doc-heading {
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.hcl--document .hcl__item {
+  padding: 10px;
+}
+
+.hcl--document .hcl__check {
+  color: var(--primary);
+  font-size: 20px;
+}
+
+.hcl__no-doc {
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--neutral-600);
+  font-style: italic;
+  margin-top: 16px;
+}
+
+.hcl__item-text {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-dark);
+}

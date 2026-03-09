@@ -1,0 +1,159 @@
+﻿/* ── Footer ─────────────────────────────────────────────── */
+
+.footer {
+  width: 100%;
+}
+
+/* ── Homepage variant ─────────────────────────────────── */
+
+.footer--homepage .footer__top {
+  background: var(--primary);
+  padding: 51px 97px 90px 97px;
+}
+
+.footer__top-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  gap: 100px;
+}
+
+.footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: 31px;
+}
+
+.footer__col--wide {
+  flex: 1;
+}
+
+.footer__heading {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 24px;
+  color: var(--text-light);
+  letter-spacing: 0.25px;
+}
+
+.footer__link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer__link {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 24px;
+  color: var(--text-light);
+  letter-spacing: 0.25px;
+  text-decoration: none;
+}
+.footer__link:hover {
+  text-decoration: underline;
+}
+
+.footer__hours-group {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.footer__hours-times {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.footer__text {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--text-light);
+  letter-spacing: 0.25px;
+}
+
+.footer__offices {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+.footer__office {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.footer__org {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--text-light);
+  letter-spacing: 0.25px;
+}
+
+.footer__address {
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.footer__addr-icon {
+  font-size: 32px;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.footer__socials {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.footer__social {
+  width: 31px;
+  height: 31px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  text-decoration: none;
+}
+.footer__social .material-icons-outlined {
+  font-size: 28px;
+}
+
+/* ── Bottom bar (shared by both variants) ────────────── */
+
+.footer__bottom {
+  background: #014FA0;
+  padding: 16px 30px;
+  text-align: center;
+}
+
+.footer__visitors {
+  display: inline-block;
+  border: 1px solid var(--text-light);
+  padding: 4px 12px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.footer__credit,
+.footer__copyright,
+.footer__rights {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--text-light);
+}
+
+/* ── Post-login variant ───────────────────────────────── */
+
+.footer--postlogin .footer__bottom {
+  padding: 24px 30px;
+}

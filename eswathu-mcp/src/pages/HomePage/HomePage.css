@@ -1,0 +1,136 @@
+﻿/* HomePage styles */
+
+.page-homepage {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── Card grid (3-col max, used inside HomepageSections) ── */
+.hp-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 29px;
+  row-gap: 32px;
+}
+
+/* ── 3. Services section ── */
+.hp-services {
+  padding: 90px 120px 80px;
+}
+
+.hp-services__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 55px;
+}
+
+.hp-services__groups {
+  display: flex;
+  flex-direction: column;
+  gap: 55px;
+}
+
+/* ── 4. Understanding E-Khata ── */
+.hp-ekhata {
+  background: var(--primary-50);
+  padding: 90px 100px;
+}
+
+.hp-ekhata__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 59px;
+}
+
+.hp-ekhata__cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* ── 5. Classification types ── */
+.hp-classification {
+  background: var(--primary);
+  padding: 70px 100px;
+}
+
+.hp-classification__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.hp-classification__desc {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--text-light);
+  margin-top: -5px;
+}
+
+.hp-classification__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 50px;
+}
+
+/* Light variant for PageHeading on blue bg */
+.page-heading--light .page-heading__subtitle,
+.page-heading--light .page-heading__title {
+  color: var(--text-light);
+}
+
+/* ── 6. Need Help ── */
+.hp-help {
+  background: var(--secondary);
+  padding: 90px 100px;
+}
+
+.hp-help__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.hp-help__desc {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--text-dark);
+  margin-top: -20px;
+}
+
+.hp-help__cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* ── 7. Connected Services ── */
+.hp-connected {
+  padding: 90px 100px;
+}
+
+.hp-connected__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 59px;
+}
+
+.hp-connected__cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}

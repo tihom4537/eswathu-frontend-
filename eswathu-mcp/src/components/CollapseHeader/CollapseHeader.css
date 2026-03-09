@@ -1,0 +1,58 @@
+/* ── CollapseHeader ──────────────────────────────────────── */
+
+.collapse {
+  width: 100%;
+  max-width: 1107px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.collapse__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: #E6E6E6;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  cursor: pointer;
+}
+
+.collapse--open .collapse__header {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.collapse__title {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 28px;
+  color: var(--text-dark);
+}
+
+.collapse__chevron {
+  font-size: 24px;
+  color: var(--text-dark);
+}
+
+/* ── Animated body wrapper ────────────────────────────────── */
+.collapse__body-anim {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease-in-out;
+}
+
+.collapse__body-anim--open {
+  max-height: 2400px;
+}
+
+.collapse__body {
+  background: var(--white);
+  border: 1px solid #CED4DA;
+  border-top: none;
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+  padding: 20px;
+}

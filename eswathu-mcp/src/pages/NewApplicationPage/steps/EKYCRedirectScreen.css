@@ -1,0 +1,29 @@
+/* ── eKYC Redirect Screen ──────────────────────────────── */
+
+.ekyc-redirect {
+  display: flex;
+  flex-direction: column;
+  background: var(--white, #fff);
+}
+
+.ekyc-redirect__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.ekyc-redirect__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.ekyc-redirect__actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  padding: 24px 0;
+  position: sticky;
+  bottom: 0;
+  background: var(--white, #fff);
+  border-top: 1px solid var(--neutral-200, #e0e0e0);
+}

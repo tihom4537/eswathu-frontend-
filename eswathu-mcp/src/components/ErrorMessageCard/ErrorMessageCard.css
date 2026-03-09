@@ -1,0 +1,42 @@
+﻿/* ── ErrorMessageCard ─────────────────────────────────── */
+
+.error-card {
+  width: 512px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 40px 40px;
+  border-radius: var(--radius-md);
+  background: #4D4D4D;
+  text-align: center;
+}
+
+.error-card__message {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 28px;
+  color: var(--text-light);
+  margin-bottom: 30px;
+}
+
+.error-card__ok {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: #727272;
+  color: var(--primary-50);
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+}
+
+.error-card__ok:hover {
+  opacity: 0.85;
+}

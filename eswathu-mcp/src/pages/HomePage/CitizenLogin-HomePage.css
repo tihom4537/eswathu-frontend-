@@ -1,0 +1,55 @@
+/* ── CitizenLogin-HomePage ───────────────────────────────── */
+
+.citizen-home-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 1280px;
+  background: var(--white);
+}
+
+.citizen-home-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: 55px;
+  padding: 90px 120px 80px;
+  width: 100%;
+}
+
+/* 3-column card grid — 29px gap between cards */
+.citizen-home-page__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 29px;
+  width: 100%;
+}
+
+/* Multi-icon section header: Check Status | Download | Print */
+.citizen-home__multi-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.citizen-home__multi-header-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: #024C97;
+}
+
+.citizen-home__multi-header-item .material-icons-outlined {
+  font-size: 32px;
+  color: #024C97;
+}
+
+.citizen-home__multi-header-sep {
+  font-family: var(--font-family);
+  font-size: 24px;
+  color: #024C97;
+}

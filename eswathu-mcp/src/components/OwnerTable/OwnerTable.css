@@ -1,0 +1,41 @@
+/* ── OwnerTable — Aadhar eKYC details table ──────────── */
+
+.owner-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--text-dark);
+}
+
+.owner-table__row {
+  border: 1px solid var(--neutral-400, #727272);
+}
+
+.owner-table__label {
+  background: var(--secondary, #f2f2f2);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  padding: 10px;
+  vertical-align: middle;
+  border: 1px solid var(--neutral-400, #727272);
+  color: var(--text-dark);
+}
+
+.owner-table__label--side {
+  width: 205px;
+  vertical-align: middle;
+}
+
+.owner-table__value {
+  font-weight: 400;
+  padding: 10px;
+  vertical-align: middle;
+  border: 1px solid var(--neutral-400, #727272);
+  color: var(--text-dark);
+  word-break: break-word;
+}

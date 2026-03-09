@@ -1,0 +1,70 @@
+﻿/* ── Carousel (Hero Section) ──────────────────────────────── */
+
+.carousel {
+  width: 100%;
+  background: var(--primary);
+  overflow: hidden;
+}
+
+.carousel__slide {
+  padding: 90px 100px 70px;
+}
+
+.carousel__content {
+  max-width: 553px;
+}
+
+.carousel__subtitle {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.carousel__heading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 48px;
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+
+.carousel__desc {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--text-light);
+  margin-bottom: 32px;
+}
+
+.carousel__actions {
+  display: flex;
+  gap: 15px;
+}
+
+.carousel__dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 0 24px;
+}
+
+.carousel__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.carousel__dot--active {
+  background: var(--text-light);
+}
