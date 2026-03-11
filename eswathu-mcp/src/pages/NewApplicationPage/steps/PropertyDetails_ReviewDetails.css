@@ -1,0 +1,107 @@
+/* ── Section 3.3 Review Details ─────────────────────────── */
+
+.pd-rd {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ── Table wrapper overrides ─────────────────────────────── */
+
+.pd-rd__table-wrap .table-wrapper {
+  max-width: 100%;
+}
+
+/* Border colour: Figma uses #727272, override component default */
+.pd-rd__table-wrap .data-table__th,
+.pd-rd__table-wrap .data-table__td {
+  border-color: #727272;
+}
+
+/* Header row */
+.pd-rd__table-wrap .data-table__header {
+  height: 50px;
+  background: var(--secondary);
+}
+
+.pd-rd__table-wrap .data-table__th {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-dark);
+  padding: 15px 10px;
+  white-space: normal;
+}
+
+/* Value rows */
+.pd-rd__table-wrap .data-table__td {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--neutral-600);
+  padding: 10px;
+  vertical-align: top;
+  min-height: 40px;
+}
+
+/* Collapse the 1px border between stacked tables */
+.pd-rd__table-wrap + .pd-rd__table-wrap {
+  margin-top: -1px;
+}
+
+/* ── Column widths ───────────────────────────────────────── */
+
+/* Location table: Photo column fixed 328px */
+.pd-rd__table-wrap--location .data-table__th:nth-child(3),
+.pd-rd__table-wrap--location .data-table__td:nth-child(3) {
+  width: 328px;
+}
+
+/* Area table: Irregular site column (3rd) slightly narrower */
+.pd-rd__table-wrap--area .data-table__th:nth-child(3),
+.pd-rd__table-wrap--area .data-table__td:nth-child(3) {
+  width: 260px;
+}
+
+/* Checkbandi table: South column fixed 180px */
+.pd-rd__table-wrap--checkbandi .data-table__th:nth-child(4),
+.pd-rd__table-wrap--checkbandi .data-table__td:nth-child(4) {
+  width: 180px;
+}
+
+/* ── Property photo ──────────────────────────────────────── */
+
+.pd-rd__photo {
+  display: block;
+  width: 222px;
+  height: 152px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.pd-rd__no-photo {
+  font-size: 14px;
+  color: var(--neutral-500);
+}
+
+/* ── Success caption ─────────────────────────────────────── */
+
+.pd-rd__caption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 16px;
+}
+
+.pd-rd__caption-icon {
+  font-size: 18px;
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.pd-rd__caption-text {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--success);
+}

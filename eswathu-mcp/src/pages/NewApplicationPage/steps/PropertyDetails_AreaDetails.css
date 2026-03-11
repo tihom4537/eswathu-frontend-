@@ -1,0 +1,134 @@
+/* ══════════════════════════════════════════════════════════
+   Subsection A — Area Details
+   ══════════════════════════════════════════════════════════ */
+
+.pd-ad {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Section heading ("Area Details") */
+.pd-ad__heading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Sub-heading ("Your Final Property Area…") */
+.pd-ad__subheading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 27px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Field label ("Please choose a unit", question text) */
+.pd-ad__label {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pd-ad__required {
+  color: var(--danger);
+}
+
+/* ── Unit section: label + horizontal row ─────────────── */
+
+.pd-ad__unit-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Horizontal row: [Total Area frozen Input + Edit] | [radio buttons] */
+.pd-ad__unit-row {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+/* Total Area display: Input + Edit button side by side */
+.pd-ad__total-area-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.pd-ad__area-input {
+  width: 260px;
+}
+
+.pd-ad__area-input .input-field__box {
+  width: 100%;
+}
+
+.pd-ad__field-btn {
+  flex-shrink: 0;
+}
+
+/* Radio buttons in a horizontal row */
+.pd-ad__radio-row {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+/* ── Final Area section (heading + InfoBox + 2 fields) ── */
+
+.pd-ad__final-area {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 2-column grid: Area in Sq.Ft | Area in Sq.Mtr */
+.pd-ad__conv-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.pd-ad__conv-row .input-field {
+  width: 100%;
+}
+
+/* ── Accept / Reject group ────────────────────────────── */
+
+.pd-ad__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Reject section ──────────────────────────────────── */
+
+.pd-ad__reject-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pd-ad__reject-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* "Confirm Area" button — left-aligned */
+.pd-ad__confirm-btn {
+  align-self: flex-start;
+}

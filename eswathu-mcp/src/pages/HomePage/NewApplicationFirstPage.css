@@ -195,6 +195,20 @@
   max-width: 640px;
 }
 
+.new-app-s02__result-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.new-app-s02__result-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
 /* ── Proceed CTA ─────────────────────────────────────── */
 .new-app-page__cta {
   display: flex;

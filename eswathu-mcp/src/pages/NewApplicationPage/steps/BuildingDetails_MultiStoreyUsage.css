@@ -1,0 +1,100 @@
+/* ── Multi-Storey Flat Usage Details ────────────────────────── */
+
+.bd-multi {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bd-multi__row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.bd-multi__input--single {
+  width: 347px;
+  flex-shrink: 0;
+}
+
+.bd-multi__input--carpet {
+  width: 460px;
+  flex-shrink: 0;
+}
+
+.bd-multi__input--add {
+  width: 347px;
+  flex-shrink: 0;
+}
+
+.bd-multi__input--block,
+.bd-multi__input--flat {
+  width: 347px;
+  flex-shrink: 0;
+}
+
+.bd-multi__dropdown--year {
+  flex: 1;
+  min-width: 0;
+}
+
+.bd-multi__flat-type {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bd-multi__flat-type-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.bd-multi__flat-type-options {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+/* ── Floor fields row (Single Flat on Multi-Floors) ─────────── */
+.bd-multi__floor-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.bd-multi__floor-input {
+  width: 144px;
+  flex-shrink: 0;
+}
+
+.bd-multi__floor-icon {
+  font-size: 24px;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.bd-multi__actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.bd-multi__success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bd-multi__success-icon {
+  color: var(--success, #2e7d32);
+  font-size: 20px;
+}
+
+.bd-multi__success-text {
+  font-size: 14px;
+  color: var(--success, #2e7d32);
+  font-weight: 500;
+}

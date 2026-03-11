@@ -2,7 +2,7 @@
 
 .checkbox {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-sm);
   cursor: pointer;
 }
@@ -18,11 +18,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 18px;
   height: 18px;
   border-radius: var(--radius-xs);
   border: 2px solid var(--neutral-500);
   transition: background 0.15s ease, border-color 0.15s ease;
+  margin-top: 1px;
 }
 
 .checkbox__icon {
@@ -52,6 +54,18 @@
 .checkbox--intermediate.checkbox--green .checkbox__box {
   background: var(--success);
   border-color: var(--success);
+}
+
+/* Selected (blue) — alias for default */
+.checkbox--selected.checkbox--blue .checkbox__box {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Intermediate (blue) */
+.checkbox--intermediate.checkbox--blue .checkbox__box {
+  background: var(--primary);
+  border-color: var(--primary);
 }
 
 /* Unselected — keep border only */

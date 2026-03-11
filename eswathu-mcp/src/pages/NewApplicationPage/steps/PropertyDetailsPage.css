@@ -27,9 +27,7 @@
   gap: 20px;
 }
 
-/* Pre-allocate height so nothing above shifts when address appears */
 .pd-s31-box .section-box__body {
-  min-height: 560px;
   box-sizing: border-box;
 }
 
@@ -79,12 +77,8 @@
   width: 100%;
   height: 100%;
   background: #E8E8E8;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
   position: relative;
+  overflow: hidden;
 }
 
 .pd-s31__map-icon {
@@ -110,6 +104,17 @@
 .pd-s31__map-pin .material-icons-outlined {
   font-size: 40px;
   color: var(--danger);
+}
+
+.pd-s31__map-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  display: block;
 }
 
 /* ── Divider ─────────────────────────────────────────────── */
@@ -295,12 +300,50 @@
 
 /* ══ SECTION 3.2 ════════════════════════════════════════════ */
 
-.pd-s32__placeholder {
+.pd-s32-box .section-box__body {
+  box-sizing: border-box;
+}
+
+/* Grey placeholder headings shown in 3.2 before subsections unlock */
+.pd-s32__placeholder-heading {
   font-family: var(--font-family);
-  font-size: 14px;
-  line-height: 20px;
-  color: var(--neutral-600);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--neutral-400);
   margin: 0;
+  padding-left: 15px;
+}
+
+/* Wrapper for all three subsections */
+.pd-s32 {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Grey divider between subsections */
+.pd-s32__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--neutral-100);
+  margin: 24px 0;
+  flex-shrink: 0;
+}
+
+/* ══ SECTION 3.3 ════════════════════════════════════════════ */
+
+.pd-s33-box .section-box__body {
+  box-sizing: border-box;
+}
+
+/* ══ BOTTOM NAVIGATION ══════════════════════════════════════ */
+
+.pd-page__bottom-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 120px 48px;
 }
 
 /* ══ FULLSCREEN OVERLAYS ═══════════════════════════════════ */

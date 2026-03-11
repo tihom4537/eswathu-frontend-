@@ -1,0 +1,184 @@
+/* ══════════════════════════════════════════════════════════
+   Subsection B — Site Dimension Details
+   ══════════════════════════════════════════════════════════ */
+
+.pd-sd {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Section heading */
+.pd-sd__heading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Sub-headings inside the section */
+.pd-sd__subheading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 27px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pd-sd__label {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pd-sd__required {
+  color: var(--danger);
+}
+
+/* ── Odd/Even question ────────────────────────────────── */
+
+.pd-sd__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pd-sd__radio-row {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+/* ── N-S / E-W dimensions section ────────────────────── */
+
+/* Outer row: fields (left, flex-1) + Tooltip (right, fixed) */
+.pd-sd__dims-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 100px;
+}
+
+.pd-sd__dims-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Two frozen inputs side by side */
+.pd-sd__dims-row {
+  display: flex;
+  gap: 30px;
+}
+
+.pd-sd__dims-row .input-field {
+  flex: 1;
+  min-width: 0;
+}
+
+
+/* Tooltip on the right of dims section */
+.pd-sd__dims-tooltip {
+  flex-shrink: 0;
+  width: 352px;
+}
+
+/* ── Area comparison cards ────────────────────────────── */
+
+/* 2-column grid: existing data | calculated area */
+.pd-sd__comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+/* Card container (from Figma AreaComparison component) */
+.pd-sd__area-card {
+  border: 1px solid var(--neutral-300, #b0b0b0);
+  border-radius: var(--radius-md, 8px);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  box-sizing: border-box;
+}
+
+.pd-sd__area-card--blue {
+  background: rgba(2, 99, 197, 0.08);
+}
+
+.pd-sd__area-card--grey {
+  background: rgba(242, 242, 242, 0.16);
+}
+
+.pd-sd__area-card-title {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: normal;
+  letter-spacing: 0.25px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* 2 fields side by side inside each card */
+.pd-sd__data-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.pd-sd__data-row .input-field {
+  width: 100%;
+  min-width: 0;
+}
+
+/* ── Comparison result ────────────────────────────────── */
+
+.pd-sd__result {
+  /* height grows naturally — no pre-allocation */
+}
+
+/* ══ ODD DIMENSIONS FLOW ══════════════════════════════════ */
+
+.pd-sd__odd-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Tooltip in odd flow — constrained to approx. left-column width */
+.pd-sd__odd-tooltip {
+  max-width: 420px;
+}
+
+/* Constrain the "Number of sides" dropdown */
+.pd-sd__sides-selector {
+  max-width: 260px;
+}
+
+/* 3-column grid for side inputs — height grows with number of sides */
+.pd-sd__sides-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 30px;
+  align-content: start;
+}
+
+.pd-sd__sides-grid .input-field {
+  width: 100%;
+}
+
+/* ProgressCircle spinner wrapper */
+.pd-sd__calc-spinner {
+  display: flex;
+  justify-content: flex-start;
+  padding: 8px 0;
+}

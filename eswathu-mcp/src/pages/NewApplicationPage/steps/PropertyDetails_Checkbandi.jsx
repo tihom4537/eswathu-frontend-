@@ -1,37 +1,51 @@
-import React from 'react';
-import Input from '../../../components/Input/Input';
 import Button from '../../../components/Button/Button';
-import ProgressCircle from '../../../components/ProgressCircle/ProgressCircle';
-import './PropertyDetailsPage.css';
+import Input from '../../../components/Input/Input';
+import './PropertyDetails_Checkbandi.css';
 
-// Checkbandi Details Subsection for Section 3.2
-// Follows Figma patterns for Kaveri workflow
+/* ── Mock Kaveri boundary data ───────────────────────────── */
+const MOCK_BOUNDS = {
+  east:  'Survey No. 112/A',
+  west:  'Kaveri Nagar Road',
+  north: 'Shree Ram Nagar Layout',
+  south: 'BDA Main Road',
+};
 
-const PropertyDetails_Checkbandi = ({ checkbandiFetched, onSave }) => {
+const DIRS = [
+  { key: 'east',  label: 'Checkbandi East'  },
+  { key: 'west',  label: 'Checkbandi West'  },
+  { key: 'north', label: 'Checkbandi North' },
+  { key: 'south', label: 'Checkbandi South' },
+];
+
+const PropertyDetails_Checkbandi = ({ onSaveAndProceed }) => {
   return (
-    <div className="pd-s32__checkbandi-details">
-      <div className="pd-s32__sub-heading">Checkbandi Details</div>
-      <div className="pd-s32__checkbandi-fields">
-        {/* Pre-fetched fields (frozen input with edit button) */}
-        {checkbandiFetched.map((field, idx) => (
+    <div className="pd-cb">
+      <p className="pd-cb__heading">Checkbandi Details</p>
+      <p className="pd-cb__subheading">Your checkbandi details as per Sale Deed</p>
+
+      {/* ── Four boundary fields in a single row ─────────────── */}
+      <div className="pd-cb__bounds-row">
+        {DIRS.map(({ key, label }) => (
           <Input
-            key={idx}
-            label={field.label}
-            value={field.value}
+            key={key}
+            label={label}
+            value={MOCK_BOUNDS[key]}
             frozen
-            trailingIcon="edit"
-            trailingIconClassName="pd-s32__edit-icon"
-            // ...existing code...
+            required
+            className="pd-cb__bound-input"
           />
         ))}
       </div>
-      <Button
-        variant="primary"
-        onClick={onSave}
-        className="pd-s32__save-btn"
-      >
-        Save and Proceed
-      </Button>
+
+      {/* ── Save and Proceed ─────────────────────────────────── */}
+      <div className="pd-cb__actions">
+        <Button
+          variant="primary"
+          onClick={() => onSaveAndProceed(MOCK_BOUNDS)}
+        >
+          Save and Proceed
+        </Button>
+      </div>
     </div>
   );
 };

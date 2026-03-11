@@ -1462,13 +1462,14 @@ Multiple refinements to Section 2.3: doc table timing, caption message sizing, w
 **NewApplicationFirstPage (Step 0): COMPLETE ✅**
 **SaleDeedDetailsPage (Step 1): COMPLETE ✅**
 **OwnerEKYCPage (Step 2): COMPLETE ✅ (Sections 2.1 + 2.2 + 2.3)**
+**PropertyDetailsPage (Step 3): IN PROGRESS 🔄 (Sections 3.1 + 3.2 built)**
 **Full Navigation Wiring: COMPLETE ✅**
 **EKYCRedirectScreen: COMPLETE ✅**
 **OwnerTable component: COMPLETE ✅**
 **CaptionMessage component: COMPLETE ✅ (info/error/success/warning variants)**
 
 ### Complete User Flow
-`HomePage → LoginPage → CitizenLoginHomePage → NewApplicationFirstPage (Step 0) → SaleDeedDetailsPage (Step 1) → OwnerEKYCPage (Step 2) → Step 3 (TBD)`
+`HomePage → LoginPage → CitizenLoginHomePage → NewApplicationFirstPage (Step 0) → SaleDeedDetailsPage (Step 1) → OwnerEKYCPage (Step 2) → PropertyDetailsPage (Step 3, in progress)`
 
 ### OwnerEKYCPage Section Summary
 | Section | Title | Status |
@@ -1487,6 +1488,585 @@ Multiple refinements to Section 2.3: doc table timing, caption message sizing, w
 99 modules, 0 errors
 
 ### Pending
-- ❌ Step 3 — Property Details page (`new-application-step3`)
 - ❌ "Add New Owner" full flow in Step 2
 - ❌ eKYC images and tooltip sample images in `public/images/`
+- ❌ Section 3.1 post-search address form scroll (addressFormRef placed; pending verify)
+- ❌ Section 3.2 reject flow, odd-dimensions flow, area mismatch flow (scaffolded)
+
+---
+
+## Session — PropertyDetailsPage (Step 3) Sections 3.1 + 3.2
+
+### What was built
+- **PropertyDetailsPage (Step 3):** Full page scaffolded with SectionBox accordion pattern
+- **Section 3.1 — Property Search:** Search by survey number + khata number, Kaveri data fetch mock (ProgressCircle → found state), frozen Inputs for address fields, Edit/Save pattern
+- **Section 3.2 — Property Boundary Details:** Three sub-components built and wired together with sequential reveal logic
+
+### Sub-components (Section 3.2)
+| File | Description |
+|---|---|
+| `PropertyDetails_AreaDetails.jsx/.css` | Kaveri mock area (1200 sq.ft), frozen Input + red Edit, 4 unit RadioButtons, sq.ft ↔ sq.mt bidirectional conversion (frozenBlue variant), Accept/Reject flow |
+| `PropertyDetails_SiteDimensions.jsx/.css` | Mock Kaveri dims (30N/30S/40E/40W ft), odd/even RadioButtons, 2×2 frozen dim grid, computed area match check (30×40=1200), green success box, "Proceed to Checkbandi" CTA |
+| `PropertyDetails_Checkbandi.jsx/.css` | Mock boundary strings, 2×2 frozen boundary grid + red Edit buttons, "Save and Proceed" CTA |
+
+### Scroll behaviour added
+- `OwnerEKYCPage`: 2.1→2.2 scroll (s22Ref), 2.2→2.3 scroll (s23Ref)
+- `PropertyDetailsPage`: 3.1 search→address form (addressFormRef on divider), 3.1→3.2 (s32Ref), 3.2 AreaDetails accept→SiteDimensions (siteDimsRef on divider), 3.2 area match→Checkbandi (checkbandiRef on divider)
+- Pattern: `useRef` + `useEffect` watching visibility state → `scrollIntoView({ behavior: 'smooth', block: 'start' })`
+
+### SectionBox dropdown clipping fix
+- Changed `overflow: hidden` → `overflow: visible` on `.section-box` (global fix in `SectionBox.css`)
+- Rounded corners preserved via `border-top-*-radius` on header + `border-bottom-*-radius` on `.section-box__body`
+
+### Pre-allocated min-heights
+- `.pd-s31-box .section-box__body { min-height: 560px; }`
+- `.pd-s32-box .section-box__body { min-height: 1200px; }`
+
+### Standing rules saved to memory
+- Always use React framework (no vanilla DOM manipulation)
+- Scroll & height behaviour rules in `memory/scroll-height-rules.md`
+- SectionBox overflow must remain `visible`
+
+### Current Status
+**PropertyDetailsPage (Step 3): IN PROGRESS**
+| Section | Title | Status |
+|---|---|---|
+| 3.1 | Property Search | ✅ Search, Kaveri fetch, address frozen fields, Edit/Save |
+| 3.2 | Property Boundary Details | ✅ AreaDetails (sqft flow) + SiteDimensions (even flow) + Checkbandi; reject/odd/mismatch scaffolded |
+
+
+---
+
+## Phase 8 - Section 3.2 Completion + Section 3.3 ReviewDetails + Step 4 PropertyClassificationPage
+
+### Session goal
+Complete Section 3.2 (PropertyDetails subcomponents) and build the full Step 4 PropertyClassificationPage including Section 4.1 classification dropdown/docs/questionnaire and Section 4.2 survey number -> Surnoc/Hissa -> RTC Owner Details flow.
+
+---
+
+### Section 3.2 - Completed sub-components
+
+#### PropertyDetails_AreaDetails.jsx/.css
+- Kaveri-fetched area (1200 sq.ft) in frozenBlue Input; red Edit button to unlock
+- 4 RadioButton unit options (sq.ft / sq.mt / guntas / yards)
+- Bidirectional unit conversion
+- Accept flow: calls onAreaAccepted({ sqft, unit })
+- Reject flow: shows manual entry Input; after entry calls onAreaAccepted with user value
+- onAreaRejected callback fires if user does not proceed
+
+#### PropertyDetails_SiteDimensions.jsx/.css
+- Kaveri mock dims (30N / 30S / 40E / 40W ft)
+- Even flow: 2x2 frozen dimension grid (N-S and E-W); computed sqft = NS x EW shown in green success box
+- Odd flow: polygon sides entry (variable rows) with computed sqft
+- Area match check vs AreaDetails accepted value
+- Callbacks: onAreaMatch({ ns, ew }) for even, onAreaMatch({ type: 'odd', sides, calcSqft }) for odd
+- "Proceed to Checkbandi" CTA enabled after match confirmed
+
+#### PropertyDetails_Checkbandi.jsx/.css
+- 4 boundary frozen Input fields (North / South / East / West)
+- Mock boundary strings pre-filled, red Edit buttons per field
+- "Save and Proceed" CTA -> onSaveAndProceed(bounds) callback
+
+#### PropertyDetails_ReviewDetails.jsx/.css (Section 3.3)
+- Three stacked custom tables: Location | Area | Checkbandi
+- Location table: address + lat/lng + site photo row
+- Area table: total sqft + dimension breakdown row
+- Checkbandi table: 4 boundary direction rows
+- Tables use kaveri-table CSS pattern (212px label cells, grey bg)
+- Border color override: #727272 (Figma spec)
+
+#### PropertyDetailsPage.jsx - state wiring
+- DEV_MODE = true (skips Section 3.1 interactions; Section 3.2 opens immediately)
+- Sequential state: areaAccepted -> areaMatched -> s32Saved -> s33Visible
+- Scroll refs: s32Ref, siteDimsRef, checkbandiRef, s33Ref
+- Bottom nav CTA: "Save and Proceed to Property Classification" -> onNavigate('new-application-step4')
+
+---
+
+### Step 4 - PropertyClassificationPage
+
+#### Files
+| File | Description |
+|---|---|
+| src/pages/NewApplicationPage/steps/PropertyClassificationPage.jsx | Full Step 4 page |
+| src/pages/NewApplicationPage/steps/PropertyClassificationPage.css | Styles |
+| src/App.jsx | Added page === 'new-application-step4' route |
+
+#### Architecture
+All content (classification dropdown + document table + survey number flow + RTC table) lives inside ONE SectionBox (Section 4.1). A visual divider (pc-s41__divider) separates classification from survey number inside the same box body.
+
+Pre-allocated height: .pc-s41-box .section-box__body { min-height: 2400px; }
+
+---
+
+### Section 4.1 - Classification + Document Upload + Questionnaire
+
+#### Classification Dropdown (300px wide, mandatory *)
+20 options in 5 groups:
+- Revenue land: Agricultural, Revenue Site, Inam Land, Govt. Acquired Land, Converted Agricultural
+- Converted: Private Layout Converted, BDA Approved, BBMP Converted, BMRDA Converted
+- A-Khata (4 variants), B-Khata (4 variants), Mutation (2 variants)
+
+#### Document Upload Table (3 rows)
+- Division Letter (mandatory *), Death Certificate (mandatory *), Will (non-mandatory)
+- Columns: Sr. No. | Document Name | Upload (ViewFile, blue header th--upload) | Date (DatePicker) | Doc. No. (Input) | View
+
+#### Questionnaire Modal
+3-step flow -> suggests classification -> Apply button sets dropdown value.
+Backdrop overlay; page does not shift when modal opens/closes.
+
+---
+
+### Section 4.1 Body - Survey Number Flow (Stages)
+
+**Stage 1** (always visible after section opens):
+- Village frozen Input (300px), Survey No.* editable Input (300px)
+- Search button (94px) disabled until survey no. entered
+- Tooltip: "Where to find your Survey Number"
+
+**Stage 2** (after Search completes):
+- Surnoc & Hissa No.* Dropdown (184px wide, mandatory), options: *2, *3, *4, *5, *6
+- "Fetch RTC Owner Details" button (primary blue), DISABLED until dropdown selected
+- ProgressCircle small shown while fetching
+- Tooltip: "Where to find your Surnoc and Hissa Number"
+
+**Stage 3** (after Fetch completes):
+- 3 frozen Inputs in a row (163px each, 32px gap):
+  - Survey No. (value from search)
+  - Surnoc No. (shows "/", frozen)
+  - Hissa No. (selected hissa value)
+- RTC Owner Details Table (see below)
+- Radio question: "Are the owner details correct?"
+
+---
+
+### RTC Owner Details Table (pc-rtc-table)
+
+Total width ~1107px. Columns:
+| Column | Width |
+|---|---|
+| Checkbox | 45px |
+| Owner No. | 80px |
+| Main Owner No. | 80px |
+| Owner Name | 276px |
+| Father Name | 276px |
+| Land Code | 80px |
+| Ext. Acre | 80px |
+| Ext. Gunta | 80px |
+| Ext. Fgunta | 80px |
+
+- Header: background var(--secondary), height 90px, border #727272
+- Row height: 66px
+- Each row has Checkbox variant="blue"
+
+Mock constant MOCK_RTC_OWNERS: 2 rows (Mohit Kumar Singh / father Kumar Singh, Mohit Singh / father Kumar Singh)
+
+---
+
+### Radio Question: "Are the owner details correct?"
+- RadioButton component, options Yes / No, default selected: Yes
+- State: ownerMatch (default 'yes')
+
+**IF YES:** Save and Next button enables -> navigates to next section
+
+**IF NO:**
+
+Add Owners Table (pc-addowner-table, 553px wide):
+- Columns: No. (56px) | Owner name (flex, Input per row)
+- Full-width add-row button at bottom: 30px tall, background var(--primary-50) (#E6F2FF), + icon centered
+- State: addOwners = [{ id, name }]
+
+Re-entry Fields row (163px each, 32px gap):
+- Survey No.* (editable Input)
+- Surnoc No. (frozen Input, shows "/")
+- Hissa No.* (editable Input)
+
+canSave42 condition: fetchDone AND (ownerMatch==='yes' OR (ownerMatch==='no' AND all addOwners names filled AND reSurveyNo and reHissaNo not empty))
+
+---
+
+### Checkbox Component Update
+
+src/components/Checkbox/Checkbox.jsx:
+- Added variant prop (alongside existing color prop)
+- const colorClass = variant ?? color (variant takes priority when provided)
+
+src/components/Checkbox/Checkbox.css:
+- Added .checkbox--selected.checkbox--blue .checkbox__box { background: var(--primary); border-color: var(--primary); }
+- Added .checkbox--intermediate.checkbox--blue .checkbox__box { same }
+
+Usage: Checkbox variant="blue" on RTC table rows
+
+---
+
+### Current Status
+
+**Step 3 - PropertyDetailsPage: COMPLETE**
+| Section | Status |
+|---|---|
+| 3.1 Property Search | Done |
+| 3.2 Property Boundary (AreaDetails + SiteDimensions + Checkbandi) | Done |
+| 3.3 Review Details | Done |
+
+**Step 4 - PropertyClassificationPage: IN PROGRESS**
+| Section | Status |
+|---|---|
+| 4.1 Classification Dropdown + Docs + Questionnaire modal | Done |
+| 4.2 Survey Number -> Surnoc/Hissa -> Fetch RTC -> Radio Q -> Yes/No flows | Done |
+| 4.3+ (remaining step 4 sections) | Pending |
+
+
+---
+
+## Phase 9 - Step 5 BuildingDetailsPage (Building & Apartment Flow)
+
+### Session goal
+Build Step 4.2 BuildingDetailsPage with 6 sub-components for the Building + Apartment flow.
+
+---
+
+### Files created
+
+| File | Description |
+|---|---|
+| src/pages/NewApplicationPage/steps/BuildingDetailsPage.jsx | Main page |
+| src/pages/NewApplicationPage/steps/BuildingDetailsPage.css | Styles |
+| src/pages/NewApplicationPage/steps/BuildingDetails_AreaDetails.jsx/.css | 3 area inputs + Save/Edit |
+| src/pages/NewApplicationPage/steps/BuildingDetails_MultiStoreyUsage.jsx/.css | Multi-storey flat fields |
+| src/pages/NewApplicationPage/steps/BuildingDetails_ParkingDetails.jsx/.css | Parking dropdown + area input |
+| src/pages/NewApplicationPage/steps/BuildingDetails_UndividedLand.jsx/.css | Undivided land dropdown + area input |
+| src/pages/NewApplicationPage/steps/BuildingDetails_ESCOMDetails.jsx/.css | ESCOM Type + Account ID + RR + Tooltip + Verify |
+| src/pages/NewApplicationPage/steps/BuildingDetails_TenantDetails.jsx/.css | Tenant table + add row |
+| src/App.jsx | Added new-application-step5 route -> BuildingDetailsPage |
+
+---
+
+### Page structure
+
+NavigationBar (post-login) + PageHeading (Step 4) + Stepper (activeStep=3)
+SectionBox 4.2 "Property Type & Category Details" (open=true)
+  Body:
+    - 3 mandatory Dropdowns: Property Type* | Property Category* | Is it a corner site*
+    - [when all 3 selected + Building/Apartment combo] InfoBox + sequential subsections
+    - [other type/category combos] placeholder div with comment
+
+Placeholder accordion stub: "4.3 Avail Rebates" (greyed, not interactive)
+
+---
+
+### Opening Dropdowns
+
+Property Type options: Site | Building | Land to be Converted
+Property Category options: 24 options (Residential, Commercial, Parks, Roads, Civil Facilities Area (CA Sites), Industry, Multi-Ownership Building, Non-residential, agro-based manufacturing, Residential and Commercial, Residential and Non-Residential, Commercial and Non-Residential, Residential commercial and non-residential, Residential and Industrial, Commercial and Industry, Residential Commercial and Industrial, Apartment/flat, Villament, Tenement, Row House, Multi-storied building, Service apartment/flat, Mall/Multiplex, Villa, Govt Property)
+Is it a corner site options: Yes | No
+
+Building + Apartment flow trigger: type=building AND category in [apartment, villament, tenement, row-house, multi-storied, service-apartment, villa]
+
+---
+
+### Sub-component details
+
+#### BuildingDetails_AreaDetails
+3 mandatory Input fields (all flex-1 with 32px gap):
+1. Plinth Area of the Building (in sq. metres)*
+2. Undivided Plot Size. (in sq. metres)*
+3. Total Undivided Plot Size. (in sq. metres)*
+Save button: "Save Building Area Details" (disabled until all 3 filled)
+Edit button: error/red variant
+Success text: check_circle_outline icon + "Building Area Details have been saved. Please proceed to next step." (green)
+onSave({ plinthArea, undividedPlotSize, totalUndividedPlotSize })
+onEdit() callback
+
+#### BuildingDetails_MultiStoreyUsage
+Props: superBuiltArea (pre-filled from plinthArea), onSave, onEdit
+
+Row 1: Super Built Area (in sq. metres) [frozen, 347px]
+Row 2: Carpet Area (Roughly 70% of built-up area) (in sq. metres)* [460px] | Additional Area (in sq. metres)* [347px]
+Row 3: Block Name* [347px] | Flat Number* [347px] | Year of Construction/Usage Started* [Dropdown, flex-1]
+  - Year Dropdown: 2026 down to 1950
+Radio: "Choose the Type of Flat" -> Single Floor Flat | Single Flat on Multi-Floors (both mandatory to enable save)
+Save button: "Save Multi-Storey Details"
+
+#### BuildingDetails_ParkingDetails
+Number of Parking attached to Flat/Unit* [Dropdown, 460px] - options: 0, 1, 2, 3, 4, 5, 6 or more
+Total Parking Slots Area (in sq. metres)* [Input, 347px]
+Save button: "Save Parking Details"
+
+#### BuildingDetails_UndividedLand
+Undivided Land Share Type* [Dropdown, 460px] - options: Percentage, Fraction, Square Metres
+Area of Undivided Land (in sq. metres)* [Input, 347px]
+Save button: "Save Undivided Land Details"
+
+#### BuildingDetails_ESCOMDetails
+Left panel:
+  Row 1: ESCOM Type* [Dropdown, 301px] - options: BESCOM, MESCOM, HESCOM, CESCOM, GESCOM
+  Row 2: ESCOM 10-digit Account ID* [Input, flex-1] | RR Number* [Input, flex-1]
+Right panel: Tooltip component - label="Where to find your ESCOM Account ID and RR number", caption="Click to view sample", width=337px
+Button: "Verify with ESCOM" (disabled until all 3 filled, shows ProgressCircle while verifying 1.5s mock)
+This button acts as both verify + save for ESCOM section.
+
+#### BuildingDetails_TenantDetails
+Header: "Please add Details of All Tenants (if applicable for your property)"
+Table (border #727272):
+  Columns: No. (56px) | Tenant Name (278px) | Relationship type (278px, Dropdown) | Tenant Relation Name (278px) | Tenant Mobile No. (175px)
+  Relationship type options: Husband, Wife, Son, Daughter, Father, Mother, Brother, Sister, Others
+  Each data row: Input | Dropdown | Input | Input
+Add row button: full-width 30px, background var(--primary-50), add icon centered
+Save button: "Save Tenant Details" (always enabled even with empty table - tenants are optional)
+
+---
+
+### Sequential flow + scroll
+
+1. All 3 dropdowns selected + Building/Apartment -> InfoBox + Building Area Details section (scroll to areaRef)
+2. areaSaved -> Multi-Storey Usage section (scroll to multiRef)
+3. multiStoreySaved -> Parking Details section (scroll to parkingRef)
+4. parkingSaved -> Undivided Land Details section (scroll to undividedRef)
+5. undividedSaved -> ESCOM Details section (scroll to escomRef)
+6. escomSaved -> Tenant Details section (scroll to tenantRef)
+7. tenantSaved -> Save and Proceed button enables (scroll to saveRef)
+
+Edit cascade: editing any section resets all downstream saved states.
+
+---
+
+### Height pre-allocation
+
+.bd-page .section-box--open .section-box__body { min-height: 3200px; }
+
+---
+
+### Navigation
+
+App.jsx: new-application-step5 -> BuildingDetailsPage
+PropertyClassificationPage already navigates to 'new-application-step5' on "Save and Proceed to Building Details"
+
+---
+
+### Current Status
+
+Step 5 - BuildingDetailsPage: IN PROGRESS
+| Section | Status |
+|---|---|
+| 4.2 Property Type & Category Details (Opening dropdowns) | Done |
+| Building Area Details | Done |
+| Details of Usage of Multi-Storey Flat | Done |
+| Parking Details | Done |
+| Undivided Land Details | Done |
+| ESCOM Details | Done |
+| Tenant Details | Done |
+| Other type/category flows (Site, Land to be Converted, etc.) | Pending placeholder |
+| 4.3 Avail Rebates | Pending |
+
+---
+
+## Session — Homepage Updates + Section 0.2 Changes
+
+### HomePage.jsx + CitizenLogin-HomePage.jsx (done)
+- "e-Khata" section renamed to "e-Khata related Services"
+- Second card: "Apply for e-khata for properties you are already paying tax for"
+- "Report an Objection" (File Objections) and "Returned applications (for modifications)" cards moved into e-Khata related Services section (7 cards total)
+- File Objections and Returned Applications sections removed as separate sections
+- Check Status section: Download + Print cards merged into "Download and Print e-Khata" (2 cards total)
+- New "Reports and Dashboards" section added after Mutation and Transfer (1 card, icon: dashboard)
+- Same changes applied to CitizenLogin-HomePage.jsx
+
+### NewApplicationFirstPage.jsx Section 0.1 (done)
+- "Sale Deed" → "Deed Documents"
+- "Image of the property" → "Property Image with Geo Tag" with geo-tag "click here" link
+
+### Section 0.2 — Questionnaire (done)
+- q_who first question options changed to: 1. "An Individual or organisation" → q_region, 2. "Govt. property" → q_govt_type, 3. "Industry" (KIADB/KSSIDC) → r_11a7
+- 11A-15 (Sites/Buildings of Corporation/Board/Limited/Authority) moved from q_govt_type to q_scheme_type as 5th option
+- q_govt_type now has only 1 option (Central/State Government → r_11a13)
+- q_converted_layout: removed "Yes — " and "No — " prefixes from option text
+- Result view: added 3 buttons: Back (arrow_back), Start Over (refresh), Confirm Classification (primary blue)
+- Added CaptionMessage variant="info" below buttons: "This will be used in your application"
+
+### HelpCardList component updated (done)
+- Document variant item text: 16px / 24px line-height (was 14px/20px)
+- Doc section margin-top: 32px (was 16px) to match Figma spacing
+
+---
+
+## Session — Step 3.2 Overhaul + Navigation Header Fixes + Input frozenWithEdit prop
+
+### Navigation Header Visual Fixes (all pages)
+- **Breadcrumb padding:** `.breadcrumb__inner` padding `10px` → `8px`
+- **PageNavigation arrows:** Changed from solid filled grey circle (disabled) to outlined circle style. Enabled: `border: 1.5px solid var(--primary)`, `background: transparent`. Disabled: `border-color: var(--neutral-200)`, `background: transparent`. Arrow icon 20px.
+- **StepHeader padding:** `50px 40px` → `32px 40px`; arrow buttons `56×56` → `48×48px` (same outlined style)
+- **Stepper padding:** `32px 0` → `18px 0`
+
+### PropertyDetailsPage (Step 3) Fixes
+- `DEV_MODE = false` (was `true`) — correct initial state
+- Map image uses CSS class `.pd-s31__map-img` (not inline style)
+- Road type dropdown enabled
+- Section 3.2 always shows dividers + grey placeholder headings ("Site Dimension Details", "Checkbandi Details") when subsections not yet unlocked; swaps to real component when unlocked
+- Removed `min-height` pre-allocations from Section 3.1 and 3.2 SectionBox bodies
+
+### Section 3.2 — AreaDetails
+- Total Area field permanently `frozen` (removed Edit button)
+- "I Accept" / "No I want to change" radio always enabled (no `disabled={rejectConfirmed}`)
+- **Reject flow unit matching:** Reject input label is now dynamic — shows "Area in Sq.Ft", "Area in Gunta", "Area in Acre", etc. based on chosen unit at top. Conversion factor is `TO_SQMT[unit]`. "Area in Sq.Mtr" frozenBlue field is hidden when unit is already Sq.Mt.
+- `TO_SQMT` constant added: `{ sqft: 0.0929, sqmt: 1, gunta: 101.17, acre: 4046.86, cent: 40.47 }`
+
+### Section 3.2 — SiteDimensions (full rewrite)
+- N-S / E-W fields now use `frozenWithEdit` + `onUnfreeze` (new Input prop — see below)
+- Even flow: area comparison cards use tinted grey/blue backgrounds (Figma AreaComparison component)
+  - Grey card: `rgba(242,242,242,0.16)` bg, "Existing Data as per Digitization" title
+  - Blue card: `rgba(2,99,197,0.08)` bg, "Calculated Plot Area (N-S × E-W)" title
+  - Both: `1px solid #b0b0b0` border, 8px radius, 15px padding
+- Odd flow: **removed area comparison entirely** — goes directly to CaptionMessage success + Checkbandi
+- Tooltip placed below heading in odd flow (stacked), to the right of fields in even flow (side-by-side, 100px gap)
+- No pre-allocated height for sides grid
+
+### Section 3.2 — Checkbandi (rewrite)
+- Replaced 2×2 grid + Edit buttons with **single flex row of 4 plain `frozen` inputs**, gap 40px
+- Labels: Checkbandi East / Checkbandi West / Checkbandi North / Checkbandi South (Figma exact)
+- No state needed — data always fetched from `MOCK_BOUNDS`, fully read-only
+- Save and Proceed always enabled
+
+### Section 3.3 — ReviewDetails
+- Table 2 (Area details) now has 3 columns: "Total Area Details (Sq.Mts)" | "Property Dimensions (Mts)" | "Irregular site/ site with odd dimensions"
+- Third column value: "Yes" if `siteDimSummary.type === 'odd'`, else "No"
+- CSS: column 3 width constrained to 260px
+
+### Tooltip Component Fix (Tooltip.css)
+- `border: 1px solid #b3b3b3` added (was missing)
+- `gap: 8px` → `gap: 20px` between label and media sections
+- `padding: 30px 15px 15px 15px` → `padding: 20px 15px 15px 15px`
+- `width: 380px` → `width: 100%`
+- Label icon gap fixed: `8px` → `15px`
+
+### Input Component — New `frozenWithEdit` Prop (from Figma node 470:83704)
+The Figma "FillInTheBlanks" component has 3 frozen variants:
+- **`frozen`** ("Frozen or autofetched"): grey bg `#f2f2f2`, no icon — for truly read-only fetched data
+- **`frozenWithEdit`** ("frozen with edit"): grey bg `#f2f2f2`, **red close icon inside the box** — for fetched data the user can override
+- **`frozenBlue`** ("frozen blue"): blue bg `#e6f2ff`, no icon — for auto-calculated values
+
+New props added to `Input.jsx`:
+- `frozenWithEdit` (bool): activates frozen-with-edit state
+- `onUnfreeze` (func): called when the close icon is clicked
+
+Implementation:
+- `resolvedState` priority: `frozenBlue` > `frozenWithEdit` > `frozen` > `disabled` > error > state
+- `isReadOnly` includes `frozenWithEdit`
+- Always renders a `<button class="input-field__trailing-btn input-field__trailing-btn--danger">` with `close` icon when `frozenWithEdit=true` — no external className needed
+- Manual `trailingIcon` prop still works for non-frozen contexts
+
+New CSS:
+- `.input-field--frozen-with-edit .input-field__box`: grey bg `#f2f2f2`
+- `.input-field__trailing-btn--danger`: `color: var(--danger) !important`
+- `.input-field--frozen .input-field__box`: bg changed to `#f2f2f2` (was `var(--neutral-100)`) to match Figma exactly
+
+Usage rule:
+- Use `frozen` when data is fetched and read-only forever (Checkbandi)
+- Use `frozenWithEdit` + `onUnfreeze` when data is fetched but user can override (N-S/E-W dimensions, Kaveri area)
+- Never use `frozen + trailingIcon="close" + trailingIconClassName` workaround anymore
+
+### Files Modified
+- `src/components/Input/Input.jsx` — `frozenWithEdit`, `onUnfreeze` props; `resolvedState` logic; trailing button render
+- `src/components/Input/Input.css` — `frozen-with-edit` state; `trailing-btn--danger`; frozen bg fixed to `#f2f2f2`
+- `src/components/Tooltip/Tooltip.css` — border, gap, padding, width fixes
+- `src/components/Breadcrumb/Breadcrumb.css` — padding
+- `src/components/PageNavigation/PageNavigation.css` — outlined arrows
+- `src/components/StepHeader/StepHeader.css` — padding, arrow size
+- `src/components/Stepper/Stepper.css` — padding
+- `src/pages/NewApplicationPage/steps/PropertyDetailsPage.jsx` — DEV_MODE=false, map fix, 3.2 placeholder headings
+- `src/pages/NewApplicationPage/steps/PropertyDetailsPage.css` — removed min-heights, added placeholder-heading style
+- `src/pages/NewApplicationPage/steps/PropertyDetails_AreaDetails.jsx` — frozen (no Edit), reject unit-matching, TO_SQMT constant
+- `src/pages/NewApplicationPage/steps/PropertyDetails_SiteDimensions.jsx` — frozenWithEdit, no odd comparison, area cards
+- `src/pages/NewApplicationPage/steps/PropertyDetails_SiteDimensions.css` — area cards, odd-tooltip, dims-section gap
+- `src/pages/NewApplicationPage/steps/PropertyDetails_Checkbandi.jsx` — single row 4 frozen fields
+- `src/pages/NewApplicationPage/steps/PropertyDetails_Checkbandi.css` — single-row layout
+- `src/pages/NewApplicationPage/steps/PropertyDetails_ReviewDetails.jsx` — 3rd column in Table 2
+- `src/pages/NewApplicationPage/steps/PropertyDetails_ReviewDetails.css` — column 3 width 260px
+
+### Current Step 3 Status
+| Section | Title | Status |
+|---|---|---|
+| 3.1 | Property Search | ✅ |
+| 3.2 | Property Boundary Details (AreaDetails + SiteDimensions + Checkbandi) | ✅ |
+| 3.3 | Review Details | ✅ |
+
+## Session — Section 5.3 Preview of Khata (ECStep)
+
+Built Section 5.3 and added to `ECStep.jsx`. Opens after "Verify Your Data" is clicked in Section 5.2 (both declaration checkboxes ticked).
+
+### Flow change
+- `handleVerify` no longer calls `onNext()` — it sets `s53Visible = true` and scrolls to 5.3
+- "Final Save" button (primary blue, centred, always enabled) calls `onNext()` to advance
+
+### Section 5.3 Layout
+- **Blue InfoBox** at top: "Please Preview Details of all the sections..."
+- **5 preview blocks**, each with a heading, read-only table(s), and an Edit button (error/red):
+  1. **Deed Details** — 4-col Table: Gram Panchayat | Village | Registration number | Asset number
+  2. **Owner KYC** — Custom HTML table (5 cols): Owner photograph (205px) | Name | Father/... | ID No. | Address — 2 owner rows with 190px height
+  3. **Property Details** — 3 stacked custom tables (joined, no double border): Location, Area Details, Checkbandi
+  4. **Property Classification** — 2 custom tables: Classification label+value row + Survey No./Category/Type/Corner Site | Plinth Area/Undivided Plot/Floor No./Year
+  5. **Upload EC** — 6-col Table component using MOCK_EC data
+
+### Edit button navigation
+| Section | Behaviour |
+|---|---|
+| Sale Deed Details | Warning popup (step1) → navigate to `new-application-step1` |
+| Owner KYC | Direct navigate to `new-application-step2` |
+| Property Details | Direct navigate to `new-application-step3` |
+| Property Classification | Warning popup (step4) → navigate to `new-application-step4` |
+| Upload EC | Collapses 5.3, scrolls to top (stay on same page, edit 5.1) |
+
+### Warning popup
+- State: `editWarning` — null | 'step1' | 'step4'
+- Semi-transparent dark backdrop (z-index 1000), white centred card
+- Warning icon + message + sub-message + "Yes, Edit" (primary) + "Cancel" (error) buttons
+- Click outside closes popup (cancel)
+- `WARNING_CONFIG` object maps type → message, sub, target route key
+
+### Files modified
+- `eswathu-mcp/src/pages/NewApplicationPage/steps/ECStep.jsx`
+- `eswathu-mcp/src/pages/NewApplicationPage/steps/ECStep.css`
+
+## Session — Fix Warning Behaviour for Section 5.3 Preview of Khata
+
+**Problem:** Warnings were incorrectly placed on ECStep's Edit buttons (from the preview), and used a custom modal instead of ErrorMessageCard.
+
+**Fix:**
+
+### ErrorMessageCard — added `actions` prop
+- New optional `actions` prop: array of `{label, variant, onClick}` objects
+- When `actions` provided: renders `Button` components instead of the default OK button
+- Backward compatible — `onOk` still works when `actions` not passed
+- Added `.error-card__actions` CSS for flex row layout of buttons
+
+### App.jsx — added reset infrastructure
+- `pageResetKeys` state: `{0..6: number}` per-route completion reset counters
+- `resetStepsFrom(startRouteIdx)`: removes completedBCSteps and bumps pageResetKeys for routes at/after startIdx
+- `completionResetKey` added to `navProps()` — passed to every step page
+- `onResetDownstream={() => resetStepsFrom(1)}` passed to SaleDeedDetailsPage
+- `onReset42={() => resetStepsFrom(4)}` passed to PropertyClassificationPage
+
+### ECStep.jsx — removed all warning logic
+- All 5 Edit buttons in Section 5.3 navigate directly with `onNavigate?.()`
+- EC Edit button: collapses 5.3, scrolls to top (stays on same page)
+- Removed `editWarning`, `WARNING_CONFIG`, warning popup modal
+- Added `completionResetKey` prop + useEffect reset
+
+### SaleDeedDetailsPage.jsx — Kaveri Registration Number warning
+- Warning triggers on X button click (clears fetched registration number)
+- Uses ErrorMessageCard with `actions` prop as modal inside `sd-page__overlay`
+- Yes, Edit → `handleClear()` + `onResetDownstream()` (resets all downstream pages)
+- Cancel → close popup, nothing changes
+- `handleClear` now also resets `isPageComplete`
+- Added `completionResetKey` + useEffect
+
+### PropertyClassificationPage.jsx — 4.1 + 4.2 warnings
+- 4.1 Edit button → `handleS41EditClick` → shows `showWarn41` popup using ErrorMessageCard
+  - Confirmed → unlock 4.1 for editing (internal reset only, no external pages)
+- 4.2 dropdowns → `handle42Change(setter)` interceptor → if `isPageComplete` is true, show `showWarn42` popup
+  - Confirmed → apply pending change + `onReset42()` (resets BuildingDetails onwards) + `setIsPageComplete(false)`
+- Both use `pc-modal__backdrop` as overlay wrapper (already defined in CSS)
+- Added `completionResetKey`, `onReset42` props + useEffect
+
+### Other step pages (useEffect reset only)
+- OwnerEKYCPage, PropertyDetailsPage, BuildingDetailsPage, AvailRebatesPage
+- Each received `completionResetKey = 0` prop + `useEffect` to reset `isPageComplete` when triggered

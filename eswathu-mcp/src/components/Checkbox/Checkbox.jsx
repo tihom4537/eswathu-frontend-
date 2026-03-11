@@ -7,13 +7,16 @@ const Checkbox = ({
   onChange,
   disabled = false,
   color = 'default',
+  variant,
   className = '',
 }) => {
   const type = indeterminate ? 'intermediate' : checked ? 'selected' : 'unselected';
   const icon = indeterminate ? 'remove' : checked ? 'check' : null;
+  /* `variant` takes priority over `color` when provided */
+  const colorClass = variant ?? color;
 
   return (
-    <label className={`checkbox checkbox--${type} checkbox--${color} ${disabled ? 'checkbox--disabled' : ''} ${className}`}>
+    <label className={`checkbox checkbox--${type} checkbox--${colorClass} ${disabled ? 'checkbox--disabled' : ''} ${className}`}>
       <input
         type="checkbox"
         className="checkbox__input"

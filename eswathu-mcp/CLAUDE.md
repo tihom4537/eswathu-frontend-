@@ -271,3 +271,115 @@ When displaying read-only key-value data from Kaveri (or similar API responses),
 ### When to use
 - Read-only key-value data display with grey label cells
 - Any fetched API data that doesn't need column headers or row selection (use `<Table />` for those)
+
+## Global Page Navigation Rules
+Every step page in the New Application flow must include the 
+PageNavigation component (src/components/PageNavigation/PageNavigation.jsx)
+
+### Back Arrow
+- Always enabled on all steps except Step 1
+- Navigates to previous step
+- NEVER resets state — progress is always preserved
+- Completed steps show in their locked state with Edit button visible
+
+### Forward/Next Arrow  
+- Disabled by default
+- Only enables when the current step is fully completed (final CTA clicked and disabled)
+- Disabled again while user is editing a completed step
+- Re-enables after all edits are saved and page is completed again
+- Hidden entirely on the last step
+
+### Edit Button (bottom of page)
+- Placed next to the final centered CTA button at the bottom of each page
+- Only appears after page is fully completed
+- Clicking it re-enables editing from the bottom upward — 
+  last section first, working up through each section's own Edit button
+- While editing, forward arrow disables
+- Back arrow always remains enabled
+
+### State Preservation
+- Never reset useState values on back/forward navigation
+- Pages always show exactly as the user left them
+
+### Breadcrumb Navigation
+- Every step page must include the Breadcrumb component 
+  (src/components/Breadcrumb/Breadcrumb.jsx)
+- Place directly below PageNavigation arrows, above PageHeading
+- Completed steps are always clickable to jump directly
+- Incomplete/future steps are never clickable
+- Clicking any completed step preserves all state — never resets
+- Breadcrumb reflects current step and completed steps in real time
+- While a step is being edited, future steps in breadcrumb are not clickable
+
+## Input Field Validation Rules
+Every Input field must have an appropriate `inputType` prop applied.
+Never leave validation unspecified on user-facing input fields.
+
+| Field type | inputType prop | Validation behaviour |
+|---|---|---|
+| Phone / mobile number | `phone` | Digits only, exactly 10 digits, error on blur if wrong |
+| OTP | `otp` | Digits only, block non-digits on keypress |
+| Name fields | `alpha` | Letters and spaces only, error if digits/symbols entered |
+| Number / area / measurement | `numeric` | Digits only, block non-digits on keypress |
+| Registration number (e.g. SRI-1-12481-2023-24) | `alphanumeric-code` | Letters, digits, hyphens only — no error message, just block |
+| EC number (e.g. XXX-EC-X-XXXXXX-2024-25) | `alphanumeric-code` | Same as above |
+| Free text / general | `text` | No validation (default) |
+
+Error messages use CaptionMessage (error variant) shown below the field on blur.
+Never show validation errors on frozen/pre-filled fields — they are read-only.
+Clear error when user starts typing again.
+
+## Preview Page Edit Behaviour
+When user edits from the Preview of Khata (Section 5.3):
+
+### Direct navigation (no warning):
+- Steps 2, 3, and non-critical Step 4/5 sections navigate directly
+- Edited step's completion flag resets, forward arrow disables
+- All steps before and after remain unaffected
+- Data is NEVER cleared — only completion flags reset
+- User sees pre-filled data and just needs to re-save
+
+### Warning required before navigating (show ErrorMessageCard popup):
+1. Kaveri Registration Number (Step 1 Section 1.1)
+   — Resets Steps 2, 3, 4, 5 completion flags on confirm
+2. Property Classification (Step 4 Section 4.1)
+   — Resets Section 4.1 on confirm
+3. Property Category/Type (Step 4 Section 4.2)
+   — Resets Section 4.2 on confirm
+
+
+### Popup behaviour:
+- "Yes, Edit" → navigate and reset relevant flags
+- "Cancel" → close popup, stay on preview, nothing changes
+- Use ErrorMessageCard as modal with backdrop
+
+## Sequential Section Opening Rule
+This applies to EVERY page and EVERY step across the entire application.
+
+- When a page has multiple numbered sections (e.g. 5.1, 5.2, 5.3 or 3.1, 3.2 etc.),
+  only the FIRST section is open and interactive on page load
+- All subsequent sections are rendered using the SectionBox closed/disabled variant
+  — they are visible as grey closed headers at the bottom of the page
+  — they are NOT interactive until the previous section is completed
+- When the user completes a section (clicks Save/Confirm and it locks):
+  — The next section's SectionBox opens automatically
+  — All sections after that remain closed and grey
+- This creates a clear visual progress map — users can always see what's coming
+  but can only interact with the current open section
+- Grey closed SectionBoxes at the bottom must always be visible on page load
+  — never hide them entirely — just show them in closed/disabled state
+- Section opening must be smooth — follow height change rules from CLAUDE.md
+
+## ECStep Multi-View Structure
+ECStep.jsx uses a single `ecView` state to render three distinct views:
+- `'main'` → Sections 5.1 and 5.2 only
+- `'preview'` → Section 5.3 (Preview of Khata) only
+- `'final'` → Section 5.4 only
+
+Views are mutually exclusive — only the active view is visible.
+Scroll to top on every view transition.
+
+Back arrow behaviour inside ECStep:
+- 'preview' → back goes to 'main' (NOT previous step)
+- 'final' → back goes to 'preview'
+- 'main' → back goes to previous step (Step 4) as normal

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__figma__get_design_context",
+      "Bash(\"C:\\\\Users\\\\anany\\\\Desktop\\\\eswathu mcp\\\\summary.md\":*)",
+      "Bash(cat >> \"C:/Users/anany/Desktop/eswathu mcp/summary.md\" << 'EOF'\n\n---\n\n## Session — Homepage Updates + Section 0.2 Changes\n\n### HomePage.jsx + CitizenLogin-HomePage.jsx \\(done\\)\n- \"e-Khata\" section renamed to \"e-Khata related Services\"\n- Second card: \"Apply for e-khata for properties you are already paying tax for\"\n- \"Report an Objection\" \\(File Objections\\) and \"Returned applications \\(for modifications\\)\" cards moved into e-Khata related Services section \\(7 cards total\\)\n- File Objections and Returned Applications sections removed as separate sections\n- Check Status section: Download + Print cards merged into \"Download and Print e-Khata\" \\(2 cards total\\)\n- New \"Reports and Dashboards\" section added after Mutation and Transfer \\(1 card, icon: dashboard\\)\n- Same changes applied to CitizenLogin-HomePage.jsx\n\n### NewApplicationFirstPage.jsx Section 0.1 \\(done\\)\n- \"Sale Deed\" → \"Deed Documents\"\n- \"Image of the property\" → \"Property Image with Geo Tag\" with geo-tag \"click here\" link\n\n### Section 0.2 — Questionnaire \\(done\\)\n- q_who first question options changed to: 1. \"An Individual or organisation\" → q_region, 2. \"Govt. property\" → q_govt_type, 3. \"Industry\" \\(KIADB/KSSIDC\\) → r_11a7\n- 11A-15 \\(Sites/Buildings of Corporation/Board/Limited/Authority\\) moved from q_govt_type to q_scheme_type as 5th option\n- q_govt_type now has only 1 option \\(Central/State Government → r_11a13\\)\n- q_converted_layout: removed \"Yes — \" and \"No — \" prefixes from option text\n- Result view: added 3 buttons: Back \\(arrow_back\\), Start Over \\(refresh\\), Confirm Classification \\(primary blue\\)\n- Added CaptionMessage variant=\"info\" below buttons: \"This will be used in your application\"\n\n### HelpCardList component updated \\(done\\)\n- Document variant item text: 16px / 24px line-height \\(was 14px/20px\\)\n- Doc section margin-top: 32px \\(was 16px\\) to match Figma spacing\nEOF)",
+      "mcp__figma__get_screenshot",
+      "mcp__figma__get_metadata",
+      "Bash(cd \"C:\\\\Users\\\\anany\\\\Desktop\\\\eswathu mcp\\\\eswathu-mcp\" && npm run dev 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\anany\\\\Desktop\\\\eswathu mcp\\\\eswathu-mcp\" && npm run dev)"
+    ]
+  }
+}

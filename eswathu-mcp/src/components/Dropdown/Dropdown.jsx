@@ -36,29 +36,33 @@ const Dropdown = ({
         </label>
       )}
 
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
         className="dropdown__trigger"
         onClick={() => !disabled && !isFrozen && setOpen((o) => !o)}
-        disabled={disabled}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); !disabled && !isFrozen && setOpen((o) => !o); } }}
+        aria-disabled={disabled}
       >
         <span className={`dropdown__value ${!selected ? 'dropdown__value--placeholder' : ''}`}>
           {selected ? selected.label : placeholder}
         </span>
         {isFrozen ? (
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             className="dropdown__edit-btn"
             onClick={(e) => { e.stopPropagation(); setEditing(true); }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); setEditing(true); } }}
           >
             <span className="material-icons-outlined dropdown__edit-icon">close</span>
-          </button>
+          </div>
         ) : (
           <span className="material-icons-outlined dropdown__chevron">
             {open ? 'expand_less' : 'expand_more'}
           </span>
         )}
-      </button>
+      </div>
 
       {open && (
         <ul className="dropdown__menu">

@@ -1,0 +1,78 @@
+/* ── Breadcrumb ─────────────────────────────────────────────── */
+
+.breadcrumb {
+  width: 100%;
+  background: var(--white);
+  border-bottom: 1px solid var(--neutral-100);
+}
+
+.breadcrumb__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 8px var(--space-2xl);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+/* ── Each breadcrumb item (label + divider pair) ────────────── */
+.breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Step label ─────────────────────────────────────────────── */
+.breadcrumb__label {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+/* Current active step — bold & dark */
+.breadcrumb__label--current {
+  font-weight: 500;
+  color: var(--text-dark);
+  letter-spacing: 0.1px;
+}
+
+/* Completed steps — lighter, clickable */
+.breadcrumb__label--completed {
+  font-weight: 400;
+  color: var(--neutral-600);
+}
+
+/* Future steps — lighter, not interactive */
+.breadcrumb__label--future {
+  font-weight: 400;
+  color: var(--neutral-600);
+}
+
+/* Clickable completed steps */
+.breadcrumb__label--clickable {
+  cursor: pointer;
+}
+
+.breadcrumb__label--clickable:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.breadcrumb__label--clickable:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Chevron divider icon ───────────────────────────────────── */
+.breadcrumb__divider {
+  font-size: 14px !important;
+  color: var(--neutral-300);
+  line-height: 20px;
+  vertical-align: middle;
+  user-select: none;
+}

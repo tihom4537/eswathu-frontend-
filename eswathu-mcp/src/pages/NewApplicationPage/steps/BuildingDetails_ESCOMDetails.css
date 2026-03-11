@@ -1,0 +1,131 @@
+/* ── ESCOM Details ──────────────────────────────────────────── */
+
+.bd-escom {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bd-escom__main {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.bd-escom__left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  min-width: 0;
+}
+
+.bd-escom__row {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.bd-escom__type-dropdown {
+  width: 301px;
+  flex-shrink: 0;
+}
+
+.bd-escom__input {
+  flex: 1;
+  min-width: 0;
+}
+
+.bd-escom__tooltip {
+  flex-shrink: 0;
+  width: 337px;
+}
+
+.bd-escom__actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* ── Fetched ESCOM table ─────────────────────────────────────── */
+.bd-escom__fetched {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bd-escom__fetched-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.bd-escom__table-scroll {
+  max-height: 300px;
+  overflow-y: auto;
+  min-height: 132px;
+}
+
+.bd-escom__table-wrap {
+  border: 1px solid #727272;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bd-escom__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.bd-escom__th {
+  background: var(--secondary);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid #727272;
+  border-right: 1px solid #727272;
+  height: 54px;
+}
+
+.bd-escom__th:last-child {
+  border-right: none;
+}
+
+.bd-escom__th--no     { width: 47px; }
+.bd-escom__th--owner  { width: 220px; }
+.bd-escom__th--acc    { width: 220px; }
+.bd-escom__th--addr   { width: 490px; }
+.bd-escom__th--cancel { width: 100px; }
+
+.bd-escom__tr:not(:last-child) .bd-escom__td {
+  border-bottom: 1px solid #727272;
+}
+
+.bd-escom__td {
+  padding: 10px;
+  border-right: 1px solid #727272;
+  vertical-align: middle;
+  font-size: 14px;
+  color: var(--text-dark);
+  height: 78px;
+}
+
+.bd-escom__td:last-child {
+  border-right: none;
+}
+
+.bd-escom__td--no {
+  text-align: center;
+}
+
+.bd-escom__td--cancel {
+  text-align: center;
+}
+
+.bd-escom__close-btn .material-icons-outlined {
+  color: var(--danger);
+}

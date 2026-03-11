@@ -461,6 +461,13 @@ Inline validation message shown directly beneath input fields.
 **Figma symbol:** `330:79866`  
 512 × 280px. Full error state card — use when an entire operation fails (e.g. Kaveri fetch error, eKYC failure).
 
+| Prop | Type | Description |
+|---|---|---|
+| `message` | string | Primary error message (22px, white) |
+| `subMessage` | string (optional) | Secondary hint text below message (13px, grey #B0B0B0) |
+| `onOk` | () => void | Callback when OK button is clicked |
+| `className` | string | Optional extra class |
+
 ---
 
 ### 22. ViewIcon
@@ -700,16 +707,17 @@ Contextual help card that shows an info label on the left and a sample image on 
 
 **Props:** `label` (string), `imageSrc` (url), `imageAlt` (string), `caption` (string), `className`
 
-**Styles (from Figma `11:5332`):**
+**Styles (from Figma `440:83623`):**
 - Width: 380px, box-sizing border-box
 - Background: white, radius 8px (no border on card)
-- Padding: 30px top, 15px bottom, 15px left, 15px right
+- Padding: 20px top, 15px bottom, 15px left, 15px right
 - Inner layout: flex row, gap 8px, align-items flex-start
-- **Label section:** flex 1, min-width 0
+- **Label section (left):** flex 1, min-width 0, flex row, gap 8px, align-items flex-start
+  - Icon: `info_outline`, 16px, `--text-dark`, flex-shrink 0, margin-top 2px
   - Text: `label-1` (14px, weight 500, line-height 20px, letter-spacing 0.1px), colour `--text-dark`
-- **Media section:** flex 1, min-width 0, flex-col, gap 4px
-  - Image: 100% width, 126px height, object-fit cover, border 1px `#C6C6C6`, radius 2px
-  - Caption: flex row, gap 4px, align-items center
+- **Media section (right):** width 171px, flex-shrink 0, flex-col, gap 4px
+  - Image: **141 × 104px**, object-fit cover, border 1px `#C6C6C6`, radius 2px
+  - Caption: flex row, gap 4px, align-items center, width 171px
     - Icon: `info_outline`, 16px, `--neutral-600`
     - Text: `body-2` (14px, weight 400, line-height 20px, letter-spacing 0.25px), colour `--neutral-600`
 
@@ -947,3 +955,4 @@ The file includes the complete Material Icons Outlined set across 16 categories:
 | QuestionnaireFillInTheBlanks symbol | `330:79840` |
 | KarnatakaLogo instance | `367:79331` |
 | NICLogo instance | `367:79271` |
+| Tooltip symbol | `440:83623` |

@@ -7,6 +7,7 @@ const Tooltip = ({ label, imageSrc, imageAlt = 'Sample', caption, className = ''
   return (
     <div className={`tooltip-card ${className}`}>
       <div className="tooltip-card__label">
+        <span className="material-icons-outlined tooltip-card__label-icon">info_outline</span>
         <p className="tooltip-card__label-text">{label}</p>
       </div>
       <div className="tooltip-card__media">

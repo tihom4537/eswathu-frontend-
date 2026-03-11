@@ -30,18 +30,15 @@
   aspect-ratio: 661 / 537;
   border-radius: 12px;
   overflow: hidden;
-  background: var(--primary-50, #e6f2ff);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: none;
 }
 
 .login-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
-  opacity: 0.6;
+  object-position: left center;
+  opacity: 0.85;
   border-radius: 12px;
   display: block;
 }

@@ -97,14 +97,32 @@
   border-color: var(--warning);
 }
 
-/* Frozen / autofetched */
+/* Frozen / autofetched — completely read-only */
 .input-field--frozen .input-field__box {
   border-color: var(--neutral-400);
-  background: var(--neutral-100);
+  background: #f2f2f2;
 }
 .input-field--frozen .input-field__input {
   color: var(--text-dark);
   cursor: not-allowed;
+}
+
+/* Frozen with edit — grey bg + red close icon inside */
+.input-field--frozen-with-edit .input-field__box {
+  border-color: var(--neutral-400);
+  background: #f2f2f2;
+}
+.input-field--frozen-with-edit .input-field__input {
+  color: var(--text-dark);
+  cursor: not-allowed;
+}
+
+/* Danger-coloured trailing button (used by frozenWithEdit) */
+.input-field__trailing-btn--danger {
+  color: var(--danger) !important;
+}
+.input-field__trailing-btn--danger:hover {
+  opacity: 0.75;
 }
 
 /* Disabled — looks like empty but non-interactive */

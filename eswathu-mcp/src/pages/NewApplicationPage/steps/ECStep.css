@@ -1,0 +1,451 @@
+/* ── ECStep Page ─────────────────────────────────────────────── */
+
+.ec-page {
+  min-width: 1280px;
+  background: var(--secondary);
+  min-height: 100vh;
+}
+
+.ec-page__sections {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 24px var(--space-2xl) 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Page-level notice (above SectionBox) ───────────────────── */
+
+.ec-page__notice {
+  width: 100%;
+}
+
+.ec-page__notice-link {
+  color: var(--danger);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+/* ── Final CTA (Verify Your Data) ───────────────────────────── */
+
+.ec-page__cta {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 24px;
+}
+
+/* ── Loading overlay ─────────────────────────────────────────── */
+
+.ec-page__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* ═══ SECTION 5.1 — Upload EC ═══════════════════════════════ */
+
+.ec-s51 {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 8px 0;
+}
+
+/* ── EC requirements info block ─────────────────────────────── */
+
+.ec-s51__info-block {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--white);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-xs);
+  padding: 16px;
+}
+
+.ec-s51__info-icon {
+  font-size: 30px;
+  color: var(--danger);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ec-s51__info-text {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ec-s51__info-text p {
+  margin: 0;
+}
+
+.ec-s51__info-link {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+/* ── Registration Deed dropdown ─────────────────────────────── */
+
+.ec-s51__deed-wrap {
+  width: 500px;
+}
+
+.ec-s51__deed-dropdown {
+  width: 100%;
+}
+
+/* ── Fetch row ───────────────────────────────────────────────── */
+
+.ec-s51__fetch-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.ec-s51__fetch-left {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 20px;
+  flex: 0 0 auto;
+}
+
+.ec-s51__input-wrap {
+  width: 300px;
+}
+
+.ec-s51__fetch-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.ec-s51__tooltip {
+  flex-shrink: 0;
+}
+
+/* ── Kaveri EC data section ─────────────────────────────────── */
+
+.ec-s51__table-title {
+  font-family: var(--font-family);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.ec-s51__summary-table {
+  width: 100%;
+}
+
+.ec-s51__kaveri-table {
+  width: 100%;
+}
+
+/* ── Validate row ────────────────────────────────────────────── */
+
+.ec-s51__validate-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding-top: 8px;
+}
+
+/* ═══ SECTION 5.2 — Declaration ═══════════════════════════════ */
+
+.ec-s52 {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 8px 0;
+}
+
+/* ── Declaration text ────────────────────────────────────────── */
+
+.ec-s52__text {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--text-dark);
+}
+
+.ec-s52__text-intro {
+  font-weight: 500;
+  margin: 0 0 10px 0;
+}
+
+.ec-s52__list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ec-s52__list li {
+  line-height: 22px;
+}
+
+/* ── Divider ─────────────────────────────────────────────────── */
+
+.ec-s52__divider {
+  border: none;
+  border-top: 2px solid var(--neutral-100);
+  margin: 24px 0;
+}
+
+/* ── Checkboxes ──────────────────────────────────────────────── */
+
+.ec-s52__checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ═══ SECTION 5.3 — Preview of Khata ═══════════════════════ */
+
+.ec-s53 {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px 0;
+}
+
+/* ── Preview block (one per step) ───────────────────────────── */
+
+.ec-s53__preview-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ec-s53__block-heading {
+  font-family: var(--font-family);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* ── Edit buttons in preview blocks ─────────────────────────── */
+
+.ec-s53__edit-btn {
+  width: fit-content;
+}
+
+/* ── Separator between preview blocks ───────────────────────── */
+
+.ec-s53__sep {
+  height: 2px;
+  background: var(--neutral-300);
+  width: 100%;
+}
+
+/* ── Table wrapper (full width, no max-width cap) ───────────── */
+
+.ec-s53__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* When tables are stacked, remove top border on subsequent ones */
+.ec-s53__table-wrap--joined .data-table__th,
+.ec-s53__table-wrap--joined .data-table__td {
+  border-top: none;
+}
+
+/* Let Table component stretch full width */
+.ec-s53__table {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* ── Owner photo column ──────────────────────────────────────── */
+
+.ec-s53__th--photo {
+  width: 205px;
+}
+
+.ec-s53__td--photo {
+  width: 205px;
+  height: 190px;
+  vertical-align: top;
+}
+
+.ec-s53__photo-box {
+  width: 140px;
+  height: 160px;
+  background: var(--neutral-100);
+  border: 1px solid var(--neutral-300);
+  border-radius: 2px;
+}
+
+/* ── Property Photo column ───────────────────────────────────── */
+
+.ec-s53__th--photo-lg {
+  width: 328px;
+}
+
+.ec-s53__td--photo-lg {
+  width: 328px;
+  height: 172px;
+  vertical-align: top;
+}
+
+.ec-s53__photo-box--lg {
+  width: 222px;
+  height: 152px;
+}
+
+/* ── Property Classification label-style first row ──────────── */
+
+.ec-s53__row--header-like {
+  background: var(--secondary);
+}
+
+.ec-s53__td--label-header {
+  font-weight: 500;
+  color: var(--text-dark);
+  width: 278px;
+}
+
+/* ── Kaveri table reuse (mirror from SaleDeedDetailsPage) ───── */
+
+.kaveri-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.kaveri-table__label,
+.kaveri-table__value {
+  padding: 10px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.kaveri-table__label {
+  width: 212px;
+  flex-shrink: 0;
+  background: var(--secondary);
+  font-weight: 500;
+  color: var(--text-dark);
+  border-right: 1px solid #808080;
+}
+
+.kaveri-table__value {
+  flex: 1;
+  min-width: 0;
+  background: var(--white);
+  font-weight: 500;
+  color: #666;
+  border-right: 1px solid #212121;
+}
+
+.kaveri-table__value--last {
+  border-right: none;
+}
+
+.kaveri-table__row {
+  display: flex;
+  min-height: 40px;
+  border: 1px solid #666;
+}
+
+.kaveri-table__row--mid {
+  border-top: none;
+}
+
+.kaveri-table__registration {
+  display: flex;
+  flex-direction: column;
+}
+
+.kaveri-table__spacer {
+  height: 30px;
+  width: 100%;
+}
+
+/* ═══ SECTION 5.4 — Draft Khata ═══════════════════════════ */
+
+.ec-s54 {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px 0;
+}
+
+/* ── Scrollable khata document frame ─────────────────────── */
+
+.ec-s54__scroll-frame {
+  width: 100%;
+  height: 600px;
+  overflow-y: auto;
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--radius-xs);
+  background: var(--neutral-100);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.ec-s54__khata-img {
+  width: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+/* ── Success message row ─────────────────────────────────── */
+
+.ec-s54__success-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.ec-s54__success-icon {
+  font-size: 22px;
+  color: var(--success);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.ec-s54__success-text {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.ec-s54__success-link {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+/* ── Action buttons ──────────────────────────────────────── */
+
+.ec-s54__actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 8px;
+}

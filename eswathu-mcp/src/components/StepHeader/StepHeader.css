@@ -1,21 +1,22 @@
-/* ── StepHeader ────────────────────────────────────────── */
+/* ── StepHeader ─────────────────────────────────────────── */
 
 .step-header {
   width: 100%;
   background: var(--secondary);
-  padding: 50px 120px;
+  padding: 32px 40px;
 }
 
 .step-header__inner {
   max-width: var(--content-max-width);
   margin: 0 auto;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
+  align-items: center;
+  gap: 32px;
 }
 
+/* ── Step text (grows to fill) ──────────────────────────── */
 .step-header__text {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -38,4 +39,69 @@
   line-height: 48px;
   color: var(--primary);
   margin: 0;
+}
+
+/* ── Right-side container ───────────────────────────────── */
+.step-header__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* ── Arrow button ────────────────────────────────────────── */
+.step-header__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  outline: none;
+}
+
+.step-header__arrow .material-icons-outlined {
+  font-size: 22px;
+  color: var(--primary);
+  transition: color 0.15s ease;
+}
+
+.step-header__arrow:hover:not(:disabled) {
+  background: var(--primary);
+}
+
+.step-header__arrow:hover:not(:disabled) .material-icons-outlined {
+  color: var(--white);
+}
+
+.step-header__arrow:active:not(:disabled) {
+  background: #0050A0;
+  border-color: #0050A0;
+}
+
+.step-header__arrow:active:not(:disabled) .material-icons-outlined {
+  color: var(--white);
+}
+
+.step-header__arrow:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.step-header__arrow--disabled,
+.step-header__arrow:disabled {
+  border-color: var(--neutral-200);
+  background: transparent;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.step-header__arrow--disabled .material-icons-outlined,
+.step-header__arrow:disabled .material-icons-outlined {
+  color: var(--neutral-300);
 }

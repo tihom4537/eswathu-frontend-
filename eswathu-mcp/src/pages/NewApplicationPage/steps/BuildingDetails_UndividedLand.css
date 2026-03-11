@@ -1,0 +1,29 @@
+/* ── Undivided Land Details ─────────────────────────────────── */
+
+.bd-undivided {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bd-undivided__row {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.bd-undivided__dropdown {
+  width: 460px;
+  flex-shrink: 0;
+}
+
+.bd-undivided__input {
+  width: 347px;
+  flex-shrink: 0;
+}
+
+.bd-undivided__actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}

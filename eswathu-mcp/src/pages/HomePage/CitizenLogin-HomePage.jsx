@@ -36,8 +36,8 @@ const CitizenLoginHomePage = ({ onNavigate, username = '' }) => {
       <main className="citizen-home-page__content">
         <PageHeading subtitle="All Citizen Services" title="What would you like to do today?" />
 
-        {/* e-Khata — 5 cards in 2 rows */}
-        <HomepageSection icon="file_copy" title="e-Khata">
+        {/* e-Khata related Services — 7 cards */}
+        <HomepageSection icon="file_copy" title="e-Khata related Services">
           <div className="citizen-home-page__grid">
             <CardHomepage
               icon="add_circle_outline"
@@ -47,7 +47,7 @@ const CitizenLoginHomePage = ({ onNavigate, username = '' }) => {
             />
             <CardHomepage
               icon="search"
-              title="Apply for e-Khata for properties existing on Panchatantra"
+              title="Apply for e-khata for properties you are already paying tax for"
               description="If your property is listed in Panchatantra and tax is already being paid, you can proceed here without creating a new entry"
             />
             <CardHomepage
@@ -55,8 +55,6 @@ const CitizenLoginHomePage = ({ onNavigate, username = '' }) => {
               title="Apply for e-Khata for New layouts"
               description="If your property is listed in Panchatantra and tax is already being paid, you can proceed here without creating a new entry"
             />
-          </div>
-          <div className="citizen-home-page__grid">
             <CardHomepage
               icon="add_circle_outline"
               title="Apply for e-Khata for New Apartments"
@@ -66,6 +64,16 @@ const CitizenLoginHomePage = ({ onNavigate, username = '' }) => {
               icon="pending_actions"
               title="Complete Pending application"
               description="If your property is listed in Panchatantra and tax is already being paid, you can proceed here without creating a new entry"
+            />
+            <CardHomepage
+              icon="error_outline"
+              title="Report an Objection"
+              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+            />
+            <CardHomepage
+              icon="assignment_return"
+              title="Returned applications (for modifications)"
+              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
             />
           </div>
         </HomepageSection>
@@ -91,7 +99,7 @@ const CitizenLoginHomePage = ({ onNavigate, username = '' }) => {
           </div>
         </HomepageSection>
 
-        {/* Check Status | Download | Print — 3 cards */}
+        {/* Check Status | Download | Print — 2 cards */}
         <HomepageSection header={checkStatusHeader}>
           <div className="citizen-home-page__grid">
             <CardHomepage
@@ -101,12 +109,7 @@ const CitizenLoginHomePage = ({ onNavigate, username = '' }) => {
             />
             <CardHomepage
               icon="download"
-              title="Download e-Khata"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
-            />
-            <CardHomepage
-              icon="print"
-              title="Print e-Khata"
+              title="Download and Print e-Khata"
               description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
             />
           </div>
@@ -128,23 +131,12 @@ const CitizenLoginHomePage = ({ onNavigate, username = '' }) => {
           </div>
         </HomepageSection>
 
-        {/* File Objections — 1 card */}
-        <HomepageSection icon="error_outline" title="File Objections">
+        {/* Reports and Dashboards — 1 card */}
+        <HomepageSection icon="dashboard" title="Reports and Dashboards">
           <div className="citizen-home-page__grid">
             <CardHomepage
-              icon="error_outline"
-              title="Report an Objection"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
-            />
-          </div>
-        </HomepageSection>
-
-        {/* Returned Applications — 1 card */}
-        <HomepageSection icon="assignment_return" title="Returned applications (for modifications)">
-          <div className="citizen-home-page__grid">
-            <CardHomepage
-              icon="assignment_return"
-              title="Returned applications (for modifications)"
+              icon="dashboard"
+              title="Reports and Dashboards"
               description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
             />
           </div>

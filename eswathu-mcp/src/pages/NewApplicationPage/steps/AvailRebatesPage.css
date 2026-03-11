@@ -1,0 +1,69 @@
+/* ── Avail Rebates Page ──────────────────────────────────────── */
+
+.ar-page {
+  background: var(--secondary-50, #f2f2f2);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ar-page__heading-wrap {
+  background: var(--secondary-50, #f2f2f2);
+  padding: 50px 120px;
+}
+
+.ar-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 120px 80px;
+}
+
+/* ── SectionBox body pre-allocation ─────────────────────────── */
+.ar-page .section-box--open .section-box__body {
+  min-height: 320px;
+  padding: 32px 39px 32px 24px;
+}
+
+/* ── Body layout ─────────────────────────────────────────────── */
+.ar-page__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ar-page__info-link {
+  color: var(--text-dark);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.ar-page__info-link:hover {
+  color: var(--primary);
+}
+
+/* ── Question + radios ───────────────────────────────────────── */
+.ar-page__question-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ar-page__question {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.ar-page__radio-group {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+/* ── CTA centred ─────────────────────────────────────────────── */
+.ar-page__cta-wrap {
+  display: flex;
+  justify-content: center;
+}

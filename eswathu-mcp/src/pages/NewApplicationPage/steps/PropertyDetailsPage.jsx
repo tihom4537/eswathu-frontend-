@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
+import Breadcrumb from '../../../components/Breadcrumb/Breadcrumb';
 import StepHeader from '../../../components/StepHeader/StepHeader';
 import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
@@ -11,10 +12,11 @@ import IconButton from '../../../components/IconButton/IconButton';
 import CaptionMessage from '../../../components/CaptionMessage/CaptionMessage';
 import ErrorMessageCard from '../../../components/ErrorMessageCard/ErrorMessageCard';
 import ProgressCircle from '../../../components/ProgressCircle/ProgressCircle';
-import './PropertyDetailsPage.css';
 import PropertyDetails_AreaDetails from './PropertyDetails_AreaDetails';
 import PropertyDetails_SiteDimensions from './PropertyDetails_SiteDimensions';
 import PropertyDetails_Checkbandi from './PropertyDetails_Checkbandi';
+import PropertyDetails_ReviewDetails from './PropertyDetails_ReviewDetails';
+import './PropertyDetailsPage.css';
 
 /* ── Mock fetched address data ─────────────────────────── */
 const MOCK_ADDRESS = {
@@ -35,14 +37,38 @@ const ROAD_TYPE_OPTIONS = [
   { value: 'other', label: 'Other Roads' },
 ];
 
-const PropertyDetailsPage = ({ onNavigate, username = '' }) => {
+/*
+ * DEV_MODE: skips section 3.1 search/address flow so you land directly in 3.2.
+ * Section 3.2 subsections (Area Details → Site Dims → Checkbandi) still
+ * reveal sequentially as the user interacts with them.
+ */
+const DEV_MODE = false;
+
+const PropertyDetailsPage = ({
+  onNavigate,
+  username = '',
+  onBack,
+  onNext,
+  isBackEnabled = true,
+  currentBCStep = 2,
+  completedBCSteps = [],
+  onBCStepClick,
+  bcStepNames = [],
+  completionResetKey = 0,
+}) => {
+  /* ── Page-level completion (enables forward arrow) ──────── */
+  const [isPageComplete, setIsPageComplete] = useState(false);
+
+  useEffect(() => {
+    if (completionResetKey > 0) setIsPageComplete(false);
+  }, [completionResetKey]);
   /* ── Section 3.1 State ──────────────────────────────── */
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchStatus, setSearchStatus] = useState('idle'); // idle | loading | error | found
+  const [searchStatus, setSearchStatus] = useState(DEV_MODE ? 'found' : 'idle'); // idle | loading | error | found
   const searchAttempt = useRef(0);
 
   /* Address fields (frozen, fetched from geocode) */
-  const [addressData, setAddressData] = useState(null);
+  const [addressData, setAddressData] = useState(DEV_MODE ? { ...MOCK_ADDRESS } : null);
   const [clearedFields, setClearedFields] = useState({}); // { doorPlotNo: true, ... }
 
   /* Editable fields */
@@ -54,26 +80,63 @@ const PropertyDetailsPage = ({ onNavigate, username = '' }) => {
   const fileInputRef = useRef(null);
 
   /* Section state */
-  const [s31Saved, setS31Saved] = useState(false);
+  const [s31Saved, setS31Saved] = useState(DEV_MODE ? true : false);
 
   /* ── Section 3.2 State ──────────────────────────────── */
-  const [s32Visible, setS32Visible] = useState(false);
+  const [s32Visible, setS32Visible] = useState(DEV_MODE ? true : false);
+  const [areaAccepted, setAreaAccepted] = useState(false);
+  const [acceptedAreaSqft, setAcceptedAreaSqft] = useState(0);
+  const [wasRejected, setWasRejected] = useState(false);
+  const [areaMatched, setAreaMatched] = useState(false);
+  const [s32Saved, setS32Saved] = useState(false);
 
-  // Section 3.2 state
-  const [areaFetched, setAreaFetched] = useState('2400'); // mock
-  const [unit, setUnit] = useState('sqft');
-  const [areaSqft, setAreaSqft] = useState('2400');
-  const [areaSqmt, setAreaSqmt] = useState((2400 * 0.0929).toFixed(2));
-  const [siteDimsFetched, setSiteDimsFetched] = useState([
-    { label: 'Length', value: '60' },
-    { label: 'Breadth', value: '40' },
-  ]);
-  const [checkbandiFetched, setCheckbandiFetched] = useState([
-    { label: 'North Boundary', value: 'Road' },
-    { label: 'South Boundary', value: 'Building' },
-    { label: 'East Boundary', value: 'Land' },
-    { label: 'West Boundary', value: 'Plot' },
-  ]);
+  /* ── Section 3.3 State ──────────────────────────────── */
+  const [s33Visible, setS33Visible] = useState(DEV_MODE ? true : false);
+  const [siteDimSummary, setSiteDimSummary] = useState(
+    DEV_MODE ? { ns: '48', ew: '50' } : null
+  );
+  const [checkbandiData, setCheckbandiData] = useState(
+    DEV_MODE
+      ? { north: 'Shree Ram Nagar Layout', south: 'BDA Main Road', east: 'Survey No. 112/A', west: 'Kaveri Nagar Road' }
+      : null
+  );
+
+  /* ── Scroll refs for smooth reveal ─────────────────── */
+  const addressFormRef = useRef(null);
+  const s32Ref = useRef(null);
+  const siteDimsRef = useRef(null);
+  const checkbandiRef = useRef(null);
+  const s33Ref = useRef(null);
+
+  /* ── Scroll into view when sections/subsections appear ─ */
+  useEffect(() => {
+    if (searchStatus === 'found' && addressFormRef.current) {
+      addressFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [searchStatus]);
+
+  useEffect(() => {
+    if (s32Visible && s32Ref.current) {
+      s32Ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [s32Visible]);
+  useEffect(() => {
+    if (areaAccepted && siteDimsRef.current) {
+      siteDimsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [areaAccepted]);
+
+  useEffect(() => {
+    if (areaMatched && checkbandiRef.current) {
+      checkbandiRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [areaMatched]);
+
+  useEffect(() => {
+    if (s33Visible && s33Ref.current) {
+      s33Ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [s33Visible]);
 
   /* ── Handlers: Search ───────────────────────────────── */
   const handleSearch = () => {
@@ -138,6 +201,37 @@ const PropertyDetailsPage = ({ onNavigate, username = '' }) => {
   const handleEdit31 = () => {
     setS31Saved(false);
     setS32Visible(false);
+    setAreaAccepted(false);
+    setAcceptedAreaSqft(0);
+    setWasRejected(false);
+    setAreaMatched(false);
+    setS32Saved(false);
+    setS33Visible(false);
+    setSiteDimSummary(null);
+    setCheckbandiData(null);
+  };
+
+  /* ── Handlers: Section 3.2 ──────────────────────────── */
+  const handleAreaConfirm = (sqft, rejected) => {
+    setAreaAccepted(true);
+    setAcceptedAreaSqft(sqft);
+    setWasRejected(rejected);
+  };
+
+  const handleAreaMatch = (dimensions) => {
+    setAreaMatched(true);
+    setSiteDimSummary(dimensions);
+  };
+
+  const handleS32Complete = (bounds) => {
+    setS32Saved(true);
+    setCheckbandiData(bounds);
+    setS33Visible(true);
+  };
+
+  const handleEdit33 = () => {
+    setS33Visible(false);
+    setS32Saved(false);
   };
 
   /* ── Derived: can save? ─────────────────────────────── */
@@ -158,11 +252,26 @@ const PropertyDetailsPage = ({ onNavigate, username = '' }) => {
         onLogout={() => onNavigate?.('login')}
       />
 
+      {/* ── Breadcrumb ────────────────────────────────── */}
+      <Breadcrumb
+        steps={bcStepNames}
+        currentStep={currentBCStep}
+        completedSteps={completedBCSteps}
+        onStepClick={onBCStepClick}
+      />
+
       {/* ── Stepper ───────────────────────────────────── */}
       <Stepper activeStep={2} />
 
       {/* ── Step Header ───────────────────────────────── */}
-      <StepHeader step="Step 3" title="Property details" />
+      <StepHeader
+        step="Step 3"
+        title="Property details"
+        onBack={onBack}
+        onNext={onNext}
+        isBackEnabled={isBackEnabled}
+        isNextEnabled={isPageComplete}
+      />
 
       <div className="pd-page__sections">
 
@@ -209,7 +318,11 @@ const PropertyDetailsPage = ({ onNavigate, username = '' }) => {
               <div className="pd-s31__map-frame">
                 {/* TODO: Replace with Google Maps embed with draggable pin */}
                 <div className="pd-s31__map-placeholder">
-                  <span className="material-icons-outlined pd-s31__map-icon">map</span>
+                  <img
+                    src="/images/google-maps-satellite.jpg"
+                    alt="Google Maps Satellite Placeholder"
+                    className="pd-s31__map-img"
+                  />
                   <span className="pd-s31__map-text">
                     Google Maps will be embedded here with a draggable pin
                   </span>
@@ -225,7 +338,7 @@ const PropertyDetailsPage = ({ onNavigate, username = '' }) => {
             {/* ── Divider + Address section (after location found) ── */}
             {searchStatus === 'found' && addressData && (
               <>
-                <div className="pd-s31__divider" />
+                <div className="pd-s31__divider" ref={addressFormRef} />
                 <p className="pd-s31__sub-heading">Address of the Property</p>
 
                 {/* Row 1: 3 columns */}
@@ -284,6 +397,7 @@ const PropertyDetailsPage = ({ onNavigate, username = '' }) => {
                     onChange={(e) => setAddressData((prev) => ({ ...prev, pincode: e.target.value }))}
                     frozen={!clearedFields.pincode}
                     required
+                    inputType="numeric"
                     trailingIcon={!clearedFields.pincode ? 'close' : undefined}
                     onTrailingIconClick={!clearedFields.pincode ? () => handleClearField('pincode') : undefined}
                     trailingIconClassName="pd-s31__close-icon"
@@ -401,41 +515,87 @@ const PropertyDetailsPage = ({ onNavigate, username = '' }) => {
         </SectionBox>
 
         {/* ═══ SECTION 3.2 — Property boundary details ════ */}
+        {s32Visible && (
+          <InfoBox variant="outline">
+            Please keep the property sale deed ready for entering the correct property area details.
+          </InfoBox>
+        )}
+        <div ref={s32Ref}>
         <SectionBox
           number="3.2"
           title="Property boundary details"
           open={s32Visible}
           className="pd-s32-box"
         >
-          {/* Area Details Subsection */}
-          <PropertyDetails_AreaDetails
-            areaFetched={areaFetched}
-            unit={unit}
-            setUnit={setUnit}
-            areaSqft={areaSqft}
-            setAreaSqft={setAreaSqft}
-            areaSqmt={areaSqmt}
-            setAreaSqmt={setAreaSqmt}
-            onAccept={() => {/* proceed to Site Dimensions */}}
-            onReject={() => {/* REJECT FLOW - to be implemented later */}}
-          />
-          <div className="pd-s32__divider" />
-          {/* Site Dimensions Subsection */}
-          <PropertyDetails_SiteDimensions
-            siteDimsFetched={siteDimsFetched}
-            areaDetails={{ areaSqft, areaSqmt }}
-            onSuccess={() => {/* proceed to Checkbandi */}}
-            onMismatch={() => {/* MISMATCH - to be implemented later */}}
-          />
-          <div className="pd-s32__divider" />
-          {/* Checkbandi Details Subsection */}
-          <PropertyDetails_Checkbandi
-            checkbandiFetched={checkbandiFetched}
-            onSave={() => onNavigate && onNavigate('step4')}
-          />
+          <div className="pd-s32">
+
+            {/* ── Subsection A: Area Details ─────────────── */}
+            <PropertyDetails_AreaDetails onAccept={handleAreaConfirm} />
+
+            {/* ── Subsection B: Site Dimensions ─────────── */}
+            <div className="pd-s32__divider" />
+            {areaAccepted ? (
+              <div ref={siteDimsRef}>
+                <PropertyDetails_SiteDimensions
+                  acceptedAreaSqft={acceptedAreaSqft}
+                  wasRejected={wasRejected}
+                  onAreaMatch={handleAreaMatch}
+                />
+              </div>
+            ) : (
+              <p className="pd-s32__placeholder-heading">Site Dimension Details</p>
+            )}
+
+            {/* ── Subsection C: Checkbandi ───────────────── */}
+            <div className="pd-s32__divider" />
+            {areaMatched ? (
+              <div ref={checkbandiRef}>
+                <PropertyDetails_Checkbandi onSaveAndProceed={handleS32Complete} />
+              </div>
+            ) : (
+              <p className="pd-s32__placeholder-heading">Checkbandi Details</p>
+            )}
+
+          </div>
         </SectionBox>
+        </div>
+
+        {/* ═══ SECTION 3.3 — Review Details ════════════ */}
+        {s33Visible && (
+          <div ref={s33Ref}>
+            <SectionBox
+              number="3.3"
+              title="Review Details"
+              open
+              className="pd-s33-box"
+            >
+              <PropertyDetails_ReviewDetails
+                addressData={addressData}
+                imageFile={imageFile}
+                acceptedAreaSqft={acceptedAreaSqft}
+                siteDimSummary={siteDimSummary}
+                checkbandiData={checkbandiData}
+              />
+            </SectionBox>
+          </div>
+        )}
 
       </div>
+
+      {/* ═══ BOTTOM NAVIGATION ════════════════════════════ */}
+      {s33Visible && (
+        <div className="pd-page__bottom-nav">
+          <Button variant="error" onClick={handleEdit33}>
+            Edit
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => { setIsPageComplete(true); onNext?.(); }}
+          >
+            Save and Proceed to Property Classification
+          </Button>
+        </div>
+      )}
 
       {/* ── Fullscreen overlays ───────────────────────── */}
       {searchStatus === 'loading' && (

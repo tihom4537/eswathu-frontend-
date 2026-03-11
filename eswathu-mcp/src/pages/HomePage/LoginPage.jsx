@@ -120,7 +120,7 @@ const LoginPage = ({ onLogin }) => {
           {/* Left — eKhata document illustration */}
           <div className="login-image">
             <img
-              src="/images/eswathu.png"
+              src="/images/eswathu2.png"
               alt="e-Khata Document"
             />
           </div>
@@ -153,6 +153,7 @@ const LoginPage = ({ onLogin }) => {
               onChange={(e) => setInputValue(e.target.value)}
               frozen={otpSent}
               className="login-card__input"
+              inputType="phone"
             />
 
             {/* Pre-OTP: Captcha + Get OTP */}
@@ -175,7 +176,7 @@ const LoginPage = ({ onLogin }) => {
                 <Button
                   variant="primary"
                   onClick={handleGetOtp}
-                  disabled={!inputValue || !captchaAnswer1}
+                  disabled={inputValue.length !== 10 || !captchaAnswer1}
                 >
                   Get OTP
                 </Button>

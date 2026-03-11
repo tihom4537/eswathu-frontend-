@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
+import Breadcrumb from '../../../components/Breadcrumb/Breadcrumb';
 import StepHeader from '../../../components/StepHeader/StepHeader';
 import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
@@ -59,7 +60,27 @@ const MOCK_KAVERI = {
   generatedPropertyId: 'P-2024-54321',
 };
 
-const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
+const SaleDeedDetailsPage = ({
+  onNavigate,
+  username = '',
+  onBack,
+  onNext,
+  isBackEnabled = false,
+  currentBCStep = 0,
+  completedBCSteps = [],
+  onBCStepClick,
+  bcStepNames = [],
+  completionResetKey = 0,
+  onResetDownstream,
+  onVillageChange,
+}) => {
+  /* ── Page-level completion (enables forward arrow) ──────── */
+  const [isPageComplete, setIsPageComplete] = useState(false);
+
+  /* Reset completion when upstream triggers a reset */
+  useEffect(() => {
+    if (completionResetKey > 0) setIsPageComplete(false);
+  }, [completionResetKey]);
   /* ── Section 1.1 State ───────────────────────────────────── */
   const [kaveriYes, setKaveriYes] = useState(true); // true | false
   const [radioLocked, setRadioLocked] = useState(false);
@@ -79,8 +100,23 @@ const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
   const [locPanchayat, setLocPanchayat] = useState('');
   const [locVillage, setLocVillage] = useState('');
 
+  /* Expose village name to parent whenever it changes */
+  useEffect(() => {
+    onVillageChange?.(locVillage);
+  }, [locVillage]); // eslint-disable-line react-hooks/exhaustive-deps
+
   /* ── Section 1.3 State ───────────────────────────────────── */
   const [s13Visible, setS13Visible] = useState(false);
+  const s13Ref = useRef(null);
+
+  useEffect(() => {
+    if (s13Visible && s13Ref.current) {
+      setTimeout(() => s13Ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    }
+  }, [s13Visible]);
+
+  /* ── Kaveri reg-no edit warning ─────────────────────────── */
+  const [showKaveriWarn, setShowKaveriWarn] = useState(false);
 
   /* ── Handlers ───────────────────────────────────────────── */
   const handleFlowSelect = (isYes) => {
@@ -128,11 +164,27 @@ const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
     setSelectedSchedule(null);
     setS12Saved(false);
     setS13Visible(false);
+    setIsPageComplete(false);
     setLocDistrict('');
     setLocTaluk('');
     setLocPanchayat('');
     setLocVillage('');
     fetchAttempt.current = 0;
+  };
+
+  /* Intercept the X-button click: show warning if data exists downstream */
+  const handleKaveriXClick = () => {
+    setShowKaveriWarn(true);
+  };
+
+  const handleKaveriWarnConfirm = () => {
+    setShowKaveriWarn(false);
+    handleClear();
+    onResetDownstream?.();
+  };
+
+  const handleKaveriWarnCancel = () => {
+    setShowKaveriWarn(false);
   };
 
   const handleSave12 = () => {
@@ -197,6 +249,14 @@ const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
         onLogout={() => onNavigate && onNavigate('login')}
       />
 
+      {/* ── Breadcrumb ────────────────────────────────── */}
+      <Breadcrumb
+        steps={bcStepNames}
+        currentStep={currentBCStep}
+        completedSteps={completedBCSteps}
+        onStepClick={onBCStepClick}
+      />
+
       {/* ── Stepper (standalone, above step header) ──── */}
       <Stepper activeStep={0} />
 
@@ -204,6 +264,10 @@ const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
       <StepHeader
         step="Step 1"
         title="Sale/ property registration deed details"
+        onBack={onBack}
+        onNext={onNext}
+        isBackEnabled={isBackEnabled}
+        isNextEnabled={isPageComplete}
       />
 
       <div className="sd-page__sections">
@@ -252,8 +316,9 @@ const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
                       disabled={fetchStatus === 'loading'}
                       state={fetchStatus === 'success' ? 'success' : 'empty'}
                       required
+                      inputType="alphanumeric-code"
                       trailingIcon={fetchStatus === 'success' ? 'close' : undefined}
-                      onTrailingIconClick={fetchStatus === 'success' ? handleClear : undefined}
+                      onTrailingIconClick={fetchStatus === 'success' ? handleKaveriXClick : undefined}
                       trailingIconClassName={fetchStatus === 'success' ? 'sd-s11__close-icon' : ''}
                     />
                   </div>
@@ -492,6 +557,7 @@ const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
                       onChange={(e) => setAssetNumber(e.target.value)}
                       disabled={s12Saved}
                       required
+                      inputType="alphanumeric-code"
                     />
                   </div>
                   <Tooltip
@@ -545,6 +611,7 @@ const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
 
         {/* ═══ SECTION 1.3 — Review ═══════════════════════════ */}
         {s13Visible && (
+          <div ref={s13Ref}>
           <SectionBox number="1.3" title="Review" open className="sd-s13-box">
             <div className="sd-s13">
 
@@ -577,6 +644,7 @@ const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
 
             </div>
           </SectionBox>
+          </div>
         )}
 
         {/* ═══ SAVE AND PROCEED (centered, outside sections) ══ */}
@@ -584,7 +652,7 @@ const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
           <div className="sd-page__proceed">
             <Button
               variant="primary"
-              onClick={() => onNavigate && onNavigate('new-application-step2')}
+              onClick={() => { setIsPageComplete(true); onNext?.(); }}
             >
               Save and Proceed
             </Button>
@@ -606,6 +674,22 @@ const SaleDeedDetailsPage = ({ onNavigate, username = '' }) => {
             message="Error in fetching details from Kaveri. Please Retry or Contact Kaveri helpline XXXXXXXXXX."
             onOk={handleErrorDismiss}
           />
+        </div>
+      )}
+
+      {/* ── Kaveri Registration Number edit warning ──────────── */}
+      {showKaveriWarn && (
+        <div className="sd-page__overlay" onClick={handleKaveriWarnCancel}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <ErrorMessageCard
+              message="Editing the Kaveri Registration Number will cause you to lose progress in multiple sections of the form including Owner KYC, Property Details and Property Classification. Are you sure you want to proceed?"
+              subMessage="This action cannot be undone."
+              actions={[
+                { label: 'Yes, Edit', variant: 'primary', onClick: handleKaveriWarnConfirm },
+                { label: 'Cancel',    variant: 'error',   onClick: handleKaveriWarnCancel  },
+              ]}
+            />
+          </div>
         </div>
       )}
     </div>

@@ -1,0 +1,29 @@
+/* ── Parking Details ────────────────────────────────────────── */
+
+.bd-parking {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bd-parking__row {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.bd-parking__dropdown {
+  width: 460px;
+  flex-shrink: 0;
+}
+
+.bd-parking__input {
+  width: 347px;
+  flex-shrink: 0;
+}
+
+.bd-parking__actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}

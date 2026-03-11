@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
+import PageNavigation from '../../components/PageNavigation/PageNavigation';
 import PageHeading from '../../components/PageHeading/PageHeading';
 import Stepper from '../../components/Stepper/Stepper';
 import SectionBox from '../../components/SectionBox/SectionBox';
@@ -7,6 +8,7 @@ import InfoBox from '../../components/InfoBox/InfoBox';
 import Button from '../../components/Button/Button';
 import QuestionnaireField from '../../components/QuestionnaireField/QuestionnaireField';
 import HelpCardList from '../../components/HelpCardList/HelpCardList';
+import CaptionMessage from '../../components/CaptionMessage/CaptionMessage';
 import { nodes, DOCS } from './classifierData';
 import './NewApplicationFirstPage.css';
 
@@ -14,6 +16,7 @@ const NewApplicationFirstPage = ({ onNavigate, username = '' }) => {
   const [history, setHistory] = useState([]);
   const [currentId, setCurrentId] = useState('q_who');
   const [selectedOption, setSelectedOption] = useState(null);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   const node = nodes[currentId];
   const isResult = node.type === 'result';
@@ -42,6 +45,11 @@ const NewApplicationFirstPage = ({ onNavigate, username = '' }) => {
     setHistory([]);
     setCurrentId('q_who');
     setSelectedOption(null);
+    setIsConfirmed(false);
+  };
+
+  const handleConfirm = () => {
+    setIsConfirmed(true);
   };
 
   const resultDocs = isResult && !node.noDoc ? (DOCS[node.code] || []) : [];
@@ -55,6 +63,13 @@ const NewApplicationFirstPage = ({ onNavigate, username = '' }) => {
         variant="postLogin"
         username={username}
         onLogout={() => onNavigate && onNavigate('login')}
+      />
+
+      <PageNavigation
+        onBack={() => onNavigate && onNavigate('home')}
+        isBackEnabled={true}
+        onNext={() => onNavigate && onNavigate('new-application-step1')}
+        isNextEnabled={isConfirmed}
       />
 
       {/* Steps banner */}
@@ -85,11 +100,11 @@ const NewApplicationFirstPage = ({ onNavigate, username = '' }) => {
 
             <div className="new-app-s01__doc-list">
 
-              {/* Sale Deed */}
+              {/* Deed Documents */}
               <div className="new-app-s01__doc-item">
                 <span className="material-icons-outlined new-app-s01__doc-icon">file_copy</span>
                 <div className="new-app-s01__doc-content">
-                  <p className="new-app-s01__doc-title">Sale Deed</p>
+                  <p className="new-app-s01__doc-title">Deed Documents</p>
                   <p className="new-app-s01__doc-desc">
                     It is the official proof that a property is registered in your name.
                   </p>
@@ -111,13 +126,14 @@ const NewApplicationFirstPage = ({ onNavigate, username = '' }) => {
 
               <hr className="new-app-s01__divider" />
 
-              {/* Image of the property */}
+              {/* Property Image with Geo Tag */}
               <div className="new-app-s01__doc-item">
                 <span className="material-icons-outlined new-app-s01__doc-icon new-app-s01__doc-icon--image">image</span>
                 <div className="new-app-s01__doc-content">
-                  <p className="new-app-s01__doc-title">Image of the property</p>
+                  <p className="new-app-s01__doc-title">Property Image with Geo Tag</p>
                   <p className="new-app-s01__doc-desc">
-                    Photo of the property with the front elevation visible.
+                    Photo of the property with the front elevation visible.{' '}
+                    <a href="#" className="new-app-s01__link">Click here to know how to click a geo tagged photo</a>
                   </p>
                 </div>
               </div>
@@ -210,13 +226,26 @@ const NewApplicationFirstPage = ({ onNavigate, username = '' }) => {
                 <HelpCardList
                   variant="document"
                   subtitle={resultFormType}
-                  title={`${node.code} — ${node.title}`}
+                  title={`${node.code.replace(/-\d+$/, '')} — ${node.title}`}
                   items={resultDocs}
                   noDoc={node.noDoc}
                 />
-                <Button variant="white" icon="refresh" onClick={handleRestart}>
-                  Start Over
-                </Button>
+                <div className="new-app-s02__result-actions">
+                  <Button variant="white" icon="arrow_back" onClick={handleBack}>
+                    Back
+                  </Button>
+                  <Button variant="white" icon="refresh" onClick={handleRestart}>
+                    Start Over
+                  </Button>
+                </div>
+                <div className="new-app-s02__result-confirm">
+                  <Button variant="primary" disabled={isConfirmed} onClick={handleConfirm}>
+                    Confirm my Classification
+                  </Button>
+                  <CaptionMessage variant="info">
+                    This will be used in your application
+                  </CaptionMessage>
+                </div>
               </div>
             )}
 

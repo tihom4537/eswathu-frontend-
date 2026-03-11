@@ -61,7 +61,7 @@
 /* ── Document variant ───────────────────────────────────── */
 
 .hcl__doc-section {
-  margin-top: 16px;
+  margin-top: 32px;
 }
 
 .hcl__doc-heading {
@@ -80,6 +80,11 @@
 .hcl--document .hcl__check {
   color: var(--primary);
   font-size: 20px;
+}
+
+.hcl--document .hcl__item-text {
+  font-size: 16px;
+  line-height: 24px;
 }
 
 .hcl__no-doc {

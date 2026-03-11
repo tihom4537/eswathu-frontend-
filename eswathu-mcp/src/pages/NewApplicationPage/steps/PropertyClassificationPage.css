@@ -1,0 +1,1016 @@
+/* ══════════════════════════════════════════════════════════
+   Property Classification Page — Step 4
+   ══════════════════════════════════════════════════════════ */
+
+.pc-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+}
+
+/* ── Sections wrapper ────────────────────────────────────── */
+
+.pc-page__sections {
+  padding: 40px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* ══ SECTION 4.1 ════════════════════════════════════════════ */
+
+.pc-s41-box .section-box__body {
+  box-sizing: border-box;
+}
+
+.pc-s41 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Find group: InfoBox + button stacked */
+.pc-s41__find-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pc-s41__find-btn-wrap {
+  align-self: flex-start;
+}
+
+/* Dropdown label + full-width dropdown stacked */
+.pc-s41__dropdown-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.pc-s41__dropdown-label {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 30px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pc-s41__required {
+  color: var(--danger);
+}
+
+/* Full-width dropdown — no max-width constraint */
+.pc-s41__dropdown-wrap {
+  width: 100%;
+}
+
+.pc-s41__dropdown-wrap .dropdown {
+  width: 100%;
+}
+
+/* Document upload instruction text */
+.pc-s41__doc-instruction {
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Table wrapper — full width */
+.pc-s41__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Uploaded confirmation row */
+.pc-s41__doc-done {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pc-s41__doc-done-icon {
+  font-size: 18px;
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.pc-s41__doc-done-text {
+  font-family: var(--font-family);
+  font-size: 16px;
+  color: var(--success);
+}
+
+/* Section divider */
+.pc-s41__divider {
+  width: 100%;
+  height: 2px;
+  background: var(--neutral-100);
+  margin: 4px 0;
+  flex-shrink: 0;
+}
+
+/* Sub-section heading */
+.pc-s41__sub-heading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Actions row */
+.pc-s41__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* ── Document upload table ───────────────────────────────── */
+
+.pc-doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.pc-doc-table__header {
+  background: var(--secondary);
+  height: 70px;
+}
+
+.pc-doc-table__th {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text-dark);
+  padding: 10px;
+  border: 1px solid #727272;
+  text-align: left;
+  white-space: normal;
+  vertical-align: middle;
+}
+
+.pc-doc-table__td {
+  padding: 10px;
+  border: 1px solid #727272;
+  vertical-align: middle;
+  font-size: 14px;
+  color: var(--neutral-600);
+  height: 115px;
+  box-sizing: border-box;
+}
+
+/* Column widths — from Figma */
+.pc-doc-table__th--sl     { width: 49px;   }
+.pc-doc-table__th--type   { width: 232px;  }
+.pc-doc-table__th--date   { width: 228px;  }
+.pc-doc-table__th--no     { width: 228px;  }
+.pc-doc-table__th--upload { width: 263px; }
+.pc-doc-table__th--view   { width: 76px; text-align: center; }
+
+/* TD modifiers */
+.pc-doc-table__td--sl   { text-align: center; width: 49px; }
+.pc-doc-table__td--type { width: 232px; }
+.pc-doc-table__td--view { text-align: center; width: 76px; }
+
+/* Upload data cell — light blue fill */
+.pc-doc-table__td--upload {
+  background: rgba(2, 99, 197, 0.08);
+  width: 263px;
+}
+
+/* DatePicker and Input fill their cells */
+.pc-doc-table__td--date .datepicker {
+  width: 100%;
+}
+
+.pc-doc-table__td--no .input-field {
+  width: 100%;
+}
+
+.pc-doc-table__td--no .input-field__label {
+  display: none;
+}
+
+/* Header row height */
+.pc-doc-table__header {
+  background: var(--secondary);
+  height: 70px;
+}
+
+/* ── View icon button ────────────────────────────────────── */
+
+.pc-view-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 44px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--primary);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  padding: 0;
+}
+
+.pc-view-icon .material-icons-outlined {
+  font-size: 22px;
+  color: var(--primary);
+}
+
+.pc-view-icon:hover:not(:disabled) { background: rgba(2, 99, 197, 0.08); }
+.pc-view-icon:active:not(:disabled) { background: rgba(2, 99, 197, 0.16); }
+
+.pc-view-icon--inactive {
+  background: #eee;
+  border-color: var(--neutral-400, #b0b0b0);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pc-view-icon--inactive .material-icons-outlined {
+  color: var(--neutral-400, #b0b0b0);
+}
+
+/* ── No-docs message ─────────────────────────────────────── */
+
+.pc-s41__no-docs {
+  font-family: var(--font-family);
+  font-size: 16px;
+  color: var(--neutral-500);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Survey Number sub-section ───────────────────────────── */
+
+.pc-s41__survey-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 4px;
+}
+
+.pc-s41__survey-divider {
+  width: 100%;
+  height: 2px;
+  background: var(--neutral-200, #e0e0e0);
+}
+
+.pc-s41__survey-heading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 27px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* ── View file popup ─────────────────────────────────────── */
+
+.pc-popup__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.pc-viewfile-popup {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  width: 480px;
+  max-width: calc(100vw - 48px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+.pc-popup__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--neutral-100);
+}
+
+.pc-popup__title {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pc-popup__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-xs);
+  padding: 4px;
+  color: var(--neutral-600);
+}
+
+.pc-popup__close:hover { background: var(--secondary); }
+.pc-popup__close .material-icons-outlined { font-size: 22px; }
+
+.pc-viewfile-popup__body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.pc-viewfile-popup__name {
+  font-family: var(--font-family);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin: 0;
+  word-break: break-all;
+}
+
+.pc-viewfile-popup__preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--neutral-500);
+  font-size: 14px;
+}
+
+.pc-viewfile-popup__icon {
+  font-size: 48px;
+  color: var(--danger);
+}
+
+/* Upload cell */
+.pc-doc__upload-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pc-doc__upload-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pc-doc__hidden-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Uploaded file chip */
+.pc-doc__file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  max-width: 100%;
+}
+
+.pc-doc__file-icon {
+  font-size: 20px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.pc-doc__file-name {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-dark);
+}
+
+.pc-doc__file-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: var(--radius-xs);
+  flex-shrink: 0;
+  background: var(--danger);
+  border: none;
+}
+
+.pc-doc__file-remove .material-icons-outlined {
+  font-size: 12px;
+  color: var(--white);
+}
+
+.pc-doc__file-remove:hover { opacity: 0.7; }
+
+/* View cell */
+.pc-doc__view-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pc-doc__view-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.pc-doc__view-link:hover { text-decoration: underline; }
+
+.pc-doc__view-link .material-icons-outlined { font-size: 18px; }
+
+.pc-doc__view-empty { color: var(--neutral-400); }
+
+.pc-doc__type { font-weight: 500; color: var(--text-dark); }
+.pc-doc__required { color: var(--danger); }
+
+/* Frozen fields show their labels */
+.pc-s42__frozen-field .input-field__label { display: block; }
+
+/* Strip label space from inputs inside table cells */
+.pc-doc-table__td .input-field__label { display: none; }
+.pc-doc-table__td .input-field        { width: 100%; }
+.pc-doc-table__td .input-field__box   { width: 100%; }
+
+/* ══ SECTION 4.1 — Survey Number sub-section ══════════════ */
+
+/* Village + Survey stacked with tight gap */
+.pc-s42__village-and-search {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pc-s42__village-input {
+  width: 300px;
+}
+
+.pc-s42__village-input .input-field       { width: 100%; }
+.pc-s42__village-input .input-field__box  { width: 100%; }
+
+/* Survey row: input group + Tooltip */
+.pc-s42__survey-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.pc-s42__survey-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.pc-s42__survey-input-wrap {
+  width: 300px;
+}
+
+.pc-s42__survey-input-wrap .input-field       { width: 100%; }
+.pc-s42__survey-input-wrap .input-field__box  { width: 100%; }
+
+/* Tooltip fixed width */
+.pc-s42__tooltip {
+  flex-shrink: 0;
+  width: 352px;
+  align-self: flex-start;
+}
+
+/* Surnoc/Hissa section */
+.pc-s42__surnoc-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Surnoc/Hissa row */
+.pc-s42__surnoc-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.pc-s42__surnoc-input-wrap {
+  width: 300px;
+}
+
+.pc-s42__surnoc-input-wrap .input-field      { width: 100%; }
+.pc-s42__surnoc-input-wrap .input-field__box { width: 100%; }
+
+.pc-s42__surnoc-tooltip {
+  flex-shrink: 0;
+  width: 352px;
+  align-self: flex-start;
+}
+
+/* Fetch RTC row — button(s) below dropdowns */
+.pc-s42__fetch-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Stage 3: 3 frozen fields */
+.pc-s42__frozen-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.pc-s42__frozen-field {
+  width: 163px;
+  flex-shrink: 0;
+}
+
+.pc-s42__frozen-field .input-field      { width: 100%; }
+.pc-s42__frozen-field .input-field__box { width: 100%; }
+
+/* RTC instruction text */
+.pc-s42__rtc-instruction {
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 27px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* ── RTC Owner Table ─────────────────────────────────────── */
+
+.pc-s42__rtc-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.pc-rtc-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.pc-rtc-table__header {
+  background: var(--secondary);
+  border: 1px solid #727272;
+}
+
+.pc-rtc-table__th {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text-dark);
+  padding: 10px;
+  border: 1px solid #727272;
+  text-align: left;
+  vertical-align: middle;
+  white-space: normal;
+  height: 90px;
+}
+
+.pc-rtc-table__td {
+  padding: 10px;
+  border: 1px solid #727272;
+  vertical-align: middle;
+  font-size: 15px;
+  color: var(--neutral-600);
+  height: 66px;
+}
+
+/* Column widths */
+.pc-rtc-table__th--cb          { width: 45px;  text-align: center; }
+.pc-rtc-table__th--ownerNo     { width: 80px;  }
+.pc-rtc-table__th--mainOwnerNo { width: 100px; }
+.pc-rtc-table__th--ownerName   { width: 200px; }
+.pc-rtc-table__th--fatherName  { width: 160px; }
+.pc-rtc-table__th--landCode    { width: 80px;  }
+.pc-rtc-table__th--acre        { width: 70px;  }
+.pc-rtc-table__th--gunta       { width: 70px;  }
+.pc-rtc-table__th--fgunta      { width: 80px;  }
+
+.pc-rtc-table__td--cb {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* ── Radio question ──────────────────────────────────────── */
+
+.pc-s42__radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pc-s42__radio-question {
+  font-family: var(--font-family);
+  font-size: 16px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pc-s42__radio-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ── "No" flow: Add Owners table ─────────────────────────── */
+
+.pc-s42__add-owners {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pc-s42__add-owners-label {
+  font-family: var(--font-family);
+  font-size: 16px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pc-addowner-table-wrap {
+  width: 553px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pc-addowner-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.pc-addowner-table__header {
+  background: var(--secondary);
+  height: 30px;
+}
+
+.pc-addowner-table__th {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--text-dark);
+  padding: 5px 10px;
+  border: 1px solid #727272;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.pc-addowner-table__td {
+  padding: 10px;
+  border: 1px solid #727272;
+  vertical-align: middle;
+  height: 73px;
+}
+
+.pc-addowner-table__th--no { width: 56px; }
+.pc-addowner-table__td--no {
+  font-family: var(--font-family);
+  font-size: 16px;
+  color: var(--text-dark);
+  text-align: center;
+}
+
+/* Strip label space inside table input */
+.pc-addowner-table__td .input-field__label { display: none; }
+.pc-addowner-table__td .input-field        { width: 100%; }
+.pc-addowner-table__td .input-field__box   { width: 100%; }
+
+/* Add row button — full-width light-blue bar */
+.pc-addowner-table__add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 30px;
+  background: var(--primary-50);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: none;
+  margin-top: 0;
+}
+
+.pc-addowner-table__add-btn .material-icons-outlined {
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.pc-addowner-table__add-btn:hover {
+  background: #c8dff8;
+}
+
+/* ── "No" flow: Re-entry fields ──────────────────────────── */
+
+.pc-s42__reentry {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pc-s42__reentry-label {
+  font-family: var(--font-family);
+  font-size: 16px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pc-s42__reentry-fields {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+/* Actions row within survey section */
+.pc-s42__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+/* ══ BOTTOM NAVIGATION ══════════════════════════════════════ */
+
+.pc-page__bottom-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 120px 48px;
+}
+
+/* ══ QUESTIONNAIRE MODAL ════════════════════════════════════ */
+
+.pc-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.pc-modal {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  width: 560px;
+  max-width: calc(100vw - 48px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pc-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--neutral-100);
+}
+
+.pc-modal__title {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pc-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  padding: 4px;
+  color: var(--neutral-600);
+}
+
+.pc-modal__close:hover { background: var(--secondary); }
+
+.pc-modal__close .material-icons-outlined { font-size: 22px; }
+
+.pc-modal__body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pc-modal__progress {
+  font-family: var(--font-family);
+  font-size: 13px;
+  color: var(--neutral-500);
+  margin: 0;
+}
+
+.pc-modal__question {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 26px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pc-modal__options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pc-modal__footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+/* Question header: label chip + question text */
+.pc-modal__question-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pc-modal__question-label {
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* Result screen nav: Back + Start Over */
+.pc-modal__result-nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Confirm row: button + caption message */
+.pc-modal__confirm-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pc-modal__result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.pc-modal__result-icon {
+  font-size: 48px;
+  color: var(--success);
+}
+
+.pc-modal__result-label {
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--neutral-600);
+  margin: 0;
+}
+
+.pc-modal__result-value {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+
+/* ══ SECTION 4.2 — Property Type and Category Details ═════ */
+
+.pc-s42__body {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 8px 15px;
+}
+
+.pc-s42__dropdowns-row {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.pc-s42__dropdown-item {
+  flex: 1;
+  min-width: 0;
+}
+
+.pc-s42__dropdown-item .dropdown {
+  width: 100%;
+}
+
+/* Sub-section container */
+.pc-s42__section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Sub-section title */
+.pc-s42__section-title {
+  font-family: var(--font-family);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Grey divider between subsections */
+.pc-s42__divider {
+  height: 1px;
+  background: var(--neutral-300, #b0b0b0);
+}
+
+/* Grey locked subsection heading */
+.pc-s42__placeholder-heading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--neutral-400);
+  margin: 0;
+}
+
+/* Placeholder text */
+.pc-s42__placeholder-text {
+  font-size: 16px;
+  color: var(--text-hint, #727272);
+  font-style: italic;
+  margin: 0;
+}
+
+/* ── Section 4.3 Avail Rebates ───────────────────────────── */
+.pc-s43__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px 0;
+}
+
+.pc-s43__question-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pc-s43__question {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pc-s43__radio-group {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.pc-s43__info-link {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* ── Save and Proceed button wrap ────────────────────────── */
+.pc-page__save-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 24px;
+}

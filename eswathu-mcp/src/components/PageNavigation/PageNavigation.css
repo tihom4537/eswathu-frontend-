@@ -1,0 +1,107 @@
+/* ── PageNavigation ─────────────────────────────────────────── */
+
+.page-nav {
+  width: 100%;
+  background: var(--white);
+  border-bottom: 1px solid var(--neutral-100);
+}
+
+.page-nav__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 6px var(--space-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Arrow button ──────────────────────────────────────────── */
+.page-nav__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.page-nav__arrow .material-icons-outlined {
+  font-size: 20px;
+  color: var(--primary);
+  transition: color 0.15s ease;
+}
+
+.page-nav__arrow:hover:not(:disabled) {
+  background: var(--primary);
+}
+
+.page-nav__arrow:hover:not(:disabled) .material-icons-outlined {
+  color: var(--white);
+}
+
+.page-nav__arrow:active:not(:disabled) {
+  background: #0050A0;
+  border-color: #0050A0;
+}
+
+.page-nav__arrow:active:not(:disabled) .material-icons-outlined {
+  color: var(--white);
+}
+
+.page-nav__arrow:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.page-nav__arrow--disabled,
+.page-nav__arrow:disabled {
+  border-color: var(--neutral-200);
+  background: transparent;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.page-nav__arrow--disabled .material-icons-outlined,
+.page-nav__arrow:disabled .material-icons-outlined {
+  color: var(--neutral-300);
+}
+
+/* ── Right side container ───────────────────────────────────── */
+.page-nav__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ── Edit button (red/error variant) ───────────────────────── */
+.page-nav__edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px;
+  border-radius: var(--radius-xs);
+  border: 1.5px solid var(--danger);
+  background: transparent;
+  color: var(--danger);
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  outline: none;
+}
+
+.page-nav__edit-btn:hover {
+  background: var(--danger);
+  color: var(--white);
+}
+
+.page-nav__edit-btn:focus-visible {
+  box-shadow: 0 0 0 4px rgba(183, 19, 26, 0.25);
+}

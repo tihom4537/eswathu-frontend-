@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
+import Breadcrumb from '../../../components/Breadcrumb/Breadcrumb';
 import Stepper from '../../../components/Stepper/Stepper';
 import StepHeader from '../../../components/StepHeader/StepHeader';
 import SectionBox from '../../../components/SectionBox/SectionBox';
@@ -86,11 +87,30 @@ const DOCS_BY_REASON = {
   ],
 };
 
-const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
+const OwnerEKYCPage = ({
+  onNavigate,
+  username = '',
+  onBack,
+  onNext,
+  isBackEnabled = true,
+  currentBCStep = 1,
+  completedBCSteps = [],
+  onBCStepClick,
+  bcStepNames = [],
+  completionResetKey = 0,
+}) => {
+  /* ── Page-level completion (enables forward arrow) ──────── */
+  const [isPageComplete, setIsPageComplete] = useState(false);
+
+  useEffect(() => {
+    if (completionResetKey > 0) setIsPageComplete(false);
+  }, [completionResetKey]);
+
   /* ── Section 2.1 State ──────────────────────────────── */
   const [isCompany, setIsCompany] = useState(false);
   const [addNewOwner, setAddNewOwner] = useState(false);
   const [newOwnerNames, setNewOwnerNames] = useState(['']);
+  const [ownerNameErrors, setOwnerNameErrors] = useState(['']);
   const [s21Submitted, setS21Submitted] = useState(false);
 
   /* ── Derived: combined owners (original + newly added) ── */
@@ -123,6 +143,10 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
   const [otpCountdown, setOtpCountdown] = useState(0);
   const otpTimerRef = useRef(null);
   const scrollPosRef = useRef(0);
+
+  /* ── Section scroll refs ─────────────────────────────── */
+  const s22Ref = useRef(null);
+  const s23Ref = useRef(null);
 
   /* ── Section 2.3 State — Mismatch ───────────────────── */
   const [s23Visible, setS23Visible] = useState(false);
@@ -270,6 +294,19 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
     return () => clearInterval(otpTimerRef.current);
   }, []);
 
+  /* ── Scroll to next section when it opens ───────────── */
+  useEffect(() => {
+    if (s22Visible && s22Ref.current) {
+      s22Ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [s22Visible]);
+
+  useEffect(() => {
+    if (s23Visible && s23Ref.current) {
+      s23Ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [s23Visible]);
+
   const handleCompleteEkyc = () => {
     setOtpVerified(true);
     const owner = allOwners[popupOwnerIdx];
@@ -373,11 +410,26 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
         onLogout={() => onNavigate('login')}
       />
 
+      {/* ── Breadcrumb ──────────────────────────────────── */}
+      <Breadcrumb
+        steps={bcStepNames}
+        currentStep={currentBCStep}
+        completedSteps={completedBCSteps}
+        onStepClick={onBCStepClick}
+      />
+
       {/* ── Stepper ─────────────────────────────────────── */}
       <Stepper activeStep={1} />
 
       {/* ── Step Header ─────────────────────────────────── */}
-      <StepHeader step="Step 2" title="Owner KYC" />
+      <StepHeader
+        step="Step 2"
+        title="Owner KYC"
+        onBack={onBack}
+        onNext={onNext}
+        isBackEnabled={isBackEnabled}
+        isNextEnabled={isPageComplete}
+      />
 
       {/* ── Sections container ──────────────────────────── */}
       <div className="ekyc-page__sections">
@@ -510,14 +562,41 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
                                 const updated = [...newOwnerNames];
                                 updated[i] = e.target.value;
                                 setNewOwnerNames(updated);
+                                if (ownerNameErrors[i]) {
+                                  const errs = [...ownerNameErrors];
+                                  errs[i] = '';
+                                  setOwnerNameErrors(errs);
+                                }
+                              }}
+                              onKeyDown={(e) => {
+                                if (
+                                  !e.ctrlKey && !e.metaKey && !e.altKey &&
+                                  !['Backspace','Delete','Tab','Enter','Escape','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key) &&
+                                  /[^a-zA-Z\s]/.test(e.key)
+                                ) {
+                                  e.preventDefault();
+                                }
+                              }}
+                              onBlur={() => {
+                                if (/[^a-zA-Z\s]/.test(name)) {
+                                  const errs = [...ownerNameErrors];
+                                  errs[i] = 'Please enter alphabets only';
+                                  setOwnerNameErrors(errs);
+                                }
                               }}
                               disabled={s21Submitted}
                             />
+                            {ownerNameErrors[i] && (
+                              <CaptionMessage variant="error">{ownerNameErrors[i]}</CaptionMessage>
+                            )}
                             {!s21Submitted && newOwnerNames.length > 1 && (
                               <button
                                 type="button"
                                 className="ekyc-s21__remove-row-btn"
-                                onClick={() => setNewOwnerNames((prev) => prev.filter((_, j) => j !== i))}
+                                onClick={() => {
+                                  setNewOwnerNames((prev) => prev.filter((_, j) => j !== i));
+                                  setOwnerNameErrors((prev) => prev.filter((_, j) => j !== i));
+                                }}
                               >
                                 <span className="material-icons-outlined">close</span>
                               </button>
@@ -534,7 +613,10 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
                     type="button"
                     className={`ekyc-s21__add-row-btn${!newOwnerNames[newOwnerNames.length - 1]?.trim() ? ' ekyc-s21__add-row-btn--disabled' : ''}`}
                     disabled={!newOwnerNames[newOwnerNames.length - 1]?.trim()}
-                    onClick={() => setNewOwnerNames((prev) => [...prev, ''])}
+                    onClick={() => {
+                      setNewOwnerNames((prev) => [...prev, '']);
+                      setOwnerNameErrors((prev) => [...prev, '']);
+                    }}
                   >
                     <span className="material-icons-outlined">add</span>
                   </button>
@@ -575,6 +657,7 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
         {/* ════════════════════════════════════════════════ */}
         {/* Section 2.2 — Do eKYC for all land owners      */}
         {/* ════════════════════════════════════════════════ */}
+        <div ref={s22Ref}>
         <SectionBox
           number="2.2"
           title="Do eKYC for all land owners"
@@ -668,10 +751,12 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
             </div>
           )}
         </SectionBox>
+        </div>
 
         {/* ════════════════════════════════════════════════ */}
         {/* Section 2.3 — Owner Details Mismatch            */}
         {/* ════════════════════════════════════════════════ */}
+        <div ref={s23Ref}>
         {hasMismatch && (
         <SectionBox
           number="2.3"
@@ -766,6 +851,7 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
                               placeholder="Enter document no."
                               value={d.docNo || ''}
                               onChange={(e) => handleDocFieldChange(doc.key, 'docNo', e.target.value)}
+                              inputType="alphanumeric-code"
                             />
                           </td>
                           <td className="ekyc-s23__doc-td ekyc-s23__doc-td--date">
@@ -833,6 +919,7 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
           )}
         </SectionBox>
         )}
+        </div>
 
         {/* ── Save and Proceed (bottom) ──────────────── */}
         {s22Verified && (
@@ -840,7 +927,7 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
             <Button
               variant="primary"
               disabled={hasMismatch && !canS23Proceed}
-              onClick={() => onNavigate('new-application-step3')}
+              onClick={() => { setIsPageComplete(true); onNext?.(); }}
             >
               Save and Proceed
             </Button>
@@ -934,6 +1021,7 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
                   value={relatedPersonName}
                   onChange={(e) => setRelatedPersonName(e.target.value)}
                   required
+                  inputType="alpha"
                   className="ekyc-popup__field"
                 />
               </div>
@@ -946,6 +1034,7 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}
                   required
+                  inputType="phone"
                   className="ekyc-popup__field--mobile"
                 />
                 <Button
@@ -964,6 +1053,7 @@ const OwnerEKYCPage = ({ onNavigate, username = '' }) => {
                     onChange={(e) => setOtp(e.target.value)}
                     required
                     disabled={!otpSent}
+                    inputType="otp"
                     className="ekyc-popup__field--otp"
                   />
                   {otpSent && otpCountdown > 0 && (

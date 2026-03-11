@@ -1,0 +1,123 @@
+/* ── Building Details Page ──────────────────────────────────── */
+
+.bd-page {
+  background: var(--secondary-50, #f2f2f2);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.bd-page__heading-wrap {
+  background: var(--secondary-50, #f2f2f2);
+  padding: 50px 120px;
+}
+
+.bd-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 120px 80px;
+}
+
+/* ── SectionBox body pre-allocation ─────────────────────────── */
+.bd-page .section-box--open .section-box__body {
+  min-height: 3200px;
+  padding: 32px 39px 32px 24px;
+}
+
+/* ── Inner body layout ──────────────────────────────────────── */
+.bd-page__body {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ── Opening 3 dropdowns ────────────────────────────────────── */
+.bd-page__dropdown-row {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  padding: 0 15px;
+}
+
+.bd-page__dropdown {
+  flex: 1;
+}
+
+/* ── Section sub-heading (Area Details, Parking, etc.) ──────── */
+.bd-page__section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 15px;
+}
+
+.bd-page__section-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* ── Divider between subsections ────────────────────────────── */
+.bd-page__divider {
+  height: 1px;
+  background: var(--neutral-300, #b0b0b0);
+  margin: 0 15px;
+}
+
+/* ── Save and Proceed ───────────────────────────────────────── */
+.bd-page__save-wrap {
+  padding: 0 15px;
+}
+
+/* ── 4.3 Accordion placeholder ──────────────────────────────── */
+.bd-page__accordion-placeholder {
+  margin-top: 4px;
+}
+
+.bd-page__accordion-stub {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--secondary, #f2f2f2);
+  border: 1px solid var(--neutral-200, #c6c6c6);
+  border-radius: 8px;
+  padding: 16px 20px;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.bd-page__accordion-num {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--neutral-300, #b0b0b0);
+}
+
+.bd-page__accordion-label {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--neutral-300, #b0b0b0);
+}
+
+/* ── Grey placeholder headings (locked subsections) ─────────── */
+.bd-page__placeholder-heading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--neutral-400);
+  margin: 0;
+  padding: 0 15px;
+}
+
+/* ── Other flow placeholder ─────────────────────────────────── */
+.bd-page__placeholder {
+  padding: 24px 15px;
+}
+
+.bd-page__placeholder-text {
+  font-size: 16px;
+  color: var(--text-hint, #727272);
+  font-style: italic;
+}

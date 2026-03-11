@@ -1,0 +1,49 @@
+/* ══════════════════════════════════════════════════════════
+   Subsection C — Checkbandi Details
+   ══════════════════════════════════════════════════════════ */
+
+.pd-cb {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Section heading */
+.pd-cb__heading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Sub-heading */
+.pd-cb__subheading {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 27px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* ── Single-row 4-field layout ────────────────────────── */
+
+.pd-cb__bounds-row {
+  display: flex;
+  gap: 40px;
+}
+
+.pd-cb__bound-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Actions row ──────────────────────────────────────── */
+
+.pd-cb__actions {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}

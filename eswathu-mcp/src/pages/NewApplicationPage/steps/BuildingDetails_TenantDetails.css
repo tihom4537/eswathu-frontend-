@@ -1,0 +1,141 @@
+/* ── Tenant Details ─────────────────────────────────────────── */
+
+.bd-tenant {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bd-tenant__desc {
+  font-size: 16px;
+  color: var(--text-dark);
+  font-weight: 400;
+  margin: 0;
+}
+
+/* ── Table outer (table + add button, 8px gap) ───────────────── */
+.bd-tenant__table-outer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Table ───────────────────────────────────────────────────── */
+.bd-tenant__table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #727272;
+}
+
+/* Header row */
+.bd-tenant__header-row {
+  background: var(--secondary, #f2f2f2);
+  height: 50px;
+}
+
+.bd-tenant__th {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-dark);
+  text-align: left;
+  padding: 15px 10px;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #727272;
+}
+
+.bd-tenant__th:last-child {
+  border-right: none;
+}
+
+.bd-tenant__th--no     { width: 60px; }
+.bd-tenant__th--mobile { width: 175px; }
+.bd-tenant__th--del    { width: 48px; }
+
+/* Data rows */
+.bd-tenant__row {
+  border-top: 1px solid #727272;
+}
+
+.bd-tenant__td {
+  padding: 8px 10px;
+  border-right: 1px solid #666;
+  vertical-align: middle;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  /* allow dropdowns to overflow */
+  overflow: visible;
+  position: relative;
+}
+
+.bd-tenant__td:last-child {
+  border-right: none;
+}
+
+.bd-tenant__td--no {
+  text-align: center;
+  width: 60px;
+}
+
+.bd-tenant__td--mobile {
+  width: 175px;
+}
+
+.bd-tenant__td--rel {
+  overflow: visible;
+}
+
+.bd-tenant__td--del {
+  text-align: center;
+  width: 48px;
+}
+
+/* Inputs / Dropdowns inside cells — strip their own label/border wrappers */
+.bd-tenant__cell-field {
+  width: 100%;
+}
+
+/* ── Add row button ───────────────────────────────────────────── */
+.bd-tenant__add-btn {
+  width: 100%;
+  height: 30px;
+  background: var(--primary-100, #cde5fe);
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--primary, #0263c5);
+}
+
+.bd-tenant__add-btn:hover {
+  background: var(--primary-200, #b3d7fe);
+}
+
+.bd-tenant__add-btn .material-icons-outlined {
+  font-size: 20px;
+}
+
+/* ── Delete button ───────────────────────────────────────────── */
+.bd-tenant__del-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--danger, #c62828);
+}
+
+.bd-tenant__del-btn .material-icons-outlined {
+  font-size: 20px;
+}
+
+/* ── Actions ─────────────────────────────────────────────────── */
+.bd-tenant__actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}

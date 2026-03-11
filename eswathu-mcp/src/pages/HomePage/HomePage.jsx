@@ -72,8 +72,8 @@ const HomePage = ({ onNavigate }) => {
           />
 
           <div className="hp-services__groups">
-            {/* e-Khata */}
-            <HomepageSection icon="file_copy" title="e-Khata">
+            {/* e-Khata related Services */}
+            <HomepageSection icon="file_copy" title="e-Khata related Services">
               <div className="hp-card-grid">
                 <CardHomepage
                   icon="add_circle_outline"
@@ -83,7 +83,7 @@ const HomePage = ({ onNavigate }) => {
                 />
                 <CardHomepage
                   icon="search"
-                  title="Apply for e-khata for properties existing on Panchatantra"
+                  title="Apply for e-khata for properties you are already paying tax for"
                   description="If your property is listed in Panchatantra and tax is already being paid, you can proceed here without creating a new entry"
                 />
                 <CardHomepage
@@ -100,6 +100,16 @@ const HomePage = ({ onNavigate }) => {
                   icon="pending_actions"
                   title="Complete Pending application"
                   description="If your property is listed in Panchatantra and tax is already being paid, you can proceed here without creating a new entry"
+                />
+                <CardHomepage
+                  icon="error_outline"
+                  title="Report an Objection"
+                  description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+                />
+                <CardHomepage
+                  icon="assignment_return"
+                  title="Returned applications (for modifications)"
+                  description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
                 />
               </div>
             </HomepageSection>
@@ -146,12 +156,7 @@ const HomePage = ({ onNavigate }) => {
                 />
                 <CardHomepage
                   icon="download"
-                  title="Download e-Khata"
-                  description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
-                />
-                <CardHomepage
-                  icon="print"
-                  title="Print e-Khata"
+                  title="Download and Print e-Khata"
                   description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
                 />
               </div>
@@ -173,23 +178,12 @@ const HomePage = ({ onNavigate }) => {
               </div>
             </HomepageSection>
 
-            {/* File Objections */}
-            <HomepageSection icon="error_outline" title="File Objections">
+            {/* Reports and Dashboards */}
+            <HomepageSection icon="dashboard" title="Reports and Dashboards">
               <div className="hp-card-grid">
                 <CardHomepage
-                  icon="error_outline"
-                  title="Report an Objection"
-                  description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
-                />
-              </div>
-            </HomepageSection>
-
-            {/* Returned Applications */}
-            <HomepageSection icon="assignment_return" title="Returned applications (for modifications)">
-              <div className="hp-card-grid">
-                <CardHomepage
-                  icon="assignment_return"
-                  title="Returned applications (for modifications)"
+                  icon="dashboard"
+                  title="Reports and Dashboards"
                   description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
                 />
               </div>

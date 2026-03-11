@@ -1,6 +1,15 @@
 // E-Swathu Property Classification — Questionnaire Data
 // Ported from property-classifier-logic (1).html
 
+/**
+ * OPTIONAL_DOCS — maps classification code to an array of doc indices
+ * that are NOT mandatory (no red *). All other doc indices are mandatory.
+ * Empty means all docs for all classifications are mandatory by default.
+ */
+export const OPTIONAL_DOCS = {
+  // e.g. '11A-1': [2]  ← 3rd doc is optional for 11A-1
+};
+
 export const DOCS = {
   '11A-1': [
     'Dishank / Tahsildar Village Station Map',
@@ -96,17 +105,17 @@ export const nodes = {
     question: 'Which of the following best describes you?',
     options: [
       {
-        text: 'An individual / citizen or developer applying for e-khata',
+        text: 'An Individual or organisation',
         next: 'q_region',
       },
       {
-        text: 'A KIADB / KSSIDC approved property owner',
-        sub: 'Karnataka Industrial Areas Development Board / Karnataka State Small Industries Development Corporation',
-        next: 'r_11a7',
+        text: 'Govt. property',
+        next: 'q_govt_type',
       },
       {
-        text: 'A Government body / board / corporation / authority',
-        next: 'q_govt_type',
+        text: 'Industry',
+        sub: 'KIADB / KSSIDC — Karnataka Industrial Areas Development Board / Karnataka State Small Industries Development Corporation',
+        next: 'r_11a7',
       },
     ],
   },
@@ -116,10 +125,6 @@ export const nodes = {
     label: 'Government Property',
     question: 'Which type of government property is this?',
     options: [
-      {
-        text: 'Sites or Buildings of Corporation / Board / Limited / Authority',
-        next: 'r_11a15',
-      },
       {
         text: 'Sites or Buildings owned by Central Government / State Government / Local Bodies within the GP (region)',
         next: 'r_11a13',
@@ -192,6 +197,10 @@ export const nodes = {
         text: 'Housing Schemes (like RGRHCL)',
         next: 'r_11a2',
       },
+      {
+        text: 'Sites or Buildings of Corporation / Board / Limited / Authority',
+        next: 'r_11a15',
+      },
     ],
   },
 
@@ -201,11 +210,11 @@ export const nodes = {
     question: 'Answer both: (1) Has the land been converted? (2) Does it have a layout plan / building permit?',
     options: [
       {
-        text: 'Yes — the land has been converted and it has a layout plan / building permit',
+        text: 'The land has been converted and it has a layout plan / building permit',
         next: 'q_site_or_building_yes',
       },
       {
-        text: 'No — converted or non-converted land with no layout plan',
+        text: 'Converted or non-converted land with no layout plan',
         next: 'q_property_type_no',
       },
     ],

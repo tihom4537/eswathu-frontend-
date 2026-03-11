@@ -53,3 +53,10 @@
 .error-card__ok:hover {
   opacity: 0.85;
 }
+
+.error-card__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}

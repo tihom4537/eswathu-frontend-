@@ -1,0 +1,40 @@
+/* ── Building Area Details ──────────────────────────────────── */
+
+.bd-area {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bd-area__row {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.bd-area__input {
+  flex: 1;
+}
+
+.bd-area__actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.bd-area__success {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bd-area__success-icon {
+  font-size: 18px;
+  color: var(--success);
+}
+
+.bd-area__success-text {
+  font-size: 16px;
+  color: var(--success);
+  font-weight: 400;
+}
