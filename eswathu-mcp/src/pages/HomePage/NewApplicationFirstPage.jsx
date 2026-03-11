@@ -12,7 +12,7 @@ import CaptionMessage from '../../components/CaptionMessage/CaptionMessage';
 import { nodes, DOCS } from './classifierData';
 import './NewApplicationFirstPage.css';
 
-const NewApplicationFirstPage = ({ onNavigate, username = '' }) => {
+const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationConfirmed }) => {
   const [history, setHistory] = useState([]);
   const [currentId, setCurrentId] = useState('q_who');
   const [selectedOption, setSelectedOption] = useState(null);
@@ -50,6 +50,7 @@ const NewApplicationFirstPage = ({ onNavigate, username = '' }) => {
 
   const handleConfirm = () => {
     setIsConfirmed(true);
+    onClassificationConfirmed?.(node.code);
   };
 
   const resultDocs = isResult && !node.noDoc ? (DOCS[node.code] || []) : [];

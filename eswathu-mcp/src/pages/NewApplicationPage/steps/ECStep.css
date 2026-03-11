@@ -2,7 +2,7 @@
 
 .ec-page {
   min-width: 1280px;
-  background: var(--secondary);
+  background: var(--white);
   min-height: 100vh;
 }
 
@@ -60,29 +60,36 @@
 
 .ec-s51__info-block {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   align-items: flex-start;
   background: var(--white);
   border: 1px solid var(--danger);
-  border-radius: var(--radius-xs);
-  padding: 16px;
+  border-radius: var(--radius-md);
+  padding: 15px;
+}
+
+.ec-s51__info-icon-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 2px;
 }
 
 .ec-s51__info-icon {
   font-size: 30px;
   color: var(--danger);
-  flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .ec-s51__info-text {
+  flex: 1;
   font-family: var(--font-family);
-  font-size: 14px;
-  line-height: 22px;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.25px;
   color: var(--text-dark);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .ec-s51__info-text p {
@@ -91,18 +98,17 @@
 
 .ec-s51__info-link {
   color: var(--primary);
-  font-weight: 500;
+  text-decoration: none;
+}
+
+.ec-s51__info-link:hover {
   text-decoration: underline;
 }
 
 /* ── Registration Deed dropdown ─────────────────────────────── */
 
 .ec-s51__deed-wrap {
-  width: 500px;
-}
-
-.ec-s51__deed-dropdown {
-  width: 100%;
+  width: 300px;
 }
 
 /* ── Fetch row ───────────────────────────────────────────────── */
@@ -122,12 +128,12 @@
 }
 
 .ec-s51__input-wrap {
-  width: 300px;
+  width: 358px;
 }
 
 .ec-s51__fetch-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 }
 
@@ -139,15 +145,12 @@
 
 .ec-s51__table-title {
   font-family: var(--font-family);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 500;
   color: var(--text-dark);
   margin: 0;
 }
 
-.ec-s51__summary-table {
-  width: 100%;
-}
 
 .ec-s51__kaveri-table {
   width: 100%;
@@ -320,65 +323,18 @@
   width: 278px;
 }
 
-/* ── Kaveri table reuse (mirror from SaleDeedDetailsPage) ───── */
+/* ── Kaveri table — scoped overrides to fix cascade conflict with SaleDeedDetailsPage.css ── */
 
-.kaveri-table {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.kaveri-table__label,
-.kaveri-table__value {
-  padding: 10px;
-  font-family: var(--font-family);
-  font-size: 16px;
-  line-height: 20px;
-  letter-spacing: 0.1px;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-.kaveri-table__label {
-  width: 212px;
-  flex-shrink: 0;
-  background: var(--secondary);
-  font-weight: 500;
-  color: var(--text-dark);
-  border-right: 1px solid #808080;
-}
-
-.kaveri-table__value {
-  flex: 1;
-  min-width: 0;
-  background: var(--white);
-  font-weight: 500;
-  color: #666;
-  border-right: 1px solid #212121;
-}
-
-.kaveri-table__value--last {
-  border-right: none;
-}
-
-.kaveri-table__row {
-  display: flex;
+.ec-s51__kaveri-table .kaveri-table__row {
+  height: auto;
   min-height: 40px;
-  border: 1px solid #666;
+  overflow: visible;
+  align-items: stretch;
 }
 
-.kaveri-table__row--mid {
-  border-top: none;
-}
-
-.kaveri-table__registration {
-  display: flex;
-  flex-direction: column;
-}
-
-.kaveri-table__spacer {
-  height: 30px;
-  width: 100%;
+.ec-s51__kaveri-table .kaveri-table__label,
+.ec-s51__kaveri-table .kaveri-table__value {
+  overflow: visible;
 }
 
 /* ═══ SECTION 5.4 — Draft Khata ═══════════════════════════ */

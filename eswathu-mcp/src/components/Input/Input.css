@@ -3,7 +3,7 @@
 .input-field {
   display: flex;
   flex-direction: column;
-  width: 358px;
+  width: 100%;
 }
 
 /* Label row */

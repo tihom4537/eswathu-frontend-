@@ -76,6 +76,9 @@ function App() {
   /* Village name from Step 1 — passed to PropertyClassificationPage */
   const [step1Village, setStep1Village] = useState('');
 
+  /* Classification confirmed in Step 0 questionnaire — passed to PropertyClassificationPage */
+  const [step0Classification, setStep0Classification] = useState('');
+
   /**
    * resetStepsFrom — removes BC completion flags and increments
    * pageResetKeys for every route at or after startRouteIdx.
@@ -200,6 +203,7 @@ function App() {
             <PropertyClassificationPage
               onNavigate={handleNavigate}
               step1Village={step1Village}
+              step0Classification={step0Classification}
               {...navProps(3)}
             />
           </div>
@@ -218,7 +222,7 @@ function App() {
   }
 
   if (page === 'new-application') {
-    return <NewApplicationFirstPage onNavigate={handleNavigate} />;
+    return <NewApplicationFirstPage onNavigate={handleNavigate} onClassificationConfirmed={setStep0Classification} />;
   }
 
   if (page === 'citizen-home') {

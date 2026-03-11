@@ -5,7 +5,6 @@ import StepHeader from '../../../components/StepHeader/StepHeader';
 import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import InfoBox from '../../../components/InfoBox/InfoBox';
-import RadioButton from '../../../components/RadioButton/RadioButton';
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import Input from '../../../components/Input/Input';
 import Button from '../../../components/Button/Button';
@@ -132,14 +131,6 @@ const ECStep = ({
     setS52Visible(true);
   };
 
-  const handleEditValidate = () => {
-    setS51Saved(false);
-    setS52Visible(false);
-    setChecked1(false);
-    setChecked2(false);
-    setIsPageComplete(false);
-  };
-
   const handleVerify = () => {
     setEcView('preview');
   };
@@ -219,7 +210,9 @@ const ECStep = ({
 
             {/* EC requirements information block — red outline */}
             <div className="ec-s51__info-block">
-              <span className="material-icons-outlined ec-s51__info-icon">info</span>
+              <div className="ec-s51__info-icon-wrap">
+                <span className="material-icons-outlined ec-s51__info-icon">info</span>
+              </div>
               <div className="ec-s51__info-text">
                 <p>
                   Encumbrance Certificate (Form 15) from at least one day before date of
@@ -227,17 +220,15 @@ const ECStep = ({
                   <a href="#" className="ec-s51__info-link">To know more click here</a>
                 </p>
                 <p>
-                  <strong>Note:</strong> If your registered deed is before 01.04.2004, then you will have to give two ECs.
+                  <strong>Note:</strong> If your registered deed is before 01.04.2004, then
+                  you will have to give two ECs.
                 </p>
+                <p>i. EC from 01.04.2004 until issued at least in the last 15 days are accepted.</p>
+                <p>ii. EC from at least one date before your registration date until 31.03.2004.</p>
                 <p>
-                  i. EC from 01.04.2004 until issued at least in the last 15 days are accepted.
-                </p>
-                <p>
-                  ii. EC from at least one date before your registration date until 31.03.2004.
-                </p>
-                <p>
-                  (For example, if your Regd Deed is registered on 17-08-1998, then obtain the EC from 16-08-1998.
-                  Note: if your Regd Deed is not in the submitted EC, then the application won't be processed.)
+                  (For example, if your Regd Deed is registered on 17-08-1998, then obtain the
+                  EC from 16-08-1998. Note: if your Regd Deed is not in the submitted EC, then
+                  the application won't be processed.)
                 </p>
               </div>
             </div>
@@ -252,7 +243,6 @@ const ECStep = ({
                 onChange={(e) => setSelectedDeed(e.target.value)}
                 placeholder="Choose Registration Deed"
                 disabled={s51Saved}
-                className="ec-s51__deed-dropdown"
               />
             </div>
 
@@ -303,23 +293,15 @@ const ECStep = ({
 
                 {/* EC Summary table */}
                 <Table
-                  columns={[
-                    'EC Number',
-                    'From Date',
-                    'To Date',
-                    'Total Deeds',
-                    'Registration Number',
-                    'Is Registration Latest',
-                  ]}
+                  columns={['EC Number', 'From Date', 'To Date', 'Total Deeds', 'Registration Number', 'Is Registration Latest']}
                   rows={[[
                     MOCK_EC.ecNumber,
                     MOCK_EC.fromDate,
                     MOCK_EC.toDate,
-                    MOCK_EC.totalDeeds,
+                    String(MOCK_EC.totalDeeds),
                     MOCK_EC.registrationNumber,
                     MOCK_EC.isLatest,
                   ]]}
-                  className="ec-s51__summary-table"
                 />
 
                 {/* Kaveri EC Document Data — key-value table */}

@@ -25,6 +25,26 @@
   gap: 24px;
 }
 
+/* ── Stepper overrides (steps banner only) ────────────── */
+
+.new-app-page__steps-bg .stepper {
+  background: transparent;
+  border-bottom: none;
+}
+
+.new-app-page__steps-bg .stepper__circle--upcoming {
+  border-color: var(--text-dark);
+  background: transparent;
+}
+
+.new-app-page__steps-bg .stepper__number {
+  color: var(--text-dark);
+}
+
+.new-app-page__steps-bg .stepper__label {
+  color: var(--text-dark);
+}
+
 /* ── Sections area ────────────────────────────────────── */
 
 .new-app-page__sections {

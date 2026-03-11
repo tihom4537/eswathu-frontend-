@@ -37,6 +37,7 @@
 /* ── Open ───────────────────────────────────────────── */
 
 .section-box--open {
+  background: var(--white);
   border: 1px solid #CED4DA;
   box-shadow: var(--shadow-card);
 }

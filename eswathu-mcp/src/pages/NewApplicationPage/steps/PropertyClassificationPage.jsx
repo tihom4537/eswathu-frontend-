@@ -118,6 +118,7 @@ const PropertyClassificationPage = ({
   bcStepNames = [],
   completionResetKey = 0,
   step1Village = '',
+  step0Classification = '',
 }) => {
   const [isPageComplete, setIsPageComplete] = useState(false);
 
@@ -158,6 +159,13 @@ const PropertyClassificationPage = ({
 
   /* ── 4.1 — Classification ───────────────────────────────── */
   const [classification, setClassification] = useState('');
+
+  /* Auto-fill from step 0 questionnaire result (only when field is empty) */
+  useEffect(() => {
+    if (step0Classification) {
+      setClassification((prev) => prev || step0Classification);
+    }
+  }, [step0Classification]); // eslint-disable-line
 
   /* ── 4.1 — Doc uploads ──────────────────────────────────── */
   const [docUploads, setDocUploads] = useState({});
