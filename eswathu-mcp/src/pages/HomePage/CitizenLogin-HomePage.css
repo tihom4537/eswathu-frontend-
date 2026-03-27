@@ -5,7 +5,7 @@
   flex-direction: column;
   min-height: 100vh;
   min-width: 1280px;
-  background: var(--white);
+  background: #ffffff;
 }
 
 .citizen-home-page__content {

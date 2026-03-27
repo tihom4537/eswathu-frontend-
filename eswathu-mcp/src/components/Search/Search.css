@@ -43,7 +43,7 @@
 /* Focused */
 .search--focused {
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.48);
+  box-shadow: 0 0 0 4px rgba(2, 76, 151, 0.48);
 }
 
 /* Filled */

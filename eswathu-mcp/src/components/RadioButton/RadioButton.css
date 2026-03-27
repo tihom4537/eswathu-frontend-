@@ -42,7 +42,7 @@
 }
 
 .radio__input:focus-visible + .radio__circle {
-  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.25);
+  box-shadow: 0 0 0 4px rgba(2, 76, 151, 0.25);
 }
 
 .radio--disabled {

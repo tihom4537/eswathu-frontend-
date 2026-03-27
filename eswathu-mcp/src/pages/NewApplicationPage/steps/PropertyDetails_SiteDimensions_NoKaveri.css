@@ -1,0 +1,8 @@
+/* ══════════════════════════════════════════════════════════
+   No-Kaveri additions for Site Dimension Details
+   ══════════════════════════════════════════════════════════ */
+
+/* Single calculated area card — constrained to ~60% width */
+.pd-sd__nk-single-card {
+  max-width: 60%;
+}

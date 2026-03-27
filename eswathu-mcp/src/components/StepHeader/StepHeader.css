@@ -2,15 +2,16 @@
 
 .step-header {
   width: 100%;
-  background: var(--secondary);
-  padding: 32px 40px;
+  background: var(--secondary);   /* #f2f2f2 */
+  padding: 50px 40px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .step-header__inner {
-  max-width: var(--content-max-width);
-  margin: 0 auto;
+  width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 32px;
 }
 
@@ -20,6 +21,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+  min-width: 0;
 }
 
 .step-header__step {
@@ -37,66 +39,66 @@
   font-weight: 500;
   font-size: 40px;
   line-height: 48px;
-  color: var(--primary);
+  color: #024c97;
   margin: 0;
 }
 
 /* ── Right-side container ───────────────────────────────── */
 .step-header__right {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   flex-shrink: 0;
 }
 
-/* ── Arrow button ────────────────────────────────────────── */
+/* ── Arrow button — plain icon, no circle ────────────────── */
+/* Matches Figma Arrow component: ~36×35px, 4 states, no border */
 .step-header__arrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1.5px solid var(--primary);
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 0;
   background: transparent;
-  color: var(--primary);
+  padding: 0;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   outline: none;
+  transition: none;
 }
 
+/* Default state: slightly muted primary */
 .step-header__arrow .material-icons-outlined {
-  font-size: 22px;
-  color: var(--primary);
-  transition: color 0.15s ease;
+  font-size: 32px;
+  color: rgba(2, 76, 151, 0.65);
+  transition: color 0.12s ease;
 }
 
-.step-header__arrow:hover:not(:disabled) {
-  background: var(--primary);
-}
-
+/* Hover: full primary */
 .step-header__arrow:hover:not(:disabled) .material-icons-outlined {
-  color: var(--white);
+  color: var(--primary);
 }
 
-.step-header__arrow:active:not(:disabled) {
-  background: #0050A0;
-  border-color: #0050A0;
-}
-
+/* Pressed: primary/700 */
 .step-header__arrow:active:not(:disabled) .material-icons-outlined {
-  color: var(--white);
+  color: #024c97;
 }
 
 .step-header__arrow:focus-visible {
-  box-shadow: var(--focus-ring);
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
+.step-header__arrow:focus-visible .material-icons-outlined {
+  color: var(--primary);
+}
+
+/* Disabled state */
 .step-header__arrow--disabled,
 .step-header__arrow:disabled {
-  border-color: var(--neutral-200);
-  background: transparent;
   cursor: not-allowed;
   pointer-events: none;
 }

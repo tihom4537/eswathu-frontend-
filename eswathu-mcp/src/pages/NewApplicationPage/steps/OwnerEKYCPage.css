@@ -4,19 +4,9 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--white, #fff);
+  background: #ffffff;
 }
 
-/* ── eKYC Error Overlay ────────────────────────────────── */
-.ekyc-error-overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
 
 .ekyc-page__sections {
   width: 100%;
@@ -35,9 +25,13 @@
 
 .ekyc-s21-box .section-box__body {
   padding: 32px 24px;
+}
+
+/* Inner layout — all direct children spaced evenly */
+.ekyc-s21 {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 20px;
 }
 
 .ekyc-s21__subsection {
@@ -141,36 +135,31 @@
   padding: 0 15px;
 }
 
-/* ── New owner input table ─────────────────────────────── */
+/* ── New owner input table (Table component) ───────────── */
 
 .ekyc-s21__new-owner-section {
   padding-left: 15px;
 }
 
-.ekyc-s21__new-owner-table-wrap {
+/* Table width + column sizing */
+.ekyc-s21__new-owner-table {
   width: 766px;
+  max-width: 766px;
 }
 
-.ekyc-s21__tr--input .ekyc-s21__td {
-  height: 73px;
-  vertical-align: middle;
+.ekyc-s21__new-owner-table .data-table__th:first-child,
+.ekyc-s21__new-owner-table .data-table__td:first-child {
+  width: 56px;
+  text-align: center;
 }
 
-.ekyc-s21__td--input {
-  padding: 15px 10px;
+.ekyc-s21__new-owner-table .data-table__th:last-child,
+.ekyc-s21__new-owner-table .data-table__td:last-child {
+  width: 50px;
+  text-align: center;
 }
 
-.ekyc-s21__input-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.ekyc-s21__input-wrap .ekyc-s21__name-input {
-  flex: 1;
-}
-
+/* Remove row button (inside the 3rd cell) */
 .ekyc-s21__remove-row-btn {
   display: flex;
   align-items: center;
@@ -181,8 +170,8 @@
   border-radius: 50%;
   background: transparent;
   cursor: pointer;
-  flex-shrink: 0;
   padding: 0;
+  margin: auto;
 }
 
 .ekyc-s21__remove-row-btn .material-icons-outlined {
@@ -190,71 +179,36 @@
   color: var(--danger, #b7131a);
 }
 
-.ekyc-s21__remove-row-btn:hover {
-  background: var(--danger-50, #fdeaea);
-}
-
-.ekyc-s21__name-input {
-  width: 100%;
-  height: 43px;
-  border: 1px solid var(--neutral-400, #c6c6c6);
-  border-radius: 8px;
-  padding: 12px;
-  font-family: var(--font-family);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  letter-spacing: 0.25px;
-  color: var(--text-dark);
-  background: #fff;
-  outline: none;
-  box-sizing: border-box;
-}
-
-.ekyc-s21__name-input:focus {
-  border-color: var(--primary, #0263c5);
-}
-
-.ekyc-s21__name-input:disabled {
-  background: var(--neutral-100, #f5f5f5);
-  color: var(--neutral-600, #666);
+.ekyc-s21__remove-row-btn:disabled {
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
-.ekyc-s21__name-input::placeholder {
-  color: var(--neutral-400, #c6c6c6);
+.ekyc-s21__remove-row-btn:not(:disabled):hover {
+  background: var(--danger-50, #fdeaea);
 }
 
-.ekyc-s21__add-row-btn {
-  width: 100%;
-  height: 30px;
+/* Add row icon button — sits inside Table's data-table__action bar (already blue/styled) */
+.ekyc-s21__add-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--primary-100, #cde5fe);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 8px;
+  padding: 0;
 }
 
-.ekyc-s21__add-row-btn .material-icons-outlined {
-  font-size: 24px;
-  color: var(--text-dark);
-}
-
-.ekyc-s21__add-row-btn:hover {
-  background: var(--primary-200, #a3cdf8);
-}
-
-.ekyc-s21__add-row-btn--disabled {
+.ekyc-s21__add-icon-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.ekyc-s21__add-row-btn--disabled:hover {
-  background: var(--primary-100, #cde5fe);
+.ekyc-s21__add-icon-btn .material-icons-outlined {
+  font-size: 24px;
+  color: var(--text-dark);
 }
+
 
 /* ── Success message after adding owners ───────────────── */
 
@@ -296,7 +250,6 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  min-height: 400px;
 }
 
 .ekyc-s22__instruction {
@@ -521,6 +474,11 @@
   justify-content: space-between;
   padding: 10px 25px;
   border-bottom: 1px solid var(--neutral-200, #e0e0e0);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--white, #fff);
+  border-radius: 8px 8px 0 0;
 }
 
 .ekyc-popup__title {
@@ -604,10 +562,16 @@
   min-width: 0;
 }
 
+.ekyc-popup__mobile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .ekyc-popup__mobile-row {
   display: flex;
   gap: 20px;
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 .ekyc-popup__field--mobile {
@@ -617,7 +581,7 @@
 
 .ekyc-popup__get-otp-btn {
   flex-shrink: 0;
-  margin-bottom: 2px;
+  margin-top: 24px; /* offset past label (20px line-height + 4px margin-bottom) to align with input box */
 }
 
 .ekyc-popup__field--otp {
@@ -629,14 +593,6 @@
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-}
-
-.ekyc-popup__otp-timer {
-  font-family: var(--font-family);
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--danger);
-  margin: 4px 0 0 0;
 }
 
 /* ── Footer ────────────────────────────────────────────── */
@@ -751,6 +707,30 @@
   display: flex;
   gap: 10px;
   padding-left: 15px;
+}
+
+/* ── New owner mismatch placeholder ─────────────────────── */
+
+.ekyc-s23__new-mismatch-placeholder {
+  padding: 16px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ekyc-s23__placeholder-row {
+  font-family: var(--font-family);
+  font-size: 16px;
+  color: var(--text-primary, #212121);
+  margin: 0;
+}
+
+.ekyc-s23__placeholder-note {
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--neutral-600, #727272);
+  font-style: italic;
+  margin: 8px 0 0 0;
 }
 
 /* ── Document upload section ───────────────────────────── */
@@ -868,7 +848,7 @@
   width: 45px;
   height: 44px;
   border-radius: var(--radius-md, 8px);
-  border: 1px solid var(--primary, #0263c5);
+  border: 1px solid var(--primary, #024C97);
   background: transparent;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -877,15 +857,15 @@
 
 .ekyc-view-icon .material-icons-outlined {
   font-size: 22px;
-  color: var(--primary, #0263c5);
+  color: var(--primary, #024C97);
 }
 
 .ekyc-view-icon:hover:not(:disabled) {
-  background: rgba(2, 99, 197, 0.08);
+  background: rgba(2, 76, 151, 0.08);
 }
 
 .ekyc-view-icon:active:not(:disabled) {
-  background: rgba(2, 99, 197, 0.16);
+  background: rgba(2, 76, 151, 0.16);
 }
 
 .ekyc-view-icon--inactive {
@@ -913,7 +893,7 @@
   align-items: center;
   gap: 20px;
   padding: 8px 24px;
-  border: 1px solid var(--primary, #0263c5);
+  border: 1px solid var(--primary, #024C97);
   border-radius: var(--radius-md, 8px);
   background: var(--white, #fff);
   width: 171px;

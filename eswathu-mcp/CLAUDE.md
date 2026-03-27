@@ -27,7 +27,7 @@ Never generate raw divs/inputs/buttons when the equivalent component exists.
 | Any icon button                               | `<IconButton />`                                        |
 | Top navigation bar                            | `<NavigationBar />`                                     |
 | Footer                                        | `<Footer />`                                            |
-| Page title + breadcrumb area                  | `<PageHeading />`                                       |
+| Page title area                               | `<PageHeading />`                                       |
 | Step indicator (horizontal)                   | `<Stepper />`                                           |
 | Step indicator (vertical)                     | `<VerticalStepper />`                                   |
 | Collapsible section / accordion               | `<SectionBox />`                                        |
@@ -42,6 +42,7 @@ Never generate raw divs/inputs/buttons when the equivalent component exists.
 | Homepage card                                 | `<CardHomepage />`                                      |
 | Accordion list item                           | `<AccordionItem />`                                     |
 | Contextual help / sample image tooltip        | `<Tooltip />`                                           |
+| Inline definition (underlined term + hover)   | `<Tooltip variant="definition" />`                      |
 | Step page grey banner (step + title)          | `<StepHeader />`                                        |
 | Date picker field                             | `<DatePicker />` — ask user if not in src/components/  |
 | File upload / view file                       | `<ViewFile />` — ask user if not in src/components/    |
@@ -130,6 +131,33 @@ import Footer from '../components/Footer/Footer';
 - Never hardcode hex colors — always use token variables
 - Min page width: 1280px
 - Font: Noto Sans (loaded via CDN in index.html)
+
+### Field + Button Row Alignment Rule
+When placing a button (or any action element) next to a labeled `<Input>` or `<Dropdown>` in a flex row:
+- **NEVER use `align-items: flex-end`** — when a validation caption appears below the field, the field grows and `flex-end` pushes the button down past the input box, breaking visual alignment
+- **Always use `align-items: flex-start`** on the flex row
+- **Add `margin-top: 24px`** to the button/action container — this offsets it past the label area (20px label line-height + 4px `margin-bottom` = 24px) so it visually aligns with the top of the input box
+- The button will now stay locked to the input box regardless of whether a caption is showing
+
+```css
+/* ✓ Correct pattern */
+.my-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.my-row .btn,
+.my-row .action-container {
+  margin-top: 24px;
+}
+
+/* ✗ Wrong — button shifts down when caption appears */
+.my-row {
+  align-items: flex-end;
+}
+```
+
+Exception: `align-items: flex-end` is acceptable when the field is `frozen` (captions never appear on frozen fields) or when there is no label above the field.
 
 ### Auto Layout / Fill Container Rule
 - Never use hardcoded pixel widths on components that should fill their parent — always use `width: 100%`
@@ -243,6 +271,41 @@ If the user says "my Figma [ComponentName] was updated":
 - Closing a modal restores the page to exactly the state before it opened
 - Always use `<ErrorMessageCard />` for error popups — never build custom error UI
 
+## Inline Definition Tooltip Pattern
+
+Use `<Tooltip variant="definition">` to add Wikipedia-style hover definitions to specific terms in any text.
+
+### When to use
+- A term in a question, option, label, or body text has a meaning that may not be obvious to citizens
+- The user provides a definition for a specific word or phrase
+- Never add definitions speculatively — only add when the user confirms the term and its definition
+
+### How it works
+- The term renders as plain text with a **blue dotted underline** (`text-decoration-color: var(--primary)`)
+- Hovering shows a plain white definition box below the term (no icon, no image)
+- Cursor remains `default` — no question-mark cursor
+- Definition box: `position: absolute`, `width: 520px`, white background, 1px border, subtle shadow
+
+### Usage
+```jsx
+<Tooltip variant="definition" definition="The full definition text here.">
+  Term Name
+</Tooltip>
+```
+
+### GLOSSARY pattern (for questionnaire pages)
+- Store all terms and definitions in the page's data file (e.g. `classifierData.js`) as:
+  ```js
+  export const GLOSSARY = {
+    'Exact Term': 'Definition text.',
+  };
+  ```
+- Use the `renderWithDefs(text)` helper (defined in the page file) to auto-highlight terms anywhere in question text or option text
+- `renderWithDefs` splits a string on GLOSSARY keys using a dynamic regex and wraps matches in `<Tooltip variant="definition">`
+- Returns the original string unchanged if no GLOSSARY terms are found — safe to call on any string
+- Terms are matched case-sensitively — the key in GLOSSARY must match exactly how the term appears in the text
+- Adding a new definition requires only one change: add the key/value to `GLOSSARY`
+
 ## Kaveri Key-Value Table Pattern
 When displaying read-only key-value data from Kaveri (or similar API responses), use the `kaveri-table` CSS pattern from `SaleDeedDetailsPage.css`:
 
@@ -301,15 +364,6 @@ PageNavigation component (src/components/PageNavigation/PageNavigation.jsx)
 - Never reset useState values on back/forward navigation
 - Pages always show exactly as the user left them
 
-### Breadcrumb Navigation
-- Every step page must include the Breadcrumb component 
-  (src/components/Breadcrumb/Breadcrumb.jsx)
-- Place directly below PageNavigation arrows, above PageHeading
-- Completed steps are always clickable to jump directly
-- Incomplete/future steps are never clickable
-- Clicking any completed step preserves all state — never resets
-- Breadcrumb reflects current step and completed steps in real time
-- While a step is being edited, future steps in breadcrumb are not clickable
 
 ## Input Field Validation Rules
 Every Input field must have an appropriate `inputType` prop applied.
@@ -383,3 +437,115 @@ Back arrow behaviour inside ECStep:
 - 'preview' → back goes to 'main' (NOT previous step)
 - 'final' → back goes to 'preview'
 - 'main' → back goes to previous step (Step 4) as normal
+
+---
+
+## Application Flow — Canonical Page Structure
+
+### Step 2 — Owner eKYC (OwnerEKYCPage.jsx)
+
+**Section 2.1 — Owner Details**
+
+Kaveri flow:
+- Pre-filled owner table from Kaveri (read-only, No. | Owner name)
+- Red InfoBox (always visible): "If owner name is spelled wrong, missing, clubbed together by mistake or there are new owner/s to be added, please add them below."
+- "Do you want to add new owners?" Yes/No radio
+- When Yes selected → second red InfoBox: "When you add new owners, these names will be considered by ekyc (not the ones fetched from Kaveri Deed Details)"
+- When Yes selected → add-owner table with Input fields + add row button
+
+No-Kaveri flow:
+- Direct owner input table (no pre-fill)
+- Same add/remove row pattern
+
+**Section 2.3 — Name Mismatch (two distinct cases)**
+
+Case 1: eKYC name ≠ Kaveri-fetched owner name
+- Table: Kaveri name | eKYC name
+- Options: Accept eKYC / Accept Kaveri / Flag as spelling difference (ONLY this case has spelling option)
+
+Case 2: eKYC name ≠ manually added owner name
+- Occurs when: (a) Kaveri flow + extra owner added, OR (b) No-Kaveri flow (all owners entered manually)
+- Table: Added name | eKYC name
+- Options: Accept eKYC / Accept entered name (NO spelling option)
+
+Rule: Kaveri-fetched owner names are NEVER considered for eKYC — only manually added names go through eKYC. So cases 1 and 2 are mutually exclusive per owner.
+
+### Step 3 — Property Details (PropertyDetailsPage.jsx)
+
+**Unit flow matrix (Section 3.2A — Area Details):**
+- Sq.Ft → conversion to Sq.Mt shown → Accept/Reject → Site Dimensions → Checkbandi
+- Sq.Mt → no conversion needed → Accept/Reject → Site Dimensions → Checkbandi
+- Gunta / Acre / Cent → conversion to Sq.Mt shown → Accept/Reject → **Site Dimensions SKIPPED** → Checkbandi
+
+All three will also have No-Kaveri variants (user to provide prompts).
+
+**Checkbandi (Section 3.2C):**
+- Pre-filled from Kaveri (frozen)
+- Only editable if Kaveri returns empty/null values
+
+### Step 4 — Property Classification (PropertyClassificationPage.jsx)
+
+Building Details is NOT a separate route — it lives inside PropertyClassificationPage.
+
+**Type = Site OR Land to be Converted** → one shared building details flow (category irrelevant)
+
+**Type = Building** → category determines which of 10 flows:
+- General building (Residential, Commercial, etc.)
+- 9 specific flows: Multi-Ownership Building, Apartment/flat, Villament, Tenement, Row House, Multi-storied building, Service apartment/flat, Mall/Multiplex, Villa
+
+---
+
+## Kannada (ಕನ್ನಡ) Language Support
+
+### How it works
+- Language state lives in `src/context/LanguageContext.jsx` — `LanguageProvider` wraps the entire app in `App.jsx`
+- The ಕನ್ನಡ / English toggle buttons in NavigationBar's topbar are already wired to `setLang('kn')` / `setLang('en')`
+- Translation strings live in `src/i18n/namespaces/` — one file per step/page
+
+### Namespace → file mapping
+| Namespace | File | Covers |
+|---|---|---|
+| `common` | `src/i18n/namespaces/common.js` | NavBar, Footer, shared buttons, breadcrumb labels |
+| `home` | `src/i18n/namespaces/home.js` | HomePage, LoginPage, CitizenLogin-HomePage |
+| `newAppFirst` | `src/i18n/namespaces/newAppFirst.js` | NewApplicationFirstPage (questionnaire) |
+| `step1` | `src/i18n/namespaces/step1.js` | SaleDeedDetailsPage |
+| `step2` | `src/i18n/namespaces/step2.js` | OwnerEKYCPage |
+| `step3` | `src/i18n/namespaces/step3.js` | PropertyDetailsPage |
+| `step4` | `src/i18n/namespaces/step4.js` | PropertyClassificationPage + BuildingDetails |
+| `step5` | `src/i18n/namespaces/step5.js` | ECStep |
+
+### Translation rules — ALWAYS follow these
+1. **Never translate on your own.** Do not invent, guess, or auto-generate Kannada strings. Wait for the user to provide an MD file with the Kannada content for each namespace.
+2. **English strings are the source of truth.** When building or updating any component, write all visible strings as English keys in the `en` object of the matching namespace file first.
+3. **Kannada strings come from the user's MD file.** When the user provides a translations MD, populate the matching `kn` object with exactly the strings given — do not alter wording.
+4. **Always use `useTranslation` in components.** No hardcoded English strings in JSX once a namespace has Kannada support. Pattern:
+   ```jsx
+   import { useTranslation } from '../../i18n';
+   // inside the component:
+   const { t } = useTranslation('step1');
+   // in JSX:
+   <label>{t('fieldLabel')}</label>
+   ```
+5. **`t(key)` auto-falls back to English** if a Kannada key is missing — so it is safe to add `useTranslation` to a component before the Kannada strings are filled in.
+6. **One key per atomic string.** Do not concatenate translated fragments — each full phrase or label is one key. This avoids grammatical word-order issues between languages.
+7. **Dynamic values go in via interpolation, not key splitting:**
+   ```js
+   // en: { greeting: 'Welcome, {name}' }
+   t('greeting').replace('{name}', username)
+   ```
+8. **Glossary/definition terms** (used with `<Tooltip variant="definition">`) also need Kannada equivalents when the user provides them — store them in the namespace file alongside regular keys, prefixed `def_`:
+   ```js
+   en: { def_khata: 'A document that records ...' }
+   kn: { def_khata: 'ಖಾತೆ ಎಂಬುದು ...' }
+   ```
+
+### Workflow when user provides a translation MD
+1. Identify which namespace the MD covers (user will usually say which step/page).
+2. Populate `kn: { ... }` in the matching namespace file with exactly the provided strings.
+3. Add `useTranslation(namespace)` + `t('key')` calls inside the step component, replacing hardcoded English strings.
+4. Do not modify any other files unless the English `en` keys also need to be added first.
+
+### Do NOT
+- Do not create separate Kannada page/component files — the same components render both languages via `t(key)`
+- Do not add a `lang` prop to individual components — they all read from context via `useLanguage()` or `useTranslation()`
+- Do not duplicate any component logic for Kannada — only the strings change

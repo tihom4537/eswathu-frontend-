@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './index.css';
+import { LanguageProvider } from './context/LanguageContext';
 import HomePage from './pages/HomePage/HomePage';
 import LoginPage from './pages/HomePage/LoginPage';
 import CitizenLoginHomePage from './pages/HomePage/CitizenLogin-HomePage';
@@ -9,6 +10,7 @@ import OwnerEKYCPage from './pages/NewApplicationPage/steps/OwnerEKYCPage';
 import PropertyDetailsPage from './pages/NewApplicationPage/steps/PropertyDetailsPage';
 import PropertyClassificationPage from './pages/NewApplicationPage/steps/PropertyClassificationPage';
 import ECStep from './pages/NewApplicationPage/steps/ECStep';
+import GlossaryPage from './pages/GlossaryPage/GlossaryPage';
 
 /* ─── New Application flow config ───────────────────────────── */
 
@@ -75,6 +77,7 @@ function App() {
 
   /* Village name from Step 1 — passed to PropertyClassificationPage */
   const [step1Village, setStep1Village] = useState('');
+  const [step1HasKaveri, setStep1HasKaveri] = useState(true);
 
   /* Classification confirmed in Step 0 questionnaire — passed to PropertyClassificationPage */
   const [step0Classification, setStep0Classification] = useState('');
@@ -139,6 +142,8 @@ function App() {
   const handleBack = (currentRouteIdx) => {
     if (currentRouteIdx > 0) {
       handleNavigate(ROUTE_ORDER[currentRouteIdx - 1].key);
+    } else {
+      handleNavigate('new-application');
     }
   };
 
@@ -152,7 +157,7 @@ function App() {
   const navProps = (routeIdx) => ({
     onBack: () => handleBack(routeIdx),
     onNext: () => handleNext(routeIdx),
-    isBackEnabled: routeIdx > 0,
+    isBackEnabled: true,
     currentBCStep: ROUTE_ORDER[routeIdx].bcIdx,
     completedBCSteps: Array.from(completedBCSteps),
     onBCStepClick: handleBCStepClick,
@@ -168,13 +173,14 @@ function App() {
   ───────────────────────────────────────────────────────────── */
   if (NEW_APP_ROUTE_KEYS.has(page)) {
     return (
-      <>
+      <div style={{ background: '#ffffff', minHeight: '100vh' }}>
         {mountedSteps.has('new-application-step1') && (
           <div style={{ display: page === 'new-application-step1' ? 'block' : 'none' }}>
             <SaleDeedDetailsPage
               onNavigate={handleNavigate}
-              onResetDownstream={() => resetStepsFrom(1)}
+              onResetDownstream={() => { resetStepsFrom(1); setStep1HasKaveri(true); }}
               onVillageChange={setStep1Village}
+              onFlowChange={setStep1HasKaveri}
               {...navProps(0)}
             />
           </div>
@@ -184,6 +190,7 @@ function App() {
           <div style={{ display: page === 'new-application-step2' ? 'block' : 'none' }}>
             <OwnerEKYCPage
               onNavigate={handleNavigate}
+              hasKaveri={step1HasKaveri}
               {...navProps(1)}
             />
           </div>
@@ -193,6 +200,7 @@ function App() {
           <div style={{ display: page === 'new-application-step3' ? 'block' : 'none' }}>
             <PropertyDetailsPage
               onNavigate={handleNavigate}
+              hasKaveri={step1HasKaveri}
               {...navProps(2)}
             />
           </div>
@@ -217,7 +225,7 @@ function App() {
             />
           </div>
         )}
-      </>
+      </div>
     );
   }
 
@@ -233,7 +241,19 @@ function App() {
     return <LoginPage onLogin={() => handleNavigate('citizen-home')} />;
   }
 
+  if (page === 'glossary') {
+    return <GlossaryPage onNavigate={handleNavigate} />;
+  }
+
   return <HomePage onNavigate={handleNavigate} />;
 }
 
-export default App;
+function AppWithProviders() {
+  return (
+    <LanguageProvider>
+      <App />
+    </LanguageProvider>
+  );
+}
+
+export default AppWithProviders;

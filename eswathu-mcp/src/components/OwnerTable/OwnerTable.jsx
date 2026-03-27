@@ -1,18 +1,13 @@
 import './OwnerTable.css';
 
-/**
- * OwnerTable — Aadhar eKYC details table shown in the eKYC popup.
- * Displays owner identity, name comparison (Panchatantra vs verified),
- * gender, DOB, and address in a key-value table layout.
- *
- * Props:
- *  - identityDocNo: string (Aadhar number / identity doc number)
- *  - panchatantraName: string
- *  - verifiedName: string
- *  - gender: string
- *  - dob: string (dd-mm-yyyy)
- *  - address: string
- */
+/* Mask identity doc number — show only last 4 digits */
+const maskDocNo = (docNo) => {
+  if (!docNo) return '';
+  const digits = docNo.replace(/\s/g, '');
+  const last4 = digits.slice(-4);
+  return `XXXX XXXX XXXX ${last4}`;
+};
+
 const OwnerTable = ({
   identityDocNo = '',
   panchatantraName = '',
@@ -25,16 +20,17 @@ const OwnerTable = ({
   return (
     <table className={`owner-table ${className}`}>
       <tbody>
-        {/* Row 1: Identity Document No — spans full width */}
+        {/* All rows share left column: Owner's Photograph */}
         <tr className="owner-table__row">
-          <td className="owner-table__label owner-table__label--side" rowSpan={4}>
-            Owner&apos;s Identity Document&nbsp;No.
+          <td className="owner-table__photo-cell" rowSpan={4}>
+            <div className="owner-table__photo-header">Owner&apos;s Photograph</div>
+            <div className="owner-table__photo-area" />
           </td>
           <td className="owner-table__label" colSpan={2}>
             Owner&apos;s Identity Document No.
           </td>
           <td className="owner-table__value" colSpan={2}>
-            {identityDocNo}
+            {maskDocNo(identityDocNo)}
           </td>
         </tr>
 
@@ -54,7 +50,7 @@ const OwnerTable = ({
           <td className="owner-table__value">{dob}</td>
         </tr>
 
-        {/* Row 4: Address — value spans 3 cols */}
+        {/* Row 4: Address */}
         <tr className="owner-table__row">
           <td className="owner-table__label">Address</td>
           <td className="owner-table__value" colSpan={3}>

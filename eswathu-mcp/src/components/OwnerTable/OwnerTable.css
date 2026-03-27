@@ -26,9 +26,27 @@
   color: var(--text-dark);
 }
 
-.owner-table__label--side {
+.owner-table__photo-cell {
   width: 205px;
-  vertical-align: middle;
+  padding: 0;
+  vertical-align: top;
+  border: 1px solid var(--neutral-400, #727272);
+}
+
+.owner-table__photo-header {
+  background: var(--secondary, #f2f2f2);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  padding: 10px;
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--neutral-400, #727272);
+}
+
+.owner-table__photo-area {
+  height: 226px;
+  background: var(--white, #fff);
 }
 
 .owner-table__value {

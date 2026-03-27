@@ -1,0 +1,129 @@
+/* ── FileUpload Component ─────────────────────────────────── */
+
+.file-upload-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.file-upload-field__label {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-primary, #212121);
+  margin: 0 0 4px 0;
+}
+
+.file-upload-field__required {
+  color: var(--danger, #cc1000);
+}
+
+.file-upload-field__input {
+  display: none;
+}
+
+/* ── Upload button (default / hover / pressed / inactive) ── */
+
+.file-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 24px;
+  background: var(--white, #fff);
+  border: 1px solid var(--primary, #024C97);
+  border-radius: 8px;
+  cursor: pointer;
+  min-height: 44px;
+  width: fit-content;
+  transition: background 0.15s ease;
+  font-family: var(--font-family);
+}
+
+.file-upload-btn:hover:not(:disabled) {
+  background: rgba(2, 76, 151, 0.08);
+  opacity: 0.8;
+}
+
+.file-upload-btn:active:not(:disabled) {
+  background: rgba(2, 76, 151, 0.16);
+  opacity: 1;
+}
+
+.file-upload-btn--inactive,
+.file-upload-btn:disabled {
+  background: #eee;
+  border-color: var(--neutral-600, #727272);
+  cursor: not-allowed;
+}
+
+.file-upload-btn__icon {
+  font-size: 28px;
+  color: var(--primary, #024C97);
+}
+
+.file-upload-btn--inactive .file-upload-btn__icon,
+.file-upload-btn:disabled .file-upload-btn__icon {
+  color: var(--neutral-600, #727272);
+}
+
+.file-upload-btn__text {
+  font-size: 16px;
+  color: var(--primary, #024C97);
+  letter-spacing: 0.25px;
+  white-space: nowrap;
+}
+
+.file-upload-btn--inactive .file-upload-btn__text,
+.file-upload-btn:disabled .file-upload-btn__text {
+  color: var(--neutral-600, #727272);
+}
+
+/* ── Uploaded state ─────────────────────────────────────── */
+
+.file-upload-btn--uploaded {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  padding: 8px 24px;
+  background: var(--white, #fff);
+  border: 1px solid var(--primary, #024C97);
+  border-radius: 8px;
+  min-height: 44px;
+  min-width: 171px;
+  max-width: 320px;
+  width: fit-content;
+}
+
+.file-upload-btn__name {
+  flex: 1;
+  font-size: 16px;
+  font-family: var(--font-family);
+  color: var(--text-primary, #212121);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.file-upload-btn__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--danger, #cc1000);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.file-upload-btn__remove:hover {
+  background: #a00d00;
+}
+
+.file-upload-btn__remove .material-icons-outlined {
+  font-size: 12px;
+  color: #fff;
+}

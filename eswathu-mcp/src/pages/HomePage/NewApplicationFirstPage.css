@@ -4,45 +4,148 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--white);
+  background: #ffffff;
 }
 
 /* ── Steps banner ─────────────────────────────────────── */
 
 .new-app-page__steps-bg {
-  background: var(--secondary);
+  background: #ffffff;
   width: 100%;
-  padding: 40px 120px;
+  padding: 24px 120px;
   box-sizing: border-box;
 }
 
 .new-app-page__steps-inner {
-  max-width: var(--content-max-width);
   width: 100%;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 32px;
+  background: #f2f2f2;
+  border-radius: 15px;
+  padding: 40px 35px 50px;
+  box-sizing: border-box;
+}
+
+/* Content column (grows to fill between arrows) */
+.new-app-page__steps-content {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 45px;
 }
 
-/* ── Stepper overrides (steps banner only) ────────────── */
-
-.new-app-page__steps-bg .stepper {
+/* ── Banner arrows — same style as StepHeader arrows ──────── */
+.new-app-page__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 0;
   background: transparent;
-  border-bottom: none;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  outline: none;
+  margin-top: 4px;
 }
 
-.new-app-page__steps-bg .stepper__circle--upcoming {
-  border-color: var(--text-dark);
-  background: transparent;
+.new-app-page__arrow .material-icons-outlined {
+  font-size: 32px;
+  color: rgba(2, 76, 151, 0.65);
+  transition: color 0.12s ease;
 }
 
-.new-app-page__steps-bg .stepper__number {
+.new-app-page__arrow:hover:not(:disabled) .material-icons-outlined {
+  color: var(--primary);
+}
+
+.new-app-page__arrow:active:not(:disabled) .material-icons-outlined {
+  color: #024c97;
+}
+
+.new-app-page__arrow:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.new-app-page__arrow--disabled,
+.new-app-page__arrow:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.new-app-page__arrow--disabled .material-icons-outlined,
+.new-app-page__arrow:disabled .material-icons-outlined {
+  color: var(--neutral-300);
+}
+
+/* PageHeading subtitle override for banner */
+.new-app-page__steps-inner .page-heading__subtitle {
+  font-size: 24px;
+  line-height: 20px;
+  color: var(--neutral-600);
+}
+
+/* ── Banner steps row (Figma 249:69627) ───────────────── */
+
+/* Flat flex row: item, line, item, line … item */
+.new-app-page__steps-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Connector lines are direct children — flex:1 fills all space between items */
+.new-app-page__steps-line {
+  flex: 1;
+  height: 1px;
+  background: #c6c6c6;
+  min-width: 16px;
+}
+
+/* Step item: pill + label, hugs content, never grows/shrinks */
+.new-app-page__steps-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+/* Number pill: 32px wide, pill border-radius, white bg + grey border */
+.new-app-page__steps-circle {
+  width: 32px;
+  padding: 6px 4px;
+  border-radius: 57px;
+  border: 1px solid #b0b0b0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: #727272;
+  box-sizing: border-box;
+}
+
+/* Step label: 22px medium, wraps naturally for multi-word labels */
+.new-app-page__steps-label {
+  font-family: var(--font-family);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 28px;
   color: var(--text-dark);
-}
-
-.new-app-page__steps-bg .stepper__label {
-  color: var(--text-dark);
+  white-space: normal;
+  max-width: 108px;
 }
 
 /* ── Sections area ────────────────────────────────────── */

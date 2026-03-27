@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
-import Breadcrumb from '../../../components/Breadcrumb/Breadcrumb';
 import StepHeader from '../../../components/StepHeader/StepHeader';
-import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import InfoBox from '../../../components/InfoBox/InfoBox';
 import Input from '../../../components/Input/Input';
@@ -12,9 +10,12 @@ import IconButton from '../../../components/IconButton/IconButton';
 import CaptionMessage from '../../../components/CaptionMessage/CaptionMessage';
 import ErrorMessageCard from '../../../components/ErrorMessageCard/ErrorMessageCard';
 import ProgressCircle from '../../../components/ProgressCircle/ProgressCircle';
-import PropertyDetails_AreaDetails from './PropertyDetails_AreaDetails';
+import PropertyDetails_AreaDetails, { IS_GUNTA_FLOW } from './PropertyDetails_AreaDetails';
 import PropertyDetails_SiteDimensions from './PropertyDetails_SiteDimensions';
 import PropertyDetails_Checkbandi from './PropertyDetails_Checkbandi';
+import PropertyDetails_AreaDetails_NoKaveri, { IS_GUNTA_FLOW_NK } from './PropertyDetails_AreaDetails_NoKaveri';
+import PropertyDetails_SiteDimensions_NoKaveri from './PropertyDetails_SiteDimensions_NoKaveri';
+import PropertyDetails_Checkbandi_NoKaveri from './PropertyDetails_Checkbandi_NoKaveri';
 import PropertyDetails_ReviewDetails from './PropertyDetails_ReviewDetails';
 import './PropertyDetailsPage.css';
 
@@ -55,6 +56,7 @@ const PropertyDetailsPage = ({
   onBCStepClick,
   bcStepNames = [],
   completionResetKey = 0,
+  hasKaveri = true,
 }) => {
   /* ── Page-level completion (enables forward arrow) ──────── */
   const [isPageComplete, setIsPageComplete] = useState(false);
@@ -85,7 +87,8 @@ const PropertyDetailsPage = ({
   /* ── Section 3.2 State ──────────────────────────────── */
   const [s32Visible, setS32Visible] = useState(DEV_MODE ? true : false);
   const [areaAccepted, setAreaAccepted] = useState(false);
-  const [acceptedAreaSqft, setAcceptedAreaSqft] = useState(0);
+  const [acceptedAreaSqmt, setAcceptedAreaSqmt] = useState(0);
+  const [acceptedUnit, setAcceptedUnit] = useState('');
   const [wasRejected, setWasRejected] = useState(false);
   const [areaMatched, setAreaMatched] = useState(false);
   const [s32Saved, setS32Saved] = useState(false);
@@ -120,17 +123,21 @@ const PropertyDetailsPage = ({
       s32Ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [s32Visible]);
-  useEffect(() => {
-    if (areaAccepted && siteDimsRef.current) {
-      siteDimsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [areaAccepted]);
+  /* Derived: whether the selected unit skips Site Dimensions */
+  const isGuntaFlow = hasKaveri ? IS_GUNTA_FLOW(acceptedUnit) : IS_GUNTA_FLOW_NK(acceptedUnit);
 
   useEffect(() => {
-    if (areaMatched && checkbandiRef.current) {
+    if (areaAccepted && !isGuntaFlow && siteDimsRef.current) {
+      siteDimsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [areaAccepted, isGuntaFlow]);
+
+  useEffect(() => {
+    const showCheckbandi = areaMatched || (areaAccepted && isGuntaFlow);
+    if (showCheckbandi && checkbandiRef.current) {
       checkbandiRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [areaMatched]);
+  }, [areaMatched, areaAccepted, isGuntaFlow]);
 
   useEffect(() => {
     if (s33Visible && s33Ref.current) {
@@ -202,7 +209,8 @@ const PropertyDetailsPage = ({
     setS31Saved(false);
     setS32Visible(false);
     setAreaAccepted(false);
-    setAcceptedAreaSqft(0);
+    setAcceptedAreaSqmt(0);
+    setAcceptedUnit('');
     setWasRejected(false);
     setAreaMatched(false);
     setS32Saved(false);
@@ -212,9 +220,20 @@ const PropertyDetailsPage = ({
   };
 
   /* ── Handlers: Section 3.2 ──────────────────────────── */
-  const handleAreaConfirm = (sqft, rejected) => {
-    setAreaAccepted(true);
-    setAcceptedAreaSqft(sqft);
+  const handleAreaConfirm = (sqmt, rejected, unit) => {
+    if (!hasKaveri) {
+      /* No-Kaveri: reactive updates — only collapse subsections when unit changes */
+      if (unit !== acceptedUnit) {
+        setAreaAccepted(false);
+        setAreaMatched(false);
+        setSiteDimSummary(null);
+      }
+      if (sqmt > 0) setAreaAccepted(true);
+    } else {
+      setAreaAccepted(sqmt > 0);
+    }
+    setAcceptedAreaSqmt(sqmt);
+    setAcceptedUnit(unit);
     setWasRejected(rejected);
   };
 
@@ -251,17 +270,6 @@ const PropertyDetailsPage = ({
         username={username}
         onLogout={() => onNavigate?.('login')}
       />
-
-      {/* ── Breadcrumb ────────────────────────────────── */}
-      <Breadcrumb
-        steps={bcStepNames}
-        currentStep={currentBCStep}
-        completedSteps={completedBCSteps}
-        onStepClick={onBCStepClick}
-      />
-
-      {/* ── Stepper ───────────────────────────────────── */}
-      <Stepper activeStep={2} />
 
       {/* ── Step Header ───────────────────────────────── */}
       <StepHeader
@@ -530,27 +538,47 @@ const PropertyDetailsPage = ({
           <div className="pd-s32">
 
             {/* ── Subsection A: Area Details ─────────────── */}
-            <PropertyDetails_AreaDetails onAccept={handleAreaConfirm} />
-
-            {/* ── Subsection B: Site Dimensions ─────────── */}
-            <div className="pd-s32__divider" />
-            {areaAccepted ? (
-              <div ref={siteDimsRef}>
-                <PropertyDetails_SiteDimensions
-                  acceptedAreaSqft={acceptedAreaSqft}
-                  wasRejected={wasRejected}
-                  onAreaMatch={handleAreaMatch}
-                />
-              </div>
+            {hasKaveri ? (
+              <PropertyDetails_AreaDetails onAccept={handleAreaConfirm} />
             ) : (
-              <p className="pd-s32__placeholder-heading">Site Dimension Details</p>
+              <PropertyDetails_AreaDetails_NoKaveri onAccept={handleAreaConfirm} />
+            )}
+
+            {/* ── Subsection B: Site Dimensions (skipped for Gunta/Acre/Cent) ── */}
+            {!isGuntaFlow && (
+              <>
+                <div className="pd-s32__divider" />
+                {areaAccepted ? (
+                  <div ref={siteDimsRef}>
+                    {hasKaveri ? (
+                      <PropertyDetails_SiteDimensions
+                        acceptedAreaSqmt={acceptedAreaSqmt}
+                        wasRejected={wasRejected}
+                        onAreaMatch={handleAreaMatch}
+                      />
+                    ) : (
+                      <PropertyDetails_SiteDimensions_NoKaveri
+                        acceptedAreaSqmt={acceptedAreaSqmt}
+                        acceptedUnit={acceptedUnit}
+                        onAreaMatch={handleAreaMatch}
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <p className="pd-s32__placeholder-heading">Site Dimension Details</p>
+                )}
+              </>
             )}
 
             {/* ── Subsection C: Checkbandi ───────────────── */}
             <div className="pd-s32__divider" />
-            {areaMatched ? (
+            {(areaMatched || (areaAccepted && isGuntaFlow)) ? (
               <div ref={checkbandiRef}>
-                <PropertyDetails_Checkbandi onSaveAndProceed={handleS32Complete} />
+                {hasKaveri ? (
+                  <PropertyDetails_Checkbandi onSaveAndProceed={handleS32Complete} />
+                ) : (
+                  <PropertyDetails_Checkbandi_NoKaveri onSaveAndProceed={handleS32Complete} />
+                )}
               </div>
             ) : (
               <p className="pd-s32__placeholder-heading">Checkbandi Details</p>
@@ -572,7 +600,7 @@ const PropertyDetailsPage = ({
               <PropertyDetails_ReviewDetails
                 addressData={addressData}
                 imageFile={imageFile}
-                acceptedAreaSqft={acceptedAreaSqft}
+                acceptedAreaSqmt={acceptedAreaSqmt}
                 siteDimSummary={siteDimSummary}
                 checkbandiData={checkbandiData}
               />

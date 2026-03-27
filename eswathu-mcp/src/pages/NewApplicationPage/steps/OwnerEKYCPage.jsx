@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
-import Breadcrumb from '../../../components/Breadcrumb/Breadcrumb';
-import Stepper from '../../../components/Stepper/Stepper';
 import StepHeader from '../../../components/StepHeader/StepHeader';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import RadioButton from '../../../components/RadioButton/RadioButton';
@@ -12,18 +10,18 @@ import Dropdown from '../../../components/Dropdown/Dropdown';
 import DatePicker from '../../../components/DatePicker/DatePicker';
 import CaptionMessage from '../../../components/CaptionMessage/CaptionMessage';
 import OwnerTable from '../../../components/OwnerTable/OwnerTable';
+import Table from '../../../components/Table/Table';
 import EKYCRedirectScreen from './EKYCRedirectScreen';
-import ErrorMessageCard from '../../../components/ErrorMessageCard/ErrorMessageCard';
 import './OwnerEKYCPage.css';
 
 /* ── Mock data (pre-fetched from Kaveri) ───────────────── */
 const MOCK_OWNERS = [
-  { id: 1, name: 'Mayuri Kumari' },
-  { id: 2, name: 'Mohit Kumar Singh' },
+  { id: 1, name: 'Mayuri Kumari',      source: 'kaveri' },
+  { id: 2, name: 'Mohit Kumar Singh',  source: 'kaveri' },
 ];
 
 const MOCK_EKYC_DATA = {
-  identityDocNo: 'XXXXXXXXXXXXXXXXXXXXX',
+  identityDocNo: '123456785643',
   panchatantraName: 'Mohit Kumar Singh',
   verifiedName: 'Mohit Kumar Singh',
   gender: 'Male',
@@ -48,13 +46,23 @@ const MOCK_EKYC_NAMES = {
   2: 'Mohit Singh',
 };
 
-/* ── Mismatch reason options ───────────────────────────── */
+/* ── Mismatch reason options — Kaveri vs eKYC ───────────── */
 const MISMATCH_REASON_OPTIONS = [
   { value: 'name_spelling_mismatch', label: 'Name Spelling Mismatch' },
-  { value: 'sale_transferred', label: 'Sale/Transferred' },
-  { value: 'unregistered_will', label: 'Unregistered Will' },
+  { value: 'sale_transferred',       label: 'Sale/Transferred' },
+  { value: 'unregistered_will',      label: 'Unregistered Will' },
   { value: 'inheritance_succession', label: 'Inheritance/Succession' },
-  { value: 'court_order', label: 'Court Order' },
+  { value: 'court_order',            label: 'Court Order' },
+  { value: 'bank_fi_sale_certificate', label: 'Bank/FI Sale Certificate' },
+];
+
+/* ── Mismatch reason options — Added owner vs eKYC ─────── */
+/* Name Spelling Mismatch removed — not applicable for new owners */
+const NEW_OWNER_MISMATCH_REASON_OPTIONS = [
+  { value: 'sale_transferred',       label: 'Sale/Transferred' },
+  { value: 'unregistered_will',      label: 'Unregistered Will' },
+  { value: 'inheritance_succession', label: 'Inheritance/Succession' },
+  { value: 'court_order',            label: 'Court Order' },
   { value: 'bank_fi_sale_certificate', label: 'Bank/FI Sale Certificate' },
 ];
 
@@ -89,6 +97,7 @@ const DOCS_BY_REASON = {
 
 const OwnerEKYCPage = ({
   onNavigate,
+  hasKaveri = true,
   username = '',
   onBack,
   onNext,
@@ -116,10 +125,10 @@ const OwnerEKYCPage = ({
   /* ── Derived: combined owners (original + newly added) ── */
   const newOwners = newOwnerNames
     .filter((n) => n.trim())
-    .map((n, i) => ({ id: `new-${i}`, name: n.trim() }));
-  const allOwners = s21Submitted && addNewOwner
+    .map((n, i) => ({ id: `new-${i}`, name: n.trim(), source: 'new' }));
+  const allOwners = !hasKaveri
     ? newOwners
-    : MOCK_OWNERS;
+    : (s21Submitted && addNewOwner ? newOwners : MOCK_OWNERS);
 
   /* ── Section 2.2 State ──────────────────────────────── */
   const [s22Visible, setS22Visible] = useState(false);
@@ -130,7 +139,7 @@ const OwnerEKYCPage = ({
   /* ── eKYC Redirect State ────────────────────────────── */
   const [ekycOwnerIdx, setEkycOwnerIdx] = useState(null);
   const [ekycAttempts, setEkycAttempts] = useState({}); // { [ownerId]: number }
-  const [ekycError, setEkycError] = useState(false); // show error card on redirect screen
+  const [ekycFailedOwners, setEkycFailedOwners] = useState(new Set()); // owners whose eKYC returned without popup (UIDAI failure)
 
   /* ── eKYC Popup / Modal State ───────────────────────── */
   const [popupOwnerIdx, setPopupOwnerIdx] = useState(null);
@@ -140,6 +149,7 @@ const OwnerEKYCPage = ({
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
+  const [otpError, setOtpError] = useState(false);
   const [otpCountdown, setOtpCountdown] = useState(0);
   const otpTimerRef = useRef(null);
   const scrollPosRef = useRef(0);
@@ -162,20 +172,39 @@ const OwnerEKYCPage = ({
   /* ── Derived: all owners done? ──────────────────────── */
   const allDone = allOwners.every((o) => ekycStatus[o.id] === 'done');
 
-  /* ── Derived: name mismatch exists? ──────────────────── */
-  const hasMismatch = allOwners.some((o) => {
-    const ekycName = MOCK_EKYC_NAMES[o.id];
+  /* ── Helper: eKYC name per owner source ──────────────── */
+  const getEkycName = (owner) => {
+    if (owner.source === 'kaveri') return MOCK_EKYC_NAMES[owner.id];
+    // New owners: mock eKYC returns name with "Sri. " prefix to simulate mismatch
+    return `Sri. ${owner.name}`;
+  };
+
+  /* ── Derived: which owners have a mismatch ────────────── */
+  const mismatchedOwners = allOwners.filter((o) => {
+    const ekycName = getEkycName(o);
     return ekycName && ekycName !== o.name;
   });
 
+  /* ── Derived: mismatch type ───────────────────────────── */
+  const hasMismatchKaveri = mismatchedOwners.some((o) => o.source === 'kaveri');
+  const hasMismatchNew    = mismatchedOwners.some((o) => o.source === 'new');
+  const hasMismatch       = hasMismatchKaveri || hasMismatchNew;
+
   /* ── Derived: needs document upload? ─────────────────── */
   const needsDocUpload = (reason) => reason && reason !== 'name_spelling_mismatch';
+
+  /* ── Derived: owners shown in the active mismatch table ── */
+  // Kaveri: show all owners (table lists everyone)
+  // New owner: show only the new owners that mismatched
+  const mismatchTableOwners = hasMismatchKaveri
+    ? allOwners
+    : mismatchedOwners.filter((o) => o.source === 'new');
 
   /* ── Derived: merged unique docs for all reasons ─────── */
   const mergedDocs = (() => {
     const seen = new Set();
     const result = [];
-    for (const owner of allOwners) {
+    for (const owner of mismatchTableOwners) {
       const reason = mismatchReasons[owner.id];
       if (!needsDocUpload(reason)) continue;
       const docs = DOCS_BY_REASON[reason] || [];
@@ -190,15 +219,15 @@ const OwnerEKYCPage = ({
   })();
 
   /* ── Derived: all reasons selected? (enables Save & Next) ── */
-  const allReasonsSelected = allOwners.every((o) => mismatchReasons[o.id]);
+  const allReasonsSelected = mismatchTableOwners.every((o) => mismatchReasons[o.id]);
 
-  /* ── Derived: all reasons are spelling only? ──────── */
+  /* ── Derived: all reasons are spelling only? (Kaveri case only) ── */
   const allSpellingOnly = allReasonsSelected && mergedDocs.length === 0;
 
   /* ── Derived: can Save and Proceed (bottom)? ──────────── */
   const canS23Proceed = (() => {
     if (!allReasonsSelected) return false;
-    // If all reasons are spelling mismatch, no doc upload needed
+    // Kaveri spelling-only path: no doc upload needed
     if (allSpellingOnly) return true;
     if (!s23Submitted) return false;
     for (const doc of mergedDocs) {
@@ -226,6 +255,7 @@ const OwnerEKYCPage = ({
     setEkycStatus({});
     setCompletedEkycData({});
     setEkycAttempts({});
+    setEkycFailedOwners(new Set());
     setMismatchReasons({});
     setDocUploads({});
     setS23Submitted(false);
@@ -237,23 +267,30 @@ const OwnerEKYCPage = ({
     const owner = allOwners[idx];
     const attempts = (ekycAttempts[owner.id] || 0) + 1;
     setEkycAttempts((prev) => ({ ...prev, [owner.id]: attempts }));
-    // Simulate UIDAI error on first attempt for second owner (index 1)
-    if (idx === 1 && attempts === 1) {
-      setEkycError(true);
-      return;
-    }
     setEkycStatus((prev) => ({ ...prev, [owner.id]: 'in-progress' }));
-    setEkycError(false);
+    setEkycFailedOwners((prev) => { const s = new Set(prev); s.delete(owner.id); return s; });
     setEkycOwnerIdx(idx);
   };
 
   const handleEkycComplete = () => {
     const owner = allOwners[ekycOwnerIdx];
+    const attempts = ekycAttempts[owner.id] || 0;
+
+    // Simulate UIDAI failure: first attempt for second owner (index 1)
+    // — redirect happened but popup doesn't open, meaning eKYC failed
+    if (ekycOwnerIdx === 1 && attempts === 1) {
+      setEkycStatus((prev) => ({ ...prev, [owner.id]: 'pending' }));
+      setEkycOwnerIdx(null);
+      setEkycFailedOwners((prev) => new Set([...prev, owner.id]));
+      requestAnimationFrame(() => window.scrollTo(0, scrollPosRef.current));
+      return;
+    }
+
+    // Normal success flow
     setEkycStatus((prev) => ({ ...prev, [owner.id]: 'done' }));
-    // Open popup for this owner
     setPopupOwnerIdx(ekycOwnerIdx);
     setEkycOwnerIdx(null);
-    setEkycError(false);
+    setEkycFailedOwners((prev) => { const s = new Set(prev); s.delete(owner.id); return s; });
     // Restore scroll position so user sees the detail card area
     requestAnimationFrame(() => window.scrollTo(0, scrollPosRef.current));
     // Reset popup form
@@ -263,19 +300,20 @@ const OwnerEKYCPage = ({
     setOtp('');
     setOtpSent(false);
     setOtpVerified(false);
+    setOtpError(false);
   };
 
   const handleEkycCancel = () => {
     const owner = allOwners[ekycOwnerIdx];
     setEkycStatus((prev) => ({ ...prev, [owner.id]: 'pending' }));
     setEkycOwnerIdx(null);
-    setEkycError(false);
     requestAnimationFrame(() => window.scrollTo(0, scrollPosRef.current));
   };
 
   /* ── Handlers: Popup ────────────────────────────────── */
   const handleGetOtp = () => {
     setOtpSent(true);
+    setOtpError(false);
     setOtpCountdown(60);
     clearInterval(otpTimerRef.current);
     otpTimerRef.current = setInterval(() => {
@@ -288,6 +326,13 @@ const OwnerEKYCPage = ({
       });
     }, 1000);
   };
+
+  /* Auto-fill related person name from UIDAI when popup opens */
+  useEffect(() => {
+    if (popupOwnerIdx !== null) {
+      setRelatedPersonName(MOCK_EKYC_DATA.panchatantraName);
+    }
+  }, [popupOwnerIdx]);
 
   /* Cleanup OTP timer on unmount */
   useEffect(() => {
@@ -308,6 +353,11 @@ const OwnerEKYCPage = ({
   }, [s23Visible]);
 
   const handleCompleteEkyc = () => {
+    // Validate OTP — correct OTP is 1234
+    if (otp !== '1234') {
+      setOtpError(true);
+      return;
+    }
     setOtpVerified(true);
     const owner = allOwners[popupOwnerIdx];
     const prefix = REL_PREFIX[relationshipType] || '';
@@ -410,17 +460,6 @@ const OwnerEKYCPage = ({
         onLogout={() => onNavigate('login')}
       />
 
-      {/* ── Breadcrumb ──────────────────────────────────── */}
-      <Breadcrumb
-        steps={bcStepNames}
-        currentStep={currentBCStep}
-        completedSteps={completedBCSteps}
-        onStepClick={onBCStepClick}
-      />
-
-      {/* ── Stepper ─────────────────────────────────────── */}
-      <Stepper activeStep={1} />
-
       {/* ── Step Header ─────────────────────────────────── */}
       <StepHeader
         step="Step 2"
@@ -434,222 +473,300 @@ const OwnerEKYCPage = ({
       {/* ── Sections container ──────────────────────────── */}
       <div className="ekyc-page__sections">
 
-        {/* ── Top InfoBox ─────────────────────────────── */}
-        <InfoBox variant="blue">
-          Please keep the property ownership document used in the previous stage ready for entering the correct owner&apos;s details.
-        </InfoBox>
+        {/* Section 2.1 — Owner Details */}
 
-        {/* ════════════════════════════════════════════════ */}
-        {/* Section 2.1 — Owner Details                     */}
-        {/* ════════════════════════════════════════════════ */}
+        {/* No-Kaveri: info notice above section box */}
+        {!hasKaveri && (
+          <InfoBox variant="info">
+            Please keep the property ownership document used in the previous stage ready for entering the correct owner's details.
+          </InfoBox>
+        )}
+
         <SectionBox
           number="2.1"
-          title="Ownership Details (As mentioned in your property ownership document)"
+          title={hasKaveri ? 'Owner details' : 'Ownership Details (As mentioned in your property ownership document)'}
           open
           className="ekyc-s21-box"
         >
-          {/* ── Company details ────────────────────────── */}
-          <div className="ekyc-s21__subsection">
-            <h3 className="ekyc-s21__subtitle">Company details</h3>
-            <div className="ekyc-s21__question">
-              <p className="ekyc-s21__question-text">
-                Is this property owned by a company/ organisation?
-              </p>
-              <div className="ekyc-s21__radio-row">
-                <RadioButton
-                  label="Yes"
-                  name="isCompany"
-                  value="yes"
-                  checked={isCompany === true}
-                  onChange={() => !s21Submitted && setIsCompany(true)}
-                  disabled={s21Submitted}
-                />
-                <RadioButton
-                  label="No"
-                  name="isCompany"
-                  value="no"
-                  checked={isCompany === false}
-                  onChange={() => !s21Submitted && setIsCompany(false)}
-                  disabled={s21Submitted}
-                />
+          {hasKaveri ? (
+            /* ── Kaveri flow: existing 2.1 UI ────────────── */
+            <div className="ekyc-s21">
+
+              <div className="ekyc-s21__subsection">
+                <h3 className="ekyc-s21__subtitle">Company details</h3>
+                <div className="ekyc-s21__question">
+                  <p className="ekyc-s21__question-text">
+                    Is this property owned by a company/ organisation?
+                  </p>
+                  <div className="ekyc-s21__radio-row">
+                    <RadioButton name="isCompany" value="yes" label="Yes"
+                      checked={isCompany === true}
+                      onChange={() => !s21Submitted && setIsCompany(true)}
+                      disabled={s21Submitted}
+                    />
+                    <RadioButton name="isCompany" value="no" label="No"
+                      checked={isCompany === false}
+                      onChange={() => !s21Submitted && setIsCompany(false)}
+                      disabled={s21Submitted}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* ── Owner Name details ─────────────────────── */}
-          <div className="ekyc-s21__subsection">
-            <h3 className="ekyc-s21__subtitle">Owner Name details</h3>
-
-            {/* Owner table */}
-            <div className="ekyc-s21__owner-table-wrap">
-              <table className="ekyc-s21__owner-table">
-                <thead>
-                  <tr>
-                    <th className="ekyc-s21__th ekyc-s21__th--no">No.</th>
-                    <th className="ekyc-s21__th">Owner name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {MOCK_OWNERS.map((owner, idx) => (
-                    <tr key={owner.id} className="ekyc-s21__tr">
-                      <td className="ekyc-s21__td ekyc-s21__td--no">{idx + 1}</td>
-                      <td className="ekyc-s21__td">{owner.name}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ── InfoBoxes ──────────────────────────────── */}
-          <div className="ekyc-s21__info-boxes">
-            <InfoBox variant="red">
-              If there are any spelling errors in the name of the owners, please proceed to ekyc as any mismatch will be checked later
-            </InfoBox>
-            <InfoBox variant="red">
-              If owner name is missing, clubbed together by mistake or there are new owners to be added, please add owner below
-            </InfoBox>
-          </div>
-
-          {/* ── Add new owners question ────────────────── */}
-          <div className="ekyc-s21__question">
-            <p className="ekyc-s21__question-text">
-              Do you want to add new owners?
-            </p>
-            <div className="ekyc-s21__radio-row">
-              <RadioButton
-                label="Yes"
-                name="addNewOwner"
-                value="yes"
-                checked={addNewOwner === true}
-                onChange={() => !s21Submitted && setAddNewOwner(true)}
-                disabled={s21Submitted}
-              />
-              <RadioButton
-                label="No"
-                name="addNewOwner"
-                value="no"
-                checked={addNewOwner === false}
-                onChange={() => !s21Submitted && setAddNewOwner(false)}
-                disabled={s21Submitted}
-              />
-            </div>
-          </div>
-
-          {/* ── New owner input table (when Yes selected) ── */}
-          {addNewOwner && (
-            <div className="ekyc-s21__new-owner-section">
-              <div className="ekyc-s21__new-owner-table-wrap">
-                <table className="ekyc-s21__owner-table ekyc-s21__new-owner-table">
-                  <thead>
-                    <tr>
-                      <th className="ekyc-s21__th ekyc-s21__th--no">No.</th>
-                      <th className="ekyc-s21__th">Owner name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {newOwnerNames.map((name, i) => (
-                      <tr key={i} className="ekyc-s21__tr ekyc-s21__tr--input">
-                        <td className="ekyc-s21__td ekyc-s21__td--no">{i + 1}</td>
-                        <td className="ekyc-s21__td ekyc-s21__td--input">
-                          <div className="ekyc-s21__input-wrap">
-                            <input
-                              type="text"
-                              className="ekyc-s21__name-input"
-                              placeholder="Enter owner name"
-                              value={name}
-                              onChange={(e) => {
-                                const updated = [...newOwnerNames];
-                                updated[i] = e.target.value;
-                                setNewOwnerNames(updated);
-                                if (ownerNameErrors[i]) {
-                                  const errs = [...ownerNameErrors];
-                                  errs[i] = '';
-                                  setOwnerNameErrors(errs);
-                                }
-                              }}
-                              onKeyDown={(e) => {
-                                if (
-                                  !e.ctrlKey && !e.metaKey && !e.altKey &&
-                                  !['Backspace','Delete','Tab','Enter','Escape','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key) &&
-                                  /[^a-zA-Z\s]/.test(e.key)
-                                ) {
-                                  e.preventDefault();
-                                }
-                              }}
-                              onBlur={() => {
-                                if (/[^a-zA-Z\s]/.test(name)) {
-                                  const errs = [...ownerNameErrors];
-                                  errs[i] = 'Please enter alphabets only';
-                                  setOwnerNameErrors(errs);
-                                }
-                              }}
-                              disabled={s21Submitted}
-                            />
-                            {ownerNameErrors[i] && (
-                              <CaptionMessage variant="error">{ownerNameErrors[i]}</CaptionMessage>
-                            )}
-                            {!s21Submitted && newOwnerNames.length > 1 && (
-                              <button
-                                type="button"
-                                className="ekyc-s21__remove-row-btn"
-                                onClick={() => {
-                                  setNewOwnerNames((prev) => prev.filter((_, j) => j !== i));
-                                  setOwnerNameErrors((prev) => prev.filter((_, j) => j !== i));
-                                }}
-                              >
-                                <span className="material-icons-outlined">close</span>
-                              </button>
-                            )}
-                          </div>
-                        </td>
+              <div className="ekyc-s21__subsection">
+                <h3 className="ekyc-s21__subtitle">Owner Name details</h3>
+                <div className="ekyc-s21__owner-table-wrap">
+                  <table className="ekyc-s21__owner-table">
+                    <thead>
+                      <tr>
+                        <th className="ekyc-s21__th ekyc-s21__th--no">No.</th>
+                        <th className="ekyc-s21__th">Owner name</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {/* + Add row button */}
-                {!s21Submitted && (
-                  <button
-                    type="button"
-                    className={`ekyc-s21__add-row-btn${!newOwnerNames[newOwnerNames.length - 1]?.trim() ? ' ekyc-s21__add-row-btn--disabled' : ''}`}
-                    disabled={!newOwnerNames[newOwnerNames.length - 1]?.trim()}
-                    onClick={() => {
-                      setNewOwnerNames((prev) => [...prev, '']);
-                      setOwnerNameErrors((prev) => [...prev, '']);
-                    }}
-                  >
-                    <span className="material-icons-outlined">add</span>
-                  </button>
-                )}
+                    </thead>
+                    <tbody>
+                      {MOCK_OWNERS.map((owner, idx) => (
+                        <tr key={owner.id} className="ekyc-s21__tr">
+                          <td className="ekyc-s21__td ekyc-s21__td--no">{idx + 1}</td>
+                          <td className="ekyc-s21__td">{owner.name}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
+
+              <InfoBox variant="red">
+                If owner name is spelled wrong, missing, clubbed together by mistake or there are new owner/s to be added, please add them below.
+              </InfoBox>
+
+              <div className="ekyc-s21__question">
+                <p className="ekyc-s21__question-text">
+                  Do you want to add new owners?
+                </p>
+                <div className="ekyc-s21__radio-row">
+                  <RadioButton name="addNewOwner" value="yes" label="Yes"
+                    checked={addNewOwner === true}
+                    onChange={() => !s21Submitted && setAddNewOwner(true)}
+                    disabled={s21Submitted}
+                  />
+                  <RadioButton name="addNewOwner" value="no" label="No"
+                    checked={addNewOwner === false}
+                    onChange={() => !s21Submitted && setAddNewOwner(false)}
+                    disabled={s21Submitted}
+                  />
+                </div>
+              </div>
+
+              {addNewOwner && (
+                <InfoBox variant="red">
+                  When you add new owners, these names will be considered by ekyc (not the ones fetched from Kaveri Deed Details)
+                </InfoBox>
+              )}
+
+              {addNewOwner && (
+                <div className="ekyc-s21__new-owner-section">
+                  <Table
+                    className="ekyc-s21__new-owner-table"
+                    columns={['No.', 'Owner name', '']}
+                    rows={newOwnerNames.map((name, i) => [
+                      i + 1,
+                      <Input
+                        key={`input-${i}`}
+                        placeholder="Please type owner name"
+                        value={name}
+                        onChange={(e) => {
+                          const updated = [...newOwnerNames];
+                          updated[i] = e.target.value;
+                          setNewOwnerNames(updated);
+                          const errs = [...ownerNameErrors];
+                          errs[i] = '';
+                          setOwnerNameErrors(errs);
+                        }}
+                        onBlur={() => {
+                          if (name.trim() && !/^[a-zA-Z\s.]+$/.test(name.trim())) {
+                            const errs = [...ownerNameErrors];
+                            errs[i] = 'Name should contain only letters';
+                            setOwnerNameErrors(errs);
+                          }
+                        }}
+                        state={ownerNameErrors[i] ? 'error' : 'empty'}
+                        caption={ownerNameErrors[i] || ''}
+                        captionVariant={ownerNameErrors[i] ? 'error' : undefined}
+                        inputType="alpha"
+                        disabled={s21Submitted}
+                      />,
+                      <button
+                        key={`remove-${i}`}
+                        type="button"
+                        className="ekyc-s21__remove-row-btn"
+                        disabled={s21Submitted || !name.trim()}
+                        onClick={() => {
+                          if (i === 0) {
+                            /* First row: clear the field, keep the row */
+                            setNewOwnerNames(['', ...newOwnerNames.slice(1)]);
+                            setOwnerNameErrors(['', ...ownerNameErrors.slice(1)]);
+                          } else {
+                            /* Extra rows: remove entirely */
+                            setNewOwnerNames(newOwnerNames.filter((_, j) => j !== i));
+                            setOwnerNameErrors(ownerNameErrors.filter((_, j) => j !== i));
+                          }
+                        }}
+                      >
+                        <span className="material-icons-outlined">close</span>
+                      </button>,
+                    ])}
+                    actionButton={
+                      !s21Submitted ? (
+                        <button
+                          type="button"
+                          className="ekyc-s21__add-icon-btn"
+                          disabled={!newOwnerNames[newOwnerNames.length - 1]?.trim()}
+                          onClick={() => {
+                            setNewOwnerNames([...newOwnerNames, '']);
+                            setOwnerNameErrors([...ownerNameErrors, '']);
+                          }}
+                        >
+                          <span className="material-icons-outlined">add</span>
+                        </button>
+                      ) : undefined
+                    }
+                  />
+                </div>
+              )}
+
+              <div className="ekyc-s21__actions">
+                <Button
+                  variant="primary"
+                  disabled={s21Submitted || (addNewOwner && newOwnerNames.every((n) => !n.trim()))}
+                  onClick={handleS21Submit}
+                >
+                  Save and Proceed to KYC
+                </Button>
+                <Button variant="error" disabled={!s21Submitted} onClick={handleS21Edit}>
+                  Edit
+                </Button>
+              </div>
+
+              {s21Submitted && addNewOwner && newOwnerNames.some((n) => n.trim()) && (
+                <div className="ekyc-s21__success-msg">
+                  <span className="material-icons-outlined ekyc-s21__success-icon">check_circle_outline</span>
+                  <span className="ekyc-s21__success-text">
+                    Owners have been added. Please proceed to next step to complete eKYC.
+                  </span>
+                </div>
+              )}
+
             </div>
-          )}
+          ) : (
+            /* ── No-Kaveri flow: direct owner entry ───────── */
+            <div className="ekyc-s21">
 
-          {/* ── Action buttons ─────────────────────────── */}
-          <div className="ekyc-s21__actions">
-            <Button
-              variant="primary"
-              disabled={s21Submitted || (addNewOwner && newOwnerNames.every((n) => !n.trim()))}
-              onClick={handleS21Submit}
-            >
-              Proceed to KYC
-            </Button>
-            <Button
-              variant="error"
-              disabled={!s21Submitted}
-              onClick={handleS21Edit}
-            >
-              Edit
-            </Button>
-          </div>
+              <div className="ekyc-s21__subsection">
+                <h3 className="ekyc-s21__subtitle">Company details</h3>
+                <div className="ekyc-s21__question">
+                  <p className="ekyc-s21__question-text">
+                    Is this property owned by a company/ organisation?
+                  </p>
+                  <div className="ekyc-s21__radio-row">
+                    <RadioButton name="isCompany" value="yes" label="Yes"
+                      checked={isCompany === true}
+                      onChange={() => !s21Submitted && setIsCompany(true)}
+                      disabled={s21Submitted}
+                    />
+                    <RadioButton name="isCompany" value="no" label="No"
+                      checked={isCompany === false}
+                      onChange={() => !s21Submitted && setIsCompany(false)}
+                      disabled={s21Submitted}
+                    />
+                  </div>
+                </div>
+              </div>
 
-          {/* ── Success message after adding owners ────── */}
-          {s21Submitted && addNewOwner && newOwnerNames.some((n) => n.trim()) && (
-            <div className="ekyc-s21__success-msg">
-              <span className="material-icons-outlined ekyc-s21__success-icon">check_circle_outline</span>
-              <span className="ekyc-s21__success-text">
-                Owners have been added. Please proceed to next step to complete eKYC.
-              </span>
+              <div className="ekyc-s21__subsection">
+                <h3 className="ekyc-s21__subtitle">Owner Name details</h3>
+                <InfoBox variant="error">
+                  Please enter names of all owners of the land you are applying e-khata
+                </InfoBox>
+
+                <Table
+                  className="ekyc-s21__new-owner-table"
+                  columns={['No.', 'Owner name', '']}
+                  rows={newOwnerNames.map((name, i) => [
+                    i + 1,
+                    <Input
+                      key={`input-${i}`}
+                      placeholder="Please type owner name"
+                      value={name}
+                      onChange={(e) => {
+                        const updated = [...newOwnerNames];
+                        updated[i] = e.target.value;
+                        setNewOwnerNames(updated);
+                        const errs = [...ownerNameErrors];
+                        errs[i] = '';
+                        setOwnerNameErrors(errs);
+                      }}
+                      onBlur={() => {
+                        if (name.trim() && !/^[a-zA-Z\s.]+$/.test(name.trim())) {
+                          const errs = [...ownerNameErrors];
+                          errs[i] = 'Name should contain only letters';
+                          setOwnerNameErrors(errs);
+                        }
+                      }}
+                      state={ownerNameErrors[i] ? 'error' : 'empty'}
+                      caption={ownerNameErrors[i] || ''}
+                      captionVariant={ownerNameErrors[i] ? 'error' : undefined}
+                      inputType="alpha"
+                      disabled={s21Submitted}
+                    />,
+                    <button
+                      key={`remove-${i}`}
+                      type="button"
+                      className="ekyc-s21__remove-row-btn"
+                      disabled={s21Submitted || !name.trim()}
+                      onClick={() => {
+                        if (i === 0) {
+                          setNewOwnerNames(['', ...newOwnerNames.slice(1)]);
+                          setOwnerNameErrors(['', ...ownerNameErrors.slice(1)]);
+                        } else {
+                          setNewOwnerNames(newOwnerNames.filter((_, j) => j !== i));
+                          setOwnerNameErrors(ownerNameErrors.filter((_, j) => j !== i));
+                        }
+                      }}
+                    >
+                      <span className="material-icons-outlined">close</span>
+                    </button>,
+                  ])}
+                  actionButton={
+                    !s21Submitted ? (
+                      <button
+                        type="button"
+                        className="ekyc-s21__add-icon-btn"
+                        disabled={!newOwnerNames[newOwnerNames.length - 1]?.trim()}
+                        onClick={() => {
+                          setNewOwnerNames([...newOwnerNames, '']);
+                          setOwnerNameErrors([...ownerNameErrors, '']);
+                        }}
+                      >
+                        <span className="material-icons-outlined">add</span>
+                      </button>
+                    ) : undefined
+                  }
+                />
+              </div>
+
+              <div className="ekyc-s21__actions">
+                <Button
+                  variant="primary"
+                  disabled={s21Submitted || newOwnerNames.every((n) => !n.trim())}
+                  onClick={handleS21Submit}
+                >
+                  Save and Proceed to KYC
+                </Button>
+                <Button variant="error" disabled={!s21Submitted} onClick={handleS21Edit}>
+                  Edit
+                </Button>
+              </div>
+
             </div>
           )}
         </SectionBox>
@@ -702,6 +819,13 @@ const OwnerEKYCPage = ({
                       </Button>
                     )}
                   </div>
+
+                  {/* UIDAI failure message — shown after redirect returns without opening popup */}
+                  {ekycFailedOwners.has(owner.id) && (
+                    <InfoBox variant="red">
+                      There was an error in completing eKYC due to UIDAI server issues. Please try again after 15–20 minutes.
+                    </InfoBox>
+                  )}
 
                   {/* Completed eKYC details card */}
                   {status === 'done' && data && (
@@ -768,55 +892,111 @@ const OwnerEKYCPage = ({
             There is a Mismatch in the Owner Name Details.
           </InfoBox>
 
-          {/* ── Mismatch table ─────────────────────────── */}
-          <div className="ekyc-s23__table-wrap">
-            <table className="ekyc-s23__table">
-              <thead>
-                <tr>
-                  <th className="ekyc-s23__th ekyc-s23__th--no">No.</th>
-                  <th className="ekyc-s23__th ekyc-s23__th--kaveri">Owner name as per Kaveri</th>
-                  <th className="ekyc-s23__th ekyc-s23__th--ekyc">Name as per eKYC</th>
-                  <th className="ekyc-s23__th ekyc-s23__th--reason">Reason for not matching</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allOwners.map((owner, idx) => (
-                  <tr key={owner.id}>
-                    <td className="ekyc-s23__td ekyc-s23__td--no">{idx + 1}</td>
-                    <td className="ekyc-s23__td">{owner.name}</td>
-                    <td className="ekyc-s23__td">{MOCK_EKYC_NAMES[owner.id] || owner.name}</td>
-                    <td className="ekyc-s23__td ekyc-s23__td--reason">
-                      <Dropdown
-                        placeholder="Select reason"
-                        options={MISMATCH_REASON_OPTIONS}
-                        value={mismatchReasons[owner.id] || ''}
-                        onChange={(e) => handleMismatchReasonChange(owner.id, e.target.value)}
-                        disabled={s23Submitted}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {/* ── Case 1: Kaveri owners vs eKYC mismatch ─── */}
+          {hasMismatchKaveri && (
+            <>
+              <div className="ekyc-s23__table-wrap">
+                <table className="ekyc-s23__table">
+                  <thead>
+                    <tr>
+                      <th className="ekyc-s23__th ekyc-s23__th--no">No.</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--kaveri">Owner name as per Kaveri</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--ekyc">Name as per eKYC</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--reason">Reason for not matching</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allOwners.map((owner, idx) => (
+                      <tr key={owner.id}>
+                        <td className="ekyc-s23__td ekyc-s23__td--no">{idx + 1}</td>
+                        <td className="ekyc-s23__td">{owner.name}</td>
+                        <td className="ekyc-s23__td">{getEkycName(owner)}</td>
+                        <td className="ekyc-s23__td ekyc-s23__td--reason">
+                          <Dropdown
+                            placeholder="Select reason"
+                            options={MISMATCH_REASON_OPTIONS}
+                            value={mismatchReasons[owner.id] || ''}
+                            onChange={(e) => handleMismatchReasonChange(owner.id, e.target.value)}
+                            disabled={s23Submitted}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-          {/* ── Action buttons ─────────────────────────── */}
-          <div className="ekyc-s23__actions">
-            <Button
-              variant="primary"
-              disabled={!allReasonsSelected || s23Submitted}
-              onClick={handleS23Save}
-            >
-              Save and Next
-            </Button>
-            <Button
-              variant="error"
-              disabled={!s23Submitted}
-              onClick={handleS23Edit}
-            >
-              Edit
-            </Button>
-          </div>
+              <div className="ekyc-s23__actions">
+                <Button
+                  variant="primary"
+                  disabled={!allReasonsSelected || s23Submitted}
+                  onClick={handleS23Save}
+                >
+                  Save and Next
+                </Button>
+                <Button
+                  variant="error"
+                  disabled={!s23Submitted}
+                  onClick={handleS23Edit}
+                >
+                  Edit
+                </Button>
+              </div>
+            </>
+          )}
+
+          {/* ── Case 2: Added owner vs eKYC mismatch ────── */}
+          {hasMismatchNew && (
+            <>
+              <div className="ekyc-s23__table-wrap">
+                <table className="ekyc-s23__table">
+                  <thead>
+                    <tr>
+                      <th className="ekyc-s23__th ekyc-s23__th--no">No.</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--kaveri">Added Owner Name</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--ekyc">Name as per eKYC</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--reason">Reason for not matching</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {mismatchTableOwners.map((owner, idx) => (
+                      <tr key={owner.id}>
+                        <td className="ekyc-s23__td ekyc-s23__td--no">{idx + 1}</td>
+                        <td className="ekyc-s23__td">{owner.name}</td>
+                        <td className="ekyc-s23__td">{getEkycName(owner)}</td>
+                        <td className="ekyc-s23__td ekyc-s23__td--reason">
+                          <Dropdown
+                            placeholder="Select reason"
+                            options={NEW_OWNER_MISMATCH_REASON_OPTIONS}
+                            value={mismatchReasons[owner.id] || ''}
+                            onChange={(e) => handleMismatchReasonChange(owner.id, e.target.value)}
+                            disabled={s23Submitted}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="ekyc-s23__actions">
+                <Button
+                  variant="primary"
+                  disabled={!allReasonsSelected || s23Submitted}
+                  onClick={handleS23Save}
+                >
+                  Save and Next
+                </Button>
+                <Button
+                  variant="error"
+                  disabled={!s23Submitted}
+                  onClick={handleS23Edit}
+                >
+                  Edit
+                </Button>
+              </div>
+            </>
+          )}
 
           {/* ── Document upload table (shown after Save & Next) */}
           {s23Submitted && mergedDocs.length > 0 && (
@@ -1019,48 +1199,50 @@ const OwnerEKYCPage = ({
                 <Input
                   label="Name of the Related Person"
                   value={relatedPersonName}
-                  onChange={(e) => setRelatedPersonName(e.target.value)}
                   required
-                  inputType="alpha"
+                  frozen
                   className="ekyc-popup__field"
                 />
               </div>
 
-              {/* Mobile + Get OTP + OTP row */}
-              <div className="ekyc-popup__mobile-row">
-                <Input
-                  label="Mobile number"
-                  placeholder="XXXXXXXXXXXX"
-                  value={mobileNumber}
-                  onChange={(e) => setMobileNumber(e.target.value)}
-                  required
-                  inputType="phone"
-                  className="ekyc-popup__field--mobile"
-                />
-                <Button
-                  variant="primary"
-                  disabled={!mobileNumber.trim() || (otpSent && otpCountdown > 0)}
-                  onClick={handleGetOtp}
-                  className="ekyc-popup__get-otp-btn"
-                >
-                  Get OTP
-                </Button>
+              {/* Mobile + OTP section */}
+              <div className="ekyc-popup__mobile-section">
+                {/* Phone + Get OTP row */}
+                <div className="ekyc-popup__mobile-row">
+                  <Input
+                    label="Mobile number"
+                    placeholder="XXXXXXXXXXXX"
+                    value={mobileNumber}
+                    onChange={(e) => setMobileNumber(e.target.value)}
+                    required
+                    inputType="phone"
+                    className="ekyc-popup__field--mobile"
+                  />
+                  <Button
+                    variant="primary"
+                    disabled={!mobileNumber.trim() || (otpSent && otpCountdown > 0)}
+                    onClick={handleGetOtp}
+                    className="ekyc-popup__get-otp-btn"
+                  >
+                    Get OTP
+                  </Button>
+                </div>
+
+                {/* OTP row — below phone row */}
                 <div className="ekyc-popup__otp-wrap">
                   <Input
                     label="Enter OTP"
                     placeholder=""
                     value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
+                    onChange={(e) => { setOtp(e.target.value); setOtpError(false); }}
                     required
                     disabled={!otpSent}
                     inputType="otp"
+                    state={otpError ? 'error' : undefined}
+                    caption={otpError ? 'Wrong OTP, please click on Get OTP and re-try' : (otpSent && otpCountdown > 0 ? `Please enter within ${otpCountdown} seconds` : '')}
+                    captionVariant={otpError ? 'error' : (otpSent && otpCountdown > 0 ? 'error' : undefined)}
                     className="ekyc-popup__field--otp"
                   />
-                  {otpSent && otpCountdown > 0 && (
-                    <p className="ekyc-popup__otp-timer">
-                      Please enter within {otpCountdown} seconds
-                    </p>
-                  )}
                 </div>
               </div>
             </div>
@@ -1069,7 +1251,7 @@ const OwnerEKYCPage = ({
             <div className="ekyc-popup__footer">
               <Button
                 variant="primary"
-                disabled={!relationshipType || !relatedPersonName.trim() || !mobileNumber.trim() || !otpSent || !otp.trim()}
+                disabled={!relationshipType || !mobileNumber.trim() || !otpSent || !otp.trim()}
                 onClick={handleCompleteEkyc}
               >
                 Complete eKYC
@@ -1085,16 +1267,6 @@ const OwnerEKYCPage = ({
         </div>
       )}
 
-      {/* ── eKYC Error Overlay (shown on main page) ───── */}
-      {ekycError && (
-        <div className="ekyc-error-overlay">
-          <ErrorMessageCard
-            message="There was an error in completing eKYC due to UIDAI server issues, please try again after 15-20 minutes"
-            subMessage="Don't worry, your form progress will not be lost"
-            onOk={() => setEkycError(false)}
-          />
-        </div>
-      )}
     </div>
   );
 };

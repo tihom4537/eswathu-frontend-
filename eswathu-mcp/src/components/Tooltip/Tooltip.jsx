@@ -1,9 +1,29 @@
 import { useState } from 'react';
 import './Tooltip.css';
 
-const Tooltip = ({ label, imageSrc, imageAlt = 'Sample', caption, className = '' }) => {
+const Tooltip = ({ label, imageSrc, imageAlt = 'Sample', caption, className = '', variant, definition, children }) => {
   const [imgError, setImgError] = useState(false);
+  const [showDef, setShowDef] = useState(false);
 
+  /* ── Definition variant — inline underlined term + hover box ── */
+  if (variant === 'definition') {
+    return (
+      <span
+        className={`tooltip-def ${className}`}
+        onMouseEnter={() => setShowDef(true)}
+        onMouseLeave={() => setShowDef(false)}
+      >
+        <span className="tooltip-def__term">{children}</span>
+        {showDef && (
+          <span className="tooltip-def__box" role="tooltip">
+            {definition}
+          </span>
+        )}
+      </span>
+    );
+  }
+
+  /* ── Default variant — image + label card ────────────────── */
   return (
     <div className={`tooltip-card ${className}`}>
       <div className="tooltip-card__label">

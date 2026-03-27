@@ -1,3 +1,46 @@
+/* ── Definition variant ──────────────────────────────────── */
+
+/* Wrapper: inline-block so position:relative works for absolute child */
+.tooltip-def {
+  position: relative;
+  display: inline-block;
+}
+
+/* The underlined term */
+.tooltip-def__term {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--primary);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  cursor: default;
+  color: inherit;
+}
+
+/* Definition box — appears below the term */
+.tooltip-def__box {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 520px;
+  background: #ffffff;
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+  z-index: 200;
+  display: block;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--text-dark);
+  /* Prevent the box itself from inheriting underline */
+  text-decoration: none;
+  white-space: normal;
+  cursor: default;
+}
+
 /* ── Tooltip Card ──────────────────────────────────────── */
 
 .tooltip-card {

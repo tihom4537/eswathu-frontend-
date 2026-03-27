@@ -106,7 +106,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--primary, #0263c5);
+  color: var(--primary, #024C97);
 }
 
 .bd-tenant__add-btn:hover {

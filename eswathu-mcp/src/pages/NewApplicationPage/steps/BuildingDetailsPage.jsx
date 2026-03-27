@@ -1,9 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
 import PageNavigation from '../../../components/PageNavigation/PageNavigation';
-import Breadcrumb from '../../../components/Breadcrumb/Breadcrumb';
 import PageHeading from '../../../components/PageHeading/PageHeading';
-import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import InfoBox from '../../../components/InfoBox/InfoBox';
 import Dropdown from '../../../components/Dropdown/Dropdown';
@@ -166,20 +164,10 @@ export default function BuildingDetailsPage({
         isNextEnabled={isPageComplete}
       />
 
-      {/* ── Breadcrumb ─────────────────────────────────────── */}
-      <Breadcrumb
-        steps={bcStepNames}
-        currentStep={currentBCStep}
-        completedSteps={completedBCSteps}
-        onStepClick={onBCStepClick}
-      />
-
       {/* Page heading */}
       <div className="bd-page__heading-wrap">
         <PageHeading subtitle="Step 4" title="Property Classification" />
       </div>
-
-      <Stepper activeStep={3} />
 
       <div className="bd-page__content">
         {/* ── Section 4.2: Property Type & Category Details ──── */}

@@ -4,15 +4,14 @@ import './PropertyDetails_ReviewDetails.css';
 const PropertyDetails_ReviewDetails = ({
   addressData,
   imageFile,
-  acceptedAreaSqft,
+  acceptedAreaSqmt,
   siteDimSummary,
   checkbandiData,
 }) => {
   /* ── Derived display values ─────────────────────────── */
-  const areaSqmt = acceptedAreaSqft > 0
-    ? (acceptedAreaSqft * 0.0929).toFixed(2)
+  const areaDisplay = acceptedAreaSqmt > 0
+    ? `${parseFloat(acceptedAreaSqmt).toFixed(2)} Sq.Mts`
     : '—';
-  const areaDisplay = acceptedAreaSqft > 0 ? `${areaSqmt} Sq.Mts` : '—';
 
   const dimsDisplay = siteDimSummary
     ? siteDimSummary.type === 'odd'
@@ -56,7 +55,7 @@ const PropertyDetails_ReviewDetails = ({
       <div className="pd-rd__table-wrap pd-rd__table-wrap--area">
         <Table
           columns={['Total Area Details (Sq.Mts)', 'Property Dimensions (Mts)', 'Irregular site/ site with odd dimensions']}
-          rows={[[areaDisplay, dimsDisplay, siteDimSummary?.type === 'odd' ? 'Yes' : 'No']]}
+          rows={[[areaDisplay, dimsDisplay, siteDimSummary ? (siteDimSummary.type === 'odd' ? 'Yes' : 'No') : 'N/A']]}
         />
       </div>
 

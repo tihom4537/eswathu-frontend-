@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
 import PageNavigation from '../../../components/PageNavigation/PageNavigation';
-import Breadcrumb from '../../../components/Breadcrumb/Breadcrumb';
 import PageHeading from '../../../components/PageHeading/PageHeading';
-import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import InfoBox from '../../../components/InfoBox/InfoBox';
 import RadioButton from '../../../components/RadioButton/RadioButton';
@@ -42,19 +40,9 @@ export default function AvailRebatesPage({
         hideNext
       />
 
-      {/* ── Breadcrumb ─────────────────────────────────────── */}
-      <Breadcrumb
-        steps={bcStepNames}
-        currentStep={currentBCStep}
-        completedSteps={completedBCSteps}
-        onStepClick={onBCStepClick}
-      />
-
       <div className="ar-page__heading-wrap">
         <PageHeading subtitle="Step 5" title="Avail Rebates" />
       </div>
-
-      <Stepper activeStep={4} />
 
       <div className="ar-page__content">
         <SectionBox number="4.3" title="Avail Rebates" open>

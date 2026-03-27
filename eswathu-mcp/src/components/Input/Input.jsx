@@ -49,6 +49,8 @@ const Input = ({
   placeholder = '',
   value,
   onChange,
+  onBlur: onBlurProp,
+  onFocus: onFocusProp,
   state = 'empty',
   required = false,
   caption,
@@ -99,12 +101,14 @@ const Input = ({
     }
   };
 
-  /* ── Blur: validate ──────────────────────────────────── */
-  const handleBlur = () => {
+  /* ── Blur: validate + call external handler ─────────── */
+  const handleBlur = (e) => {
     setFocused(false);
-    if (isReadOnly || !config.blurError) return;
-    const err = config.blurError(value ?? '');
-    setValidationError(err || '');
+    if (!isReadOnly && config.blurError) {
+      const err = config.blurError(value ?? '');
+      setValidationError(err || '');
+    }
+    onBlurProp?.(e);
   };
 
   /* ── Change: clear error ─────────────────────────────── */

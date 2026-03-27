@@ -6,6 +6,7 @@ import RadioButton from '../../components/RadioButton/RadioButton';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import CaptionMessage from '../../components/CaptionMessage/CaptionMessage';
+import { useTranslation } from '../../i18n';
 import './LoginPage.css';
 
 const CAPTCHA_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
@@ -18,9 +19,9 @@ const generateCaptcha = () => {
   return result;
 };
 
-const CaptchaBlock = ({ captchaText, onRefresh, answer, onAnswerChange, errorMessage }) => (
+const CaptchaBlock = ({ captchaText, onRefresh, answer, onAnswerChange, errorMessage, tFn }) => (
   <div className="login-captcha">
-    <span className="login-captcha__label">Captcha:</span>
+    <span className="login-captcha__label">{tFn('login_captcha_label')}</span>
     <div className="login-captcha__row">
       <div className="login-captcha__image">
         <span className="login-captcha__text">{captchaText}</span>
@@ -44,7 +45,7 @@ const CaptchaBlock = ({ captchaText, onRefresh, answer, onAnswerChange, errorMes
       </div>
     </div>
     <Input
-      placeholder="Enter Captcha Answer"
+      placeholder={tFn('login_captcha_placeholder')}
       value={answer}
       onChange={(e) => onAnswerChange(e.target.value)}
       className="login-card__input"
@@ -54,6 +55,7 @@ const CaptchaBlock = ({ captchaText, onRefresh, answer, onAnswerChange, errorMes
 );
 
 const LoginPage = ({ onLogin }) => {
+  const { t } = useTranslation('home');
   const [loginType, setLoginType] = useState('citizen');
   const [inputValue, setInputValue] = useState('');
   const [captcha1, setCaptcha1] = useState(generateCaptcha());
@@ -76,7 +78,7 @@ const LoginPage = ({ onLogin }) => {
   const handleGetOtp = () => {
     if (!inputValue || !captchaAnswer1) return;
     if (captchaAnswer1 !== captcha1) {
-      setCaptcha1Error('Incorrect captcha. Please try again.');
+      setCaptcha1Error(t('login_captcha_error'));
       setCaptchaAnswer1('');
       setCaptcha1(generateCaptcha());
       return;
@@ -106,15 +108,15 @@ const LoginPage = ({ onLogin }) => {
 
   const inputLabel =
     loginType === 'citizen'
-      ? 'Mobile Number:'
-      : 'BSK Login ID (Regd. Phone Number):';
+      ? t('login_mobile')
+      : t('login_bsk');
 
   return (
     <div className="page-login">
       <NavigationBar variant="homepage" />
 
       <section className="login-content">
-        <PageHeading subtitle="Citizen Services" title="Login" />
+        <PageHeading subtitle={t('login_subtitle')} title={t('login_title')} />
 
         <div className="login-body">
           {/* Left — eKhata document illustration */}
@@ -130,14 +132,14 @@ const LoginPage = ({ onLogin }) => {
             {/* Radio toggle */}
             <div className="login-card__radios">
               <RadioButton
-                label="Citizen login"
+                label={t('login_citizen')}
                 name="loginType"
                 value="citizen"
                 checked={loginType === 'citizen'}
                 onChange={() => handleSwitchType('citizen')}
               />
               <RadioButton
-                label="GP Application login"
+                label={t('login_gp')}
                 name="loginType"
                 value="gp"
                 checked={loginType === 'gp'}
@@ -172,13 +174,14 @@ const LoginPage = ({ onLogin }) => {
                     if (captcha1Error) setCaptcha1Error('');
                   }}
                   errorMessage={captcha1Error}
+                  tFn={t}
                 />
                 <Button
                   variant="primary"
                   onClick={handleGetOtp}
                   disabled={inputValue.length !== 10 || !captchaAnswer1}
                 >
-                  Get OTP
+                  {t('login_btn_get_otp')}
                 </Button>
               </>
             )}
@@ -187,19 +190,19 @@ const LoginPage = ({ onLogin }) => {
             {otpSent && (
               <>
                 <Button variant="primary" disabled>
-                  Get OTP
+                  {t('login_btn_get_otp')}
                 </Button>
 
                 {otpTimer > 0 && (
                   <div className="login-card__otp-timer">
                     <span className="material-icons-outlined">error_outline</span>
-                    <span>Please enter OTP within {otpTimer} seconds</span>
+                    <span>{t('login_otp_timer').replace('{seconds}', otpTimer)}</span>
                   </div>
                 )}
 
                 <Input
-                  label="Enter OTP:"
-                  placeholder="Enter OTP"
+                  label={t('login_otp_label')}
+                  placeholder={t('login_otp_placeholder')}
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   className="login-card__input"
@@ -213,10 +216,11 @@ const LoginPage = ({ onLogin }) => {
                   }}
                   answer={captchaAnswer2}
                   onAnswerChange={setCaptchaAnswer2}
+                  tFn={t}
                 />
 
                 <Button variant="primary" onClick={handleLogin}>
-                  Login
+                  {t('login_btn_login')}
                 </Button>
               </>
             )}

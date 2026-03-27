@@ -4,9 +4,12 @@
    ============================================================ */
 
 :root {
+  color-scheme: light;         /* prevent browser forced dark mode inversion */
+
   /* ── Colours ─────────────────────────────────────────────── */
-  --primary:        #0263C5;   /* brand blue — buttons, borders, active states */
+  --primary:        #024C97;   /* brand blue — buttons, borders, active states */
   --primary-50:     #E6F2FF;   /* open section header background */
+  --primary-100:    #CDE5FE;   /* table add-row button background */
   --primary-300:    #68B2FD;   /* focus ring glow */
 
   --text-dark:      #212121;   /* primary body text */
@@ -27,7 +30,7 @@
   --warning:        #B77224;   /* warning — borders, icons, text */
 
   /* ── Typography ──────────────────────────────────────────── */
-  --font-family:    'Noto Sans', sans-serif;
+  --font-family:    'Noto Sans', 'Noto Sans Kannada', sans-serif;
 
   /* ── Spacing ─────────────────────────────────────────────── */
   --space-xs:   4px;

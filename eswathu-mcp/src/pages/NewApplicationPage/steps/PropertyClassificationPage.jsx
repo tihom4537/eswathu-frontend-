@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import BuildingDetails_GeneralFlow from './BuildingDetails_GeneralFlow';
 import BuildingDetails_AreaDetails from './BuildingDetails_AreaDetails';
 import BuildingDetails_MultiStoreyUsage from './BuildingDetails_MultiStoreyUsage';
 import BuildingDetails_ParkingDetails from './BuildingDetails_ParkingDetails';
@@ -6,9 +7,7 @@ import BuildingDetails_UndividedLand from './BuildingDetails_UndividedLand';
 import BuildingDetails_ESCOMDetails from './BuildingDetails_ESCOMDetails';
 import BuildingDetails_TenantDetails from './BuildingDetails_TenantDetails';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
-import Breadcrumb from '../../../components/Breadcrumb/Breadcrumb';
 import StepHeader from '../../../components/StepHeader/StepHeader';
-import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import InfoBox from '../../../components/InfoBox/InfoBox';
 import Dropdown from '../../../components/Dropdown/Dropdown';
@@ -23,6 +22,7 @@ import HelpCardList from '../../../components/HelpCardList/HelpCardList';
 import CaptionMessage from '../../../components/CaptionMessage/CaptionMessage';
 import ErrorMessageCard from '../../../components/ErrorMessageCard/ErrorMessageCard';
 import ProgressCircle from '../../../components/ProgressCircle/ProgressCircle';
+import FileUpload from '../../../components/FileUpload/FileUpload';
 import { nodes, DOCS } from '../../HomePage/classifierData';
 import { CLASSIFICATION_DATA } from '../../../data/classificationData';
 import './PropertyClassificationPage.css';
@@ -96,6 +96,41 @@ const CORNER_SITE_OPTIONS = [
   { value: 'yes', label: 'Yes' },
   { value: 'no',  label: 'No' },
 ];
+
+/* ── Section 4.3 — Rebate dropdown options ──────────────── */
+// Property type → rebate category mapping.
+// Full option lists to be filled in once user provides the mapping table.
+const REBATE_PROPERTY_OPTIONS = [
+  { value: 'commercial-industrial', label: 'Commercial or industrial' },
+  // TODO: add remaining options from mapping table
+];
+
+const REBATE_CATEGORY_MAP = {
+  'commercial-industrial': [
+    { value: 'agro-industries', label: 'Agro- based industries' },
+    // TODO: add remaining categories for this type
+  ],
+  // TODO: add remaining property type → categories
+};
+
+// Documents required per rebate combination.
+// Key: `${rebatePropertyType}:${rebateCategory}`
+const REBATE_DOCS_MAP = {
+  'commercial-industrial:agro-industries': [
+    { name: 'Death certificate', required: 'COMPULSORY' },
+    { name: 'Will',              required: 'OPTIONAL'   },
+  ],
+  // TODO: fill in from user's mapping table
+};
+
+/* General building categories — use the Building Area Details + storeys flow */
+const GENERAL_BUILDING_CATEGORIES = new Set([
+  'residential', 'commercial', 'parks', 'roads', 'civil-facilities',
+  'industry', 'multi-ownership', 'non-residential', 'agro-manufacturing',
+  'res-commercial', 'res-non-residential', 'comm-non-residential',
+  'res-comm-non-res', 'res-industrial', 'comm-industry',
+  'res-comm-industrial', 'govt-property',
+]);
 
 /* Helper: Building + Apartment flow detection */
 const isBuildingApartmentFlow = (type, category) => {
@@ -192,8 +227,16 @@ const PropertyClassificationPage = ({
   const [escomSaved, setEscomSaved]             = useState(false);
   const [tenantSaved, setTenantSaved]           = useState(false);
 
+  /* ── 4.2 — Non-apartment explicit save ───────────────────── */
+  const [s42SavedNonApt,      setS42SavedNonApt]      = useState(false);
+  const [generalBuildingSaved, setGeneralBuildingSaved] = useState(false);
+
   /* ── 4.3 — Avail Rebates ─────────────────────────────────── */
-  const [availing, setAvailing] = useState('no');
+  const [availing, setAvailing]                 = useState(null);
+  const [rebatePropertyType, setRebatePropertyType] = useState('');
+  const [rebateCategory, setRebateCategory]         = useState('');
+  const [rebateDocs, setRebateDocs]                 = useState({});
+  const [viewRebateDocIdx, setViewRebateDocIdx]     = useState(null);
 
   /* ── 4.2 — Scroll refs ───────────────────────────────────── */
   const areaRef      = useRef(null);
@@ -233,8 +276,11 @@ const PropertyClassificationPage = ({
         doc.required === 'OPTIONAL' || docUploads[i]?.uploadStatus === 'success'
       ));
 
-  /* survey section visible only once docs complete */
-  const surveyVisible = allMandatoryUploaded;
+  /* Grama Thana (11A-1) skips survey entirely */
+  const isGramaThana = classification === '11A-1';
+
+  /* survey section visible only once docs complete AND not Grama Thana */
+  const surveyVisible = allMandatoryUploaded && !isGramaThana;
 
   /* ── Classification change ───────────────────────────────── */
   const handleClassificationChange = (e) => {
@@ -282,6 +328,23 @@ const PropertyClassificationPage = ({
     });
   };
 
+  /* ── 4.3 rebate doc upload handlers ─────────────────────── */
+  const handleRebateDocUpload = (docIdx, file) => {
+    if (file.size > 5 * 1024 * 1024) {
+      setRebateDocs((prev) => ({ ...prev, [docIdx]: { fileName: file.name, uploadStatus: 'error' } }));
+    } else {
+      setRebateDocs((prev) => ({ ...prev, [docIdx]: { fileName: file.name, uploadStatus: 'success' } }));
+    }
+  };
+
+  const handleRebateDocRemove = (docIdx) => {
+    setRebateDocs((prev) => {
+      const next = { ...prev };
+      if (next[docIdx]) next[docIdx] = { fileName: null, uploadStatus: null };
+      return next;
+    });
+  };
+
   /* ── Survey handlers ─────────────────────────────────────── */
   const handleSurveySearch = () => {
     if (villageVal && surveyVal) setSurveySearched(true);
@@ -318,6 +381,8 @@ const PropertyClassificationPage = ({
     setAreaData(null); setAreaSaved(false);
     setMultiStoreySaved(false); setParkingSaved(false);
     setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
+    setS42SavedNonApt(false); setGeneralBuildingSaved(false);
+    setAvailing(null); setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
   };
 
   const handleWarn41Cancel = () => {
@@ -332,7 +397,27 @@ const PropertyClassificationPage = ({
   const allDropdownsSelected = propertyType && propertyCategory && isCornerSite;
   const showBuildingApartmentFlow =
     allDropdownsSelected && isBuildingApartmentFlow(propertyType, propertyCategory);
-  const allSaved = tenantSaved;
+  const isGeneralBuildingFlow =
+    allDropdownsSelected &&
+    propertyType === 'building' &&
+    GENERAL_BUILDING_CATEGORIES.has(propertyCategory);
+  // s42Done: apartment → tenantSaved; general building → generalBuildingSaved; others → s42SavedNonApt
+  const s42Done = tenantSaved || generalBuildingSaved || s42SavedNonApt;
+
+  /* ── 4.3 derived state ───────────────────────────────────── */
+  const currentRebateDocs =
+    rebatePropertyType && rebateCategory
+      ? (REBATE_DOCS_MAP[`${rebatePropertyType}:${rebateCategory}`] || [])
+      : [];
+  const allRebateMandatoryUploaded =
+    currentRebateDocs.length === 0 ||
+    currentRebateDocs.every((doc, i) =>
+      doc.required === 'OPTIONAL' || rebateDocs[i]?.uploadStatus === 'success'
+    );
+  const s43Done =
+    availing === 'no' ||
+    (availing === 'yes' && !!rebatePropertyType && !!rebateCategory && allRebateMandatoryUploaded);
+  const allSaved = s42Done && s43Done;
 
   /* ── 4.2 scroll effects ──────────────────────────────────── */
   useEffect(() => { if (allDropdownsSelected) scrollTo42(areaRef); }, [allDropdownsSelected]);
@@ -341,7 +426,8 @@ const PropertyClassificationPage = ({
   useEffect(() => { if (parkingSaved) scrollTo42(undividedRef); }, [parkingSaved]);
   useEffect(() => { if (undividedSaved) scrollTo42(escomRef); }, [undividedSaved]);
   useEffect(() => { if (escomSaved) scrollTo42(tenantRef); }, [escomSaved]);
-  useEffect(() => { if (tenantSaved) scrollTo42(s43Ref); }, [tenantSaved]);
+  useEffect(() => { if (s42SavedNonApt) scrollTo42(s43Ref); }, [s42SavedNonApt]);
+  useEffect(() => { if (s42Done) scrollTo42(s43Ref); }, [s42Done]);
 
   /* ── 4.2 subsection edit handlers ───────────────────────── */
   const handleAreaEdit = () => {
@@ -400,14 +486,6 @@ const PropertyClassificationPage = ({
     <div className="pc-page">
       <NavigationBar variant="postLogin" username={username} onLogout={() => onNavigate?.('login')} />
 
-      <Breadcrumb
-        steps={bcStepNames}
-        currentStep={currentBCStep}
-        completedSteps={completedBCSteps}
-        onStepClick={onBCStepClick}
-      />
-
-      <Stepper activeStep={3} />
       <StepHeader
         step="Step 4"
         title="Property Classification"
@@ -538,6 +616,26 @@ const PropertyClassificationPage = ({
                   <p className="pc-s41__no-docs">No additional documents required for this classification.</p>
                 )}
               </>
+            )}
+
+            {/* ── Grama Thana: skip survey, show Save and Next directly ── */}
+            {allMandatoryUploaded && isGramaThana && (
+              <div className="pc-s42__actions">
+                <Button
+                  variant="primary"
+                  disabled={s41FinalDone}
+                  onClick={handleS41FinalSave}
+                >
+                  Save and Next
+                </Button>
+                <Button
+                  variant="error"
+                  disabled={!s41FinalDone}
+                  onClick={handleS41EditClick}
+                >
+                  Edit
+                </Button>
+              </div>
             )}
 
             {/* ── Survey Number Details — reveals when docs complete ── */}
@@ -750,6 +848,8 @@ const PropertyClassificationPage = ({
                       setPropertyType(e.target.value);
                       setAreaSaved(false); setMultiStoreySaved(false); setParkingSaved(false);
                       setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
+                      setS42SavedNonApt(false); setGeneralBuildingSaved(false);
+                      setAvailing(null); setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
                     }}
                     required
                   />
@@ -764,6 +864,8 @@ const PropertyClassificationPage = ({
                       setPropertyCategory(e.target.value);
                       setAreaSaved(false); setMultiStoreySaved(false); setParkingSaved(false);
                       setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
+                      setS42SavedNonApt(false); setGeneralBuildingSaved(false);
+                      setAvailing(null); setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
                     }}
                     required
                   />
@@ -774,11 +876,28 @@ const PropertyClassificationPage = ({
                     placeholder="Choose Yes/No"
                     options={CORNER_SITE_OPTIONS}
                     value={isCornerSite}
-                    onChange={(e) => setIsCornerSite(e.target.value)}
+                    onChange={(e) => {
+                      setIsCornerSite(e.target.value);
+                      setS42SavedNonApt(false); setGeneralBuildingSaved(false);
+                      setAvailing(null); setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
+                    }}
                     required
                   />
                 </div>
               </div>
+
+              {/* ── General Building flow (Residential, Commercial, etc.) ── */}
+              {isGeneralBuildingFlow && (
+                <>
+                  <InfoBox variant="blue">
+                    Please keep sale deed document ready for entering the correct Building Details.
+                  </InfoBox>
+                  <BuildingDetails_GeneralFlow
+                    onSave={() => setGeneralBuildingSaved(true)}
+                    onEdit={() => setGeneralBuildingSaved(false)}
+                  />
+                </>
+              )}
 
               {/* ── Building + Apartment flow ── */}
               {showBuildingApartmentFlow && (
@@ -876,11 +995,28 @@ const PropertyClassificationPage = ({
                 </>
               )}
 
-              {/* ── Other type/category combinations — placeholder ── */}
-              {allDropdownsSelected && !showBuildingApartmentFlow && (
-                <p className="pc-s42__placeholder-text">
-                  Details form for selected type and category — coming soon.
-                </p>
+              {/* ── Site / Land to Convert (non-building) — Save & Edit ── */}
+              {allDropdownsSelected && !showBuildingApartmentFlow && !isGeneralBuildingFlow && (
+                <div className="pc-s42__actions">
+                  <Button
+                    variant="primary"
+                    disabled={s42SavedNonApt}
+                    onClick={() => setS42SavedNonApt(true)}
+                  >
+                    Save and Next
+                  </Button>
+                  <Button
+                    variant="error"
+                    disabled={!s42SavedNonApt}
+                    onClick={() => {
+                      setS42SavedNonApt(false); setGeneralBuildingSaved(false);
+                      setAvailing(null);
+                      setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </div>
               )}
 
             </div>
@@ -889,40 +1025,152 @@ const PropertyClassificationPage = ({
 
         {/* ═══ SECTION 4.3 — Avail Rebates ═══════════════════════ */}
         <div ref={s43Ref}>
-          <SectionBox number="4.3" title="Avail Rebates" open={tenantSaved}>
-            {tenantSaved && (
+          <SectionBox number="4.3" title="Avail Rebates" open={s42Done}>
+            {s42Done && (
               <div className="pc-s43__body">
-                <InfoBox variant="red">
-                  {/* TODO: add rebates info link */}
-                  <a href="#" className="pc-s43__info-link">Click here to know more about Rebates</a>
-                </InfoBox>
+
+                {/* Info link */}
+                <div className="pc-s43__info-box">
+                  <span className="material-icons-outlined pc-s43__info-icon">info</span>
+                  <p className="pc-s43__info-text">
+                    Click <span className="pc-s43__info-link">here</span> to know more about Rebates
+                  </p>
+                </div>
+
+                {/* Yes / No question */}
                 <div className="pc-s43__question-wrap">
-                  <p className="pc-s43__question">Will you be availing any rebates for your property?</p>
+                  <p className="pc-s43__question">
+                    Will you be availing any rebates for your property?<span className="pc-s43__required">*</span>
+                  </p>
                   <div className="pc-s43__radio-group">
                     <RadioButton
                       name="availing"
                       label="Yes"
                       value="yes"
                       checked={availing === 'yes'}
-                      onChange={() => setAvailing('yes')}
+                      onChange={() => {
+                        setAvailing('yes');
+                        setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
+                      }}
                     />
                     <RadioButton
                       name="availing"
                       label="No"
                       value="no"
                       checked={availing === 'no'}
-                      onChange={() => setAvailing('no')}
+                      onChange={() => {
+                        setAvailing('no');
+                        setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
+                      }}
                     />
                   </div>
                 </div>
+
+                {/* Yes flow — cascading dropdowns + document table */}
+                {availing === 'yes' && (
+                  <>
+                    {/* Two cascading dropdowns */}
+                    <div className="pc-s43__dropdowns-row">
+                      <div className="pc-s43__dropdown-item">
+                        <Dropdown
+                          label="Property type for availing rebates"
+                          required
+                          placeholder="Select"
+                          options={REBATE_PROPERTY_OPTIONS}
+                          value={rebatePropertyType}
+                          onChange={(e) => {
+                            setRebatePropertyType(e.target.value);
+                            setRebateCategory('');
+                            setRebateDocs({});
+                          }}
+                        />
+                      </div>
+                      <div className="pc-s43__dropdown-item">
+                        <Dropdown
+                          label="Rebate Category"
+                          required
+                          placeholder="Select"
+                          options={rebatePropertyType ? (REBATE_CATEGORY_MAP[rebatePropertyType] || []) : []}
+                          value={rebateCategory}
+                          onChange={(e) => {
+                            setRebateCategory(e.target.value);
+                            setRebateDocs({});
+                          }}
+                          disabled={!rebatePropertyType}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Document table — appears once both dropdowns selected */}
+                    {rebatePropertyType && rebateCategory && currentRebateDocs.length > 0 && (
+                      <div className="pc-s43__table-wrap">
+                        <table className="pc-doc-table pc-s43__table">
+                          <thead>
+                            <tr className="pc-doc-table__header">
+                              <th className="pc-doc-table__th pc-doc-table__th--sl">Sl No.</th>
+                              <th className="pc-doc-table__th pc-doc-table__th--type">Document Type</th>
+                              <th className="pc-doc-table__th pc-doc-table__th--upload">Upload Document</th>
+                              <th className="pc-doc-table__th pc-doc-table__th--view">View file</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {currentRebateDocs.map((doc, i) => {
+                              const d = rebateDocs[i] || {};
+                              return (
+                                <tr key={i}>
+                                  <td className="pc-doc-table__td pc-doc-table__td--sl">{i + 1}</td>
+                                  <td className="pc-doc-table__td pc-doc-table__td--type">
+                                    {doc.name}
+                                    {doc.required === 'COMPULSORY' && <span className="pc-doc__required"> *</span>}
+                                  </td>
+                                  <td className="pc-doc-table__td pc-doc-table__td--upload">
+                                    <FileUpload
+                                      fileName={d.fileName || null}
+                                      uploadStatus={d.uploadStatus}
+                                      caption={
+                                        d.uploadStatus === 'success'
+                                          ? 'Document uploaded successfully'
+                                          : d.uploadStatus === 'error'
+                                          ? 'Document exceeds 5MB'
+                                          : 'Only PDF size up-to 5MB allowed'
+                                      }
+                                      captionVariant={
+                                        d.uploadStatus === 'success' ? 'success'
+                                          : d.uploadStatus === 'error' ? 'error'
+                                          : 'info'
+                                      }
+                                      onUpload={(file) => handleRebateDocUpload(i, file)}
+                                      onRemove={() => handleRebateDocRemove(i)}
+                                    />
+                                  </td>
+                                  <td className="pc-doc-table__td pc-doc-table__td--view">
+                                    <button
+                                      type="button"
+                                      className={`pc-view-icon ${d.uploadStatus === 'success' ? 'pc-view-icon--active' : 'pc-view-icon--inactive'}`}
+                                      disabled={d.uploadStatus !== 'success'}
+                                      onClick={() => d.uploadStatus === 'success' && setViewRebateDocIdx(i)}
+                                    >
+                                      <span className="material-icons-outlined">visibility</span>
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </>
+                )}
+
               </div>
             )}
           </SectionBox>
         </div>
 
-        {/* Save and Proceed — below 4.3 */}
-        {s41FinalDone && (
-          <div ref={saveRef} className="pc-page__save-wrap">
+        {/* Save and Proceed — below 4.3, centered */}
+        {s42Done && (
+          <div ref={saveRef} className="pc-page__save-wrap pc-page__save-wrap--center">
             <Button
               variant="primary"
               disabled={!allSaved}

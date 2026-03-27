@@ -1,16 +1,52 @@
 import { useState } from 'react';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
-import PageNavigation from '../../components/PageNavigation/PageNavigation';
 import PageHeading from '../../components/PageHeading/PageHeading';
-import Stepper from '../../components/Stepper/Stepper';
 import SectionBox from '../../components/SectionBox/SectionBox';
 import InfoBox from '../../components/InfoBox/InfoBox';
 import Button from '../../components/Button/Button';
 import QuestionnaireField from '../../components/QuestionnaireField/QuestionnaireField';
 import HelpCardList from '../../components/HelpCardList/HelpCardList';
 import CaptionMessage from '../../components/CaptionMessage/CaptionMessage';
-import { nodes, DOCS } from './classifierData';
+import { nodes, DOCS, KN_DOCS, KN_TITLES, GLOSSARY, KN_GLOSSARY } from './classifierData';
+import Tooltip from '../../components/Tooltip/Tooltip';
+import { useTranslation } from '../../i18n';
 import './NewApplicationFirstPage.css';
+
+/**
+ * Splits a plain string by any glossary terms and wraps matched terms
+ * in a definition Tooltip. Returns a string if no matches, or a React
+ * element array if matches are found — both render correctly in JSX.
+ *
+ * @param {string} text     - The text to scan for glossary terms.
+ * @param {Function} t      - The useTranslation t() function used to resolve
+ *                            the i18n key stored in glossary[term] into the
+ *                            correct language definition string.
+ * @param {Object} glossary - Term→i18n-key map to use. Defaults to GLOSSARY (English).
+ *                            Pass KN_GLOSSARY for Kannada text.
+ */
+const renderWithDefs = (text, t, glossary = GLOSSARY) => {
+  if (typeof text !== 'string' || !text) return text;
+  const terms = Object.keys(glossary);
+  if (terms.length === 0) return text;
+  // Escape regex special chars, then wrap each term with \b word boundaries
+  // on whichever end starts/ends with a word character. This prevents short
+  // terms like 'Site' from matching inside longer words like 'Sites'.
+  // Note: \b only matches ASCII word chars — Kannada terms use raw substring match.
+  const escaped = terms.map(term => {
+    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const startBound = /^\w/.test(term) ? '\\b' : '';
+    const endBound   = /\w$/.test(term) ? '\\b' : '';
+    return `${startBound}${esc}${endBound}`;
+  });
+  const pattern = new RegExp(`(${escaped.join('|')})`, 'g');
+  const parts = text.split(pattern);
+  if (parts.length === 1) return text; // no glossary terms found
+  return parts.map((part, i) =>
+    glossary[part]
+      ? <Tooltip key={i} variant="definition" definition={t(glossary[part])}>{part}</Tooltip>
+      : part
+  );
+};
 
 const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationConfirmed }) => {
   const [history, setHistory] = useState([]);
@@ -18,7 +54,26 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
   const [selectedOption, setSelectedOption] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
 
-  const node = nodes[currentId];
+  const { t, lang } = useTranslation('newAppFirst');
+
+  // Returns a node with label/question/options translated for the current language.
+  // Result nodes (type === 'result') are returned unchanged — their titles are not
+  // in the questionnaire MD and do not need translation here.
+  const getTranslatedNode = (nodeId) => {
+    const base = nodes[nodeId];
+    if (!base || base.type === 'result') return base;
+    return {
+      ...base,
+      label: t(`${nodeId}_label`),
+      question: t(`${nodeId}_question`),
+      options: base.options.map((opt, i) => ({
+        ...opt,
+        text: t(`${nodeId}_opt${i}`),
+      })),
+    };
+  };
+
+  const node = getTranslatedNode(currentId);
   const isResult = node.type === 'result';
 
   const handleOptionSelect = (i) => {
@@ -53,9 +108,17 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
     onClassificationConfirmed?.(node.code);
   };
 
-  const resultDocs = isResult && !node.noDoc ? (DOCS[node.code] || []) : [];
+  const isKn = lang === 'kn';
+  const resultDocs = isResult && !node.noDoc
+    ? (isKn ? (KN_DOCS[node.code] || []) : (DOCS[node.code] || []))
+    : [];
+  const resultTitle = isResult
+    ? (isKn ? (KN_TITLES[node.code] || node.title) : node.title)
+    : '';
   const resultFormType = isResult
-    ? node.code.startsWith('11A') ? 'Form 11A' : 'Form 11B'
+    ? (node.code.startsWith('11A')
+        ? (isKn ? 'ನಮೂನೆ 11A' : 'Form 11A')
+        : (isKn ? 'ನಮೂನೆ 11B' : 'Form 11B'))
     : '';
 
   return (
@@ -66,18 +129,57 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
         onLogout={() => onNavigate && onNavigate('login')}
       />
 
-      <PageNavigation
-        onBack={() => onNavigate && onNavigate('home')}
-        isBackEnabled={true}
-        onNext={() => onNavigate && onNavigate('new-application-step1')}
-        isNextEnabled={isConfirmed}
-      />
-
       {/* Steps banner */}
       <div className="new-app-page__steps-bg">
         <div className="new-app-page__steps-inner">
-          <PageHeading subtitle="Application process" title="Get your e-khata in 5 simple steps" />
-          <Stepper activeStep={-1} />
+
+          {/* Back arrow */}
+          <button
+            type="button"
+            className="new-app-page__arrow"
+            onClick={() => onNavigate && onNavigate('home')}
+            aria-label="Go back"
+          >
+            <span className="material-icons-outlined">arrow_back</span>
+          </button>
+
+          {/* Centre content */}
+          <div className="new-app-page__steps-content">
+            <PageHeading subtitle={t('newapp_subtitle')} title={t('newapp_title')} />
+
+            {/* Figma node 249:69627 — informational steps row, not interactive */}
+            <div className="new-app-page__steps-row">
+              {[
+                { n: 1, label: t('step1_label') },
+                { n: 2, label: t('step2_label') },
+                { n: 3, label: t('step3_label') },
+                { n: 4, label: t('step4_label') },
+                { n: 5, label: t('step5_label') },
+              ].flatMap(({ n, label }, i) => {
+                const els = [];
+                if (i > 0) els.push(<div key={`l${n}`} className="new-app-page__steps-line" />);
+                els.push(
+                  <div key={n} className="new-app-page__steps-item">
+                    <div className="new-app-page__steps-circle">{n}</div>
+                    <span className="new-app-page__steps-label">{label}</span>
+                  </div>
+                );
+                return els;
+              })}
+            </div>
+          </div>
+
+          {/* Forward arrow */}
+          <button
+            type="button"
+            className={`new-app-page__arrow${!isConfirmed ? ' new-app-page__arrow--disabled' : ''}`}
+            disabled={!isConfirmed}
+            onClick={() => onNavigate && onNavigate('new-application-step1')}
+            aria-label="Proceed to application"
+          >
+            <span className="material-icons-outlined">arrow_forward</span>
+          </button>
+
         </div>
       </div>
 
@@ -85,18 +187,15 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
       <div className="new-app-page__sections">
 
         {/* 0.1 — Things to keep in hand */}
-        <SectionBox number="0.1" title="Things to keep in hand before proceeding" open>
+        <SectionBox number="0.1" title={t('s01_title')} open>
           <div className="new-app-s01">
 
             <InfoBox variant="outline">
-              The form requires you to enter most of your property details hence it would be
-              helpful to keep <strong>ALL YOUR PROPERTY RELATED DOCUMENTS</strong> handy before
-              you start.
+              {t('s01_infobox_before')} <strong>{t('s01_infobox_bold')}</strong> {t('s01_infobox_after')}
             </InfoBox>
 
             <p className="new-app-s01__mandatory-text">
-              The following two documents are <strong>MANDATORY</strong>. Kindly keep both of
-              these ready before you proceed.
+              {t('s01_mandatory_before')} <strong>{t('s01_mandatory_bold')}</strong>. {t('s01_mandatory_after')}
             </p>
 
             <div className="new-app-s01__doc-list">
@@ -105,10 +204,8 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
               <div className="new-app-s01__doc-item">
                 <span className="material-icons-outlined new-app-s01__doc-icon">file_copy</span>
                 <div className="new-app-s01__doc-content">
-                  <p className="new-app-s01__doc-title">Deed Documents</p>
-                  <p className="new-app-s01__doc-desc">
-                    It is the official proof that a property is registered in your name.
-                  </p>
+                  <p className="new-app-s01__doc-title">{t('s01_doc1_title')}</p>
+                  <p className="new-app-s01__doc-desc">{t('s01_doc1_desc')}</p>
                 </div>
               </div>
 
@@ -118,10 +215,8 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
               <div className="new-app-s01__doc-item">
                 <span className="material-icons-outlined new-app-s01__doc-icon">file_copy</span>
                 <div className="new-app-s01__doc-content">
-                  <p className="new-app-s01__doc-title">Owner's Aadhaar Details</p>
-                  <p className="new-app-s01__doc-desc">
-                    Owner's Aadhaar Card Number and registered phone number for ekyc verification
-                  </p>
+                  <p className="new-app-s01__doc-title">{t('s01_doc2_title')}</p>
+                  <p className="new-app-s01__doc-desc">{t('s01_doc2_desc')}</p>
                 </div>
               </div>
 
@@ -131,10 +226,10 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
               <div className="new-app-s01__doc-item">
                 <span className="material-icons-outlined new-app-s01__doc-icon new-app-s01__doc-icon--image">image</span>
                 <div className="new-app-s01__doc-content">
-                  <p className="new-app-s01__doc-title">Property Image with Geo Tag</p>
+                  <p className="new-app-s01__doc-title">{t('s01_doc3_title')}</p>
                   <p className="new-app-s01__doc-desc">
-                    Photo of the property with the front elevation visible.{' '}
-                    <a href="#" className="new-app-s01__link">Click here to know how to click a geo tagged photo</a>
+                    {t('s01_doc3_desc')}{' '}
+                    <a href="#" className="new-app-s01__link">{t('s01_doc3_link')}</a>
                   </p>
                 </div>
               </div>
@@ -145,31 +240,23 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
               <div className="new-app-s01__doc-item">
                 <span className="material-icons-outlined new-app-s01__doc-icon">file_copy</span>
                 <div className="new-app-s01__doc-content">
-                  <p className="new-app-s01__doc-title">Encumbrance Certificate (EC)</p>
-                  <p className="new-app-s01__doc-desc">
-                    An official, legal document certifying that a property is free from any
-                    financial or legal liabilities, such as mortgages, loans, or pending dues.
-                    It acts as evidence of a clear title, showing all registered transactions
-                    over a specified period.
-                  </p>
+                  <p className="new-app-s01__doc-title">{t('s01_doc4_title')}</p>
+                  <p className="new-app-s01__doc-desc">{t('s01_doc4_desc')}</p>
                 </div>
               </div>
 
               {/* EC note InfoBox — multiline, icon top-aligned */}
               <InfoBox variant="outline" className="new-app-s01__ec-info">
                 <>
-                  Encumbrance Certificate (Form 15) from at least one day before date of
-                  registration until issued at least in the last 15 days are accepted.{' '}
-                  <a href="#" className="new-app-s01__link">To know more click here</a>
+                  {t('s01_ec_main')}{' '}
+                  <a href="#" className="new-app-s01__link">{t('s01_ec_link')}</a>
                   <br /><br />
-                  Note: If your registered deed is before 01.04.2004, then you will have to
-                  give two ECs.<br />
-                  i. EC from 01.04.2004 until issued at least in the last 15 days are accepted.<br />
-                  ii. EC from at least one date before your registration date until 31.03.2004.
+                  <strong>{t('s01_ec_note_label')}</strong>{' '}{t('s01_ec_note_intro')}<br />
+                  1. {t('s01_ec_list1')}<br />
+                  2. {t('s01_ec_list2')}<br />
+                  {t('s01_ec_example')}
                   <br /><br />
-                  (For example, if your Regd Deed is registered on 17-08-1998, then obtain the
-                  EC from 16-08-1998. Note: if your Regd Deed is not in the submitted EC, then
-                  the application won't be processed.)
+                  <strong>{t('s01_ec_important_label')}</strong>{' '}{t('s01_ec_important')}
                 </>
               </InfoBox>
 
@@ -178,27 +265,24 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
         </SectionBox>
 
         {/* 0.2 — Property Classification Questionnaire */}
-        <SectionBox number="0.2" title="Property Classification" open className="new-app-s02-box">
+        <SectionBox number="0.2" title={t('s02_title')} open className="new-app-s02-box">
           <div className="new-app-s02">
 
-            <p className="new-app-s02__intro">
-              Please answer a few questions to find and confirm your Property Classification
-              (11A and 11B)
-            </p>
+            <p className="new-app-s02__intro">{t('s02_intro')}</p>
 
             {!isResult ? (
               <div className="new-app-s02__questionnaire">
                 <div className="new-app-s02__question-header">
                   <span className="new-app-s02__question-label">{node.label}</span>
-                  <p className="new-app-s02__question-text">{node.question}</p>
+                  <p className="new-app-s02__question-text">{renderWithDefs(node.question, t, isKn ? KN_GLOSSARY : GLOSSARY)}</p>
                 </div>
 
                 <div className="new-app-s02__options">
                   {node.options.map((option, i) => (
                     <QuestionnaireField
                       key={i}
-                      text={option.text}
-                      sub={option.sub}
+                      text={renderWithDefs(option.text, t, isKn ? KN_GLOSSARY : GLOSSARY)}
+                      sub={option.sub ? renderWithDefs(option.sub, t) : undefined}
                       selected={selectedOption === i}
                       onChange={() => handleOptionSelect(i)}
                       name="questionnaire"
@@ -210,7 +294,7 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
                 <div className="new-app-s02__actions">
                   {history.length > 0 && (
                     <Button variant="white" icon="arrow_back" onClick={handleBack}>
-                      Back
+                      {t('s02_btn_back')}
                     </Button>
                   )}
                   <Button
@@ -218,7 +302,7 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
                     disabled={selectedOption === null}
                     onClick={handleNext}
                   >
-                    Next
+                    {t('s02_btn_next')}
                   </Button>
                 </div>
               </div>
@@ -227,24 +311,27 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
                 <HelpCardList
                   variant="document"
                   subtitle={resultFormType}
-                  title={`${node.code.replace(/-\d+$/, '')} — ${node.title}`}
-                  items={resultDocs}
+                  title={isKn
+                    ? <>{node.code.replace(/-\d+$/, '')} — {renderWithDefs(resultTitle, t, KN_GLOSSARY)}</>
+                    : `${node.code.replace(/-\d+$/, '')} — ${resultTitle}`
+                  }
+                  items={resultDocs.map(doc => renderWithDefs(doc, t, isKn ? KN_GLOSSARY : GLOSSARY))}
                   noDoc={node.noDoc}
                 />
                 <div className="new-app-s02__result-actions">
                   <Button variant="white" icon="arrow_back" onClick={handleBack}>
-                    Back
+                    {t('s02_btn_back')}
                   </Button>
                   <Button variant="white" icon="refresh" onClick={handleRestart}>
-                    Start Over
+                    {t('s02_btn_start_over')}
                   </Button>
                 </div>
                 <div className="new-app-s02__result-confirm">
                   <Button variant="primary" disabled={isConfirmed} onClick={handleConfirm}>
-                    Confirm my Classification
+                    {t('s02_btn_confirm')}
                   </Button>
                   <CaptionMessage variant="info">
-                    This will be used in your application
+                    {t('s02_confirm_caption')}
                   </CaptionMessage>
                 </div>
               </div>
@@ -258,7 +345,7 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
       {/* Proceed CTA */}
       <div className="new-app-page__cta">
         <Button variant="primary" onClick={() => onNavigate && onNavigate('new-application-step1')}>
-          Proceed to New Application
+          {t('proceed_btn')}
         </Button>
       </div>
     </div>

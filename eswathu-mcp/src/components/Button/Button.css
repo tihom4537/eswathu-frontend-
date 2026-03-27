@@ -35,7 +35,7 @@
   opacity: 0.9;
 }
 .btn--primary:focus-visible {
-  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.25);
+  box-shadow: 0 0 0 4px rgba(2, 76, 151, 0.25);
 }
 .btn--primary:disabled {
   opacity: 0.5;
@@ -56,7 +56,7 @@
   opacity: 0.9;
 }
 .btn--white:focus-visible {
-  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.25);
+  box-shadow: 0 0 0 4px rgba(2, 76, 151, 0.25);
 }
 .btn--white:disabled {
   opacity: 0.5;
@@ -77,7 +77,7 @@
   opacity: 0.9;
 }
 .btn--error:focus-visible {
-  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.25);
+  box-shadow: 0 0 0 4px rgba(2, 76, 151, 0.25);
 }
 .btn--error:disabled {
   opacity: 0.5;
@@ -98,13 +98,13 @@
   font-size: 28px;
 }
 .btn--upload:hover:not(:disabled) {
-  background: rgba(2, 99, 197, 0.08);
+  background: rgba(2, 76, 151, 0.08);
 }
 .btn--upload:active:not(:disabled) {
-  background: rgba(2, 99, 197, 0.24);
+  background: rgba(2, 76, 151, 0.24);
 }
 .btn--upload:focus-visible {
-  box-shadow: 0 0 0 4px rgba(2, 99, 197, 0.25);
+  box-shadow: 0 0 0 4px rgba(2, 76, 151, 0.25);
 }
 .btn--upload:disabled {
   background: #eeeeee;

@@ -148,7 +148,7 @@
 }
 
 .login-captcha__btn:hover {
-  color: var(--primary-source, #0263c5);
+  color: var(--primary-source, #024C97);
 }
 
 .login-captcha__btn .material-icons-outlined {

@@ -6,7 +6,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--white);
+  background: #ffffff;
 }
 
 /* ── Sections wrapper ────────────────────────────────────── */
@@ -184,7 +184,7 @@
 
 /* Upload data cell — light blue fill */
 .pc-doc-table__td--upload {
-  background: rgba(2, 99, 197, 0.08);
+  background: rgba(2, 76, 151, 0.08);
   width: 263px;
 }
 
@@ -228,8 +228,8 @@
   color: var(--primary);
 }
 
-.pc-view-icon:hover:not(:disabled) { background: rgba(2, 99, 197, 0.08); }
-.pc-view-icon:active:not(:disabled) { background: rgba(2, 99, 197, 0.16); }
+.pc-view-icon:hover:not(:disabled) { background: rgba(2, 76, 151, 0.08); }
+.pc-view-icon:active:not(:disabled) { background: rgba(2, 76, 151, 0.16); }
 
 .pc-view-icon--inactive {
   background: #eee;
@@ -484,8 +484,12 @@
 
 .pc-s42__survey-group {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 16px;
+}
+
+.pc-s42__survey-group > .btn {
+  margin-top: 24px; /* offset past label (20px line-height + 4px margin-bottom) to align with input box */
 }
 
 .pc-s42__survey-input-wrap {
@@ -982,19 +986,58 @@
   flex-direction: column;
   gap: 24px;
   padding: 8px 0;
+  min-height: 120px;
 }
 
-.pc-s43__question-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* Info box (red border, info icon, underlined link text) */
+.pc-s43__info-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border: 1px solid var(--danger, #b7131a);
+  border-radius: var(--radius-md, 8px);
+  align-self: flex-start;
 }
 
-.pc-s43__question {
+.pc-s43__info-icon {
+  font-size: 24px;
+  color: var(--danger, #b7131a);
+  flex-shrink: 0;
+}
+
+.pc-s43__info-text {
+  font-family: var(--font-family);
   font-size: 16px;
   font-weight: 500;
   color: var(--text-dark);
   margin: 0;
+  letter-spacing: 0.1px;
+}
+
+.pc-s43__info-link {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Yes / No question */
+.pc-s43__question-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 15px;
+}
+
+.pc-s43__question {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-dark);
+  margin: 0;
+  letter-spacing: 0.25px;
+}
+
+.pc-s43__required {
+  color: var(--danger);
 }
 
 .pc-s43__radio-group {
@@ -1003,14 +1046,35 @@
   align-items: center;
 }
 
-.pc-s43__info-link {
-  color: inherit;
-  text-decoration: underline;
+/* Cascading dropdowns row */
+.pc-s43__dropdowns-row {
+  display: flex;
+  gap: 40px;
+  padding-left: 15px;
+}
+
+.pc-s43__dropdown-item {
+  flex: 1;
+}
+
+/* Document table inside 4.3 — same base as pc-doc-table but 4 cols */
+.pc-s43__table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.pc-s43__table-wrap {
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 /* ── Save and Proceed button wrap ────────────────────────── */
 .pc-page__save-wrap {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 8px 0 24px;
+}
+
+.pc-page__save-wrap--center {
+  justify-content: center;
 }

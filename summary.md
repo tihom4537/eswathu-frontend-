@@ -2070,3 +2070,293 @@ Built Section 5.3 and added to `ECStep.jsx`. Opens after "Verify Your Data" is c
 ### Other step pages (useEffect reset only)
 - OwnerEKYCPage, PropertyDetailsPage, BuildingDetailsPage, AvailRebatesPage
 - Each received `completionResetKey = 0` prop + `useEffect` to reset `isPageComplete` when triggered
+
+---
+
+## Session — Step 1 Section Rearrangement + FileUpload Component + No-Kaveri Flow (Step 2)
+
+### Overview
+Major restructure of SaleDeedDetailsPage (Step 1) sections, new FileUpload component, No-Kaveri flow for OwnerEKYCPage Section 2.1, and two-case mismatch logic in Section 2.3.
+
+---
+
+### Step 1 — SaleDeedDetailsPage Section Restructure
+
+**New section layout:**
+- **Section 1.1** — Location + Asset (was mixed with registration details)
+  - 4-column grid: District / Taluk / Gram Panchayat / Village (all dropdowns, no auto-fetch)
+  - Asset Number input + Tooltip ("Where to find your Asset Number")
+  - Save and Continue / Edit buttons (Submit → Disable → Edit pattern)
+- **Section 1.2** — Property Registration Details (was Section 1.1)
+  - Yes/No radio: "Did property registration happen after 01/04/2004?"
+  - **Yes flow** (has Kaveri): Registration Number input + Tooltip + Fetch → Kaveri collapse table → property/schedule selection tables → Save and Continue / Edit
+  - **No flow** (pre-2004, no Kaveri): Document Type dropdown (9 options) + Document No. input + Document Date datepicker + File upload — no Save button; **auto-opens 1.3** when all fields complete
+- **Section 1.3** — Review
+  - **Yes-flow table** (4 cols): Gram Panchayat | Village | Registration number | Asset number
+  - **No-flow table** (6 cols): Gram Panchayat | Village | Document type | Document number | Document registration date | Asset number
+  - Save and Proceed (centered, outside all sections) → Step 2
+
+**No-flow Document Type options (9):**
+Registered Sale Deed, Registered Gift Deed, Registered Partition Deed, Registered Release Deed, Registered Exchange Deed, Registered Relinquishment Deed, Registered Settlement Deed, Court Decree, Government Orders
+
+**Auto-trigger logic for No-flow 1.3:**
+- `noFlowComplete` derived boolean: all 4 fields filled (docType + docNo + docDate + fileName)
+- `useEffect` watching `noFlowComplete` → sets `s13Visible = true` automatically (no Save button needed)
+
+**State added:**
+- `noFlowDocType`, `noFlowDocNo`, `noFlowDocDate`, `noFlowFileName`, `noFlowUploadStatus`
+- `onFlowChange` prop added — fires `onFlowChange(kaveriYes)` on kaveriYes change; App.jsx uses this to track `step1HasKaveri`
+
+**New CSS classes:**
+- `.sd-s12__no-flow` — column layout with 24px gap
+- `.sd-s12__no-flow-row` — 3-column grid, 24px gap
+- `.sd-s12__upload-block` — flex column for label + upload button
+
+---
+
+### New Component — FileUpload (`src/components/FileUpload/`)
+
+Built from Figma node `329:81854` (ButtonUploadFile).
+
+**Props:** `fileName`, `uploadStatus`, `disabled`, `accept`, `label`, `required`, `caption`, `captionVariant`, `onUpload`, `onRemove`
+
+**States:**
+- **Default:** White button, blue border, upload icon + "Upload File" text
+- **Hover:** rgba(2,99,197,0.08) background tint (CSS only)
+- **Pressed:** rgba(2,99,197,0.16) tint (CSS `:active`)
+- **Inactive/Disabled:** Grey background `#eee`, neutral-600 border + icon + text, `cursor: not-allowed`
+- **Uploaded:** Blue-bordered chip (171px min, 320px max), filename with ellipsis, red 16×16 remove button with white × icon
+
+**Implementation:**
+- Hidden `<input type="file">` triggered via `useRef`
+- Uploaded chip: `.file-upload-btn--uploaded` with `.file-upload-btn__name` (flex: 1, overflow ellipsis) + `.file-upload-btn__remove` (red rounded button)
+
+---
+
+### Step 2 — Section 2.3 Two-Case Mismatch Logic
+
+Two distinct mismatch cases now handled in Section 2.3:
+
+**Case 1 — Kaveri vs eKYC mismatch (existing)**
+- Triggered when Kaveri-fetched owners don't match eKYC names
+- Table header: "Name as per Kaveri"
+- Dropdown options: 6 options including "Name Spelling Mismatch"
+- `hasMismatchKaveri` computed flag
+
+**Case 2 — Added Owner vs eKYC mismatch (new)**
+- Triggered when manually added new owners don't match eKYC names
+- Table header: "Added Owner Name"
+- Dropdown options: 5 options — "Name Spelling Mismatch" removed (not applicable for new owners)
+- `hasMismatchNew` computed flag
+- `NEW_OWNER_MISMATCH_REASON_OPTIONS` constant
+
+**Owner tagging:**
+- `MOCK_OWNERS` tagged with `source: 'kaveri'`
+- `newOwners` (user-added) tagged with `source: 'new'`
+- `getEkycName(owner)`: routes to `MOCK_EKYC_NAMES` for kaveri, mock `Sri. ${name}` for new owners
+
+**Derived values:**
+- `mismatchTableOwners`: all owners for Kaveri flow; only mismatched new owners for new flow
+- `allReasonsSelected`, `mergedDocs`, `canS23Proceed` all use `mismatchTableOwners` — single source of truth for both cases
+- Spelling-only fast path preserved for Kaveri; new owner path always requires doc upload (no spelling option)
+
+**Section 2.3 JSX:** `hasMismatchKaveri` block (Kaveri table) + `hasMismatchNew` block (new owner table) render independently; merged doc upload section gated by `s23Submitted && mergedDocs.length > 0` works for both.
+
+**Button rename:** "Proceed to KYC" → "Save and Proceed to KYC" (Section 2.1)
+
+---
+
+### Step 2 — No-Kaveri Flow for Section 2.1
+
+When `hasKaveri = false` (user selected "No" in Step 1), Section 2.1 renders a completely different UI:
+
+**UI (from Figma node `80:4837` "Owner KYC - No kaveri Workflow"):**
+- **InfoBox** above section: "Please keep the property ownership document ready for owner name verification"
+- Section title: "Ownership Details (As mentioned in your property ownership document)"
+- Company radio (same)
+- **Red InfoBox** inside body: warning about entering names exactly as on document
+- **Direct input table** — owner rows with editable Name inputs, no pre-populated Kaveri names
+- "+" add row button at bottom
+- Save and Proceed to KYC / Edit buttons
+
+**No-Kaveri `allOwners` derivation:**
+```js
+const allOwners = !hasKaveri
+  ? newOwners
+  : (s21Submitted && addNewOwner ? newOwners : MOCK_OWNERS);
+```
+- Kaveri flow: shows MOCK_OWNERS (or newOwners if "add new owner" selected after submit)
+- No-Kaveri flow: always shows `newOwners` (user-entered)
+
+**2.2 and 2.3 unchanged** — same eKYC flow applies; 2.3 uses "Added Owner Name" table (Case 2 mismatch)
+
+---
+
+### App.jsx Threading
+
+```jsx
+const [step1HasKaveri, setStep1HasKaveri] = useState(true);
+// SaleDeedDetailsPage:
+onFlowChange={setStep1HasKaveri}
+onResetDownstream={() => { resetStepsFrom(1); setStep1HasKaveri(true); }}
+// OwnerEKYCPage:
+hasKaveri={step1HasKaveri}
+```
+
+---
+
+### Files Modified
+- `src/pages/NewApplicationPage/steps/SaleDeedDetailsPage.jsx` — section rearrangement, no-flow state, `onFlowChange` prop
+- `src/pages/NewApplicationPage/steps/SaleDeedDetailsPage.css` — no-flow layout classes
+- `src/components/FileUpload/FileUpload.jsx` — new component
+- `src/components/FileUpload/FileUpload.css` — new component styles
+- `src/pages/NewApplicationPage/steps/OwnerEKYCPage.jsx` — `hasKaveri` prop, owner tagging, two-case mismatch, no-Kaveri Section 2.1, button rename
+- `src/App.jsx` — `step1HasKaveri` state, `onFlowChange`, `hasKaveri` prop
+
+---
+
+### Current Status
+
+| Step | Section | Status |
+|---|---|---|
+| Step 1 | 1.1 Location + Asset | ✅ |
+| Step 1 | 1.2 Yes-flow (Kaveri) | ✅ |
+| Step 1 | 1.2 No-flow (pre-2004, no Kaveri) | ✅ |
+| Step 1 | 1.3 Review (both flows) | ✅ |
+| Step 2 | 2.1 Kaveri flow | ✅ |
+| Step 2 | 2.1 No-Kaveri flow | ✅ |
+| Step 2 | 2.2 eKYC | ✅ |
+| Step 2 | 2.3 Kaveri vs eKYC mismatch | ✅ |
+| Step 2 | 2.3 Added Owner vs eKYC mismatch | ✅ |
+| Step 2 | 2.3 No-Kaveri + mismatch | ✅ (uses Added Owner table) |
+
+### Pending
+- No-Kaveri "Add New Owner by default" context for 2.3 — user to provide screens
+
+---
+
+## Phase N — Flow Structure Clarifications + 2.1 InfoBox Fix (2026-03-16)
+
+### Flow Structure Confirmed (now documented in CLAUDE.md)
+
+**Step 2 — Owner eKYC:**
+- 2.1 Kaveri flow: always shows pre-filled table + red InfoBox about spelling/missing names; "Do you want to add new owners?" Yes/No radio; second red InfoBox only when Yes selected
+- 2.3 mismatch has two distinct cases:
+  - Case 1: eKYC ≠ Kaveri name → has spelling correction option
+  - Case 2: eKYC ≠ added owner name → no spelling option; occurs in (a) Kaveri+added or (b) no-Kaveri
+  - Kaveri-fetched names are never considered for eKYC; only added names are
+
+**Step 3 — Property Details:**
+- Checkbandi is fetched from Kaveri (frozen); editable only when Kaveri returns empty
+
+**Step 4 — Building Details:**
+- Stays inside PropertyClassificationPage (not separate route)
+- Site + Land to be Converted → one shared flow (category irrelevant)
+- Building → 10 flows based on category: General + 9 specific (Apartment, Villament, Tenement, Row House, Multi-storied, Service apartment, Mall/Multiplex, Villa, Multi-Ownership)
+
+### OwnerEKYCPage.jsx — Section 2.1 Changes
+- **Removed** old InfoBox: "If there are any spelling errors in the name of the owners, please proceed to ekyc as any mismatch will be checked later"
+- **Added** red InfoBox (always visible after Kaveri owner table): "If owner name is spelled wrong, missing, clubbed together by mistake or there are new owner/s to be added, please add them below."
+- **Added** red InfoBox (only when "Yes" selected on add-owners radio): "When you add new owners, these names will be considered by ekyc (not the ones fetched from Kaveri Deed Details)"
+- Radio question text changed from "Do you want to add a new owner to the property?" → "Do you want to add new owners?"
+- Uses `<InfoBox variant="red">` (pink background `#FFEEEA`, red border, from Figma node `87:6143`)
+
+### Files Modified
+- `src/pages/NewApplicationPage/steps/OwnerEKYCPage.jsx` — InfoBox replacements in section 2.1 Kaveri flow
+- `CLAUDE.md` — Appended canonical flow structure reference for Steps 2, 3, 4
+
+---
+
+## Phase 15 — Bug Fixes, UI Polish & New Questionnaire Feature
+
+### Bug Fixes
+
+**1. Blank/Black Page Issue (All Steps 1–5)**
+- Root cause: `background: var(--white)` on page root divs susceptible to browser forced dark mode inversion
+- Fix: Added `color-scheme: light` to `:root` in `tokens.css`; hardcoded `background-color: #ffffff` on `html, body` and `#root` in `index.css`; changed all page root backgrounds from `var(--white)` to `#ffffff`; wrapped lazy-mount keep-alive fragment in `<div style={{ background: '#ffffff' }}>`
+- Files: `tokens.css`, `index.css`, all step page `.css` files, `App.jsx`
+
+**2. Step 4 Navigation Blocker (Non-Apartment/Site/Land Flows)**
+- Root cause: `allSaved = tenantSaved` — `tenantSaved` only ever set in the Apartment/flat sub-flow; any other property type left Save and Proceed permanently disabled
+- Fix: Introduced `s42Done` derived value: `tenantSaved || (s41FinalDone && allDropdownsSelected && !showBuildingApartmentFlow)`; wired Section 4.3 open state and scroll effect off `s42Done`
+- File: `PropertyClassificationPage.jsx`
+
+**3. `--neutral-200` Undefined CSS Variable**
+- `StepHeader.css` used `var(--neutral-200)` for disabled arrow border — this token was never defined in `tokens.css`
+- Fix: Changed to `var(--neutral-300)` which is defined (`#B0B0B0`)
+
+**4. NewApplicationFirstPage Background**
+- `.new-app-page` root still used `var(--white)` — fixed to `#ffffff`
+
+### StepHeader Component Update (Figma 442:83634)
+Updated to match Figma spec exactly:
+- Padding: `32px 40px` → `50px 40px`
+- Background: `var(--secondary)` = `#f2f2f2` (confirmed correct)
+- `align-items: flex-start` (was `center`)
+- Title colour: `var(--primary)` → `#024c97` (primary/700 from Figma)
+- Removed `max-width` constraint on inner wrapper — arrows now reach page edges as in Figma
+
+**Arrow Component Update (Figma 577:84792)**
+- Removed circle border (`border-radius: 50%`, `border: 1.5px solid`) — Figma arrow is plain icon, no circle
+- Size: `48×48px` → `36×36px` (~36.36×35.41px per Figma)
+- Icon: `font-size: 32px` Material Icons (`arrow_back` / `arrow_forward`)
+- States: Default = `rgba(2,99,197,0.65)`, Hover = `var(--primary)`, Pressed = `#024c97`, Disabled = `var(--neutral-300)`
+- Fixed `focus-visible` outline: was incorrectly placed on icon `<span>`, moved to `<button>` element
+
+### NewApplicationFirstPage — Steps Banner Fix (Figma 249:69627)
+Replaced `<Stepper activeStep={-1} />` with custom flat inline steps row:
+- **Root cause of connector issue:** Stepper puts each connector line *inside* the following step's div; with `flex: 0` on last step, the step 4→5 connector collapsed to zero
+- **Fix:** Flat structure — items and lines as direct siblings via `flatMap`; lines are `flex: 1`, items are `flex-shrink: 0`
+- Visual: 32px pill circles (white bg, `#b0b0b0` border, 57px border-radius), 22px labels with natural word-wrap, evenly distributed connector lines
+- Rounded grey card: `background: #f2f2f2; border-radius: 15px; padding: 40px 35px 50px` — no longer full-width stripe
+
+### Questionnaire Definition Tooltips (Section 0.2)
+Added inline glossary tooltip system:
+- **`Tooltip` component** (`src/components/Tooltip/Tooltip.jsx`): new `variant="definition"` — renders underlined term (dotted underline, `cursor: help`) with a definition box (520px wide, white, `border-radius: md`, soft shadow) appearing below on hover; no icon, no image
+- **`GLOSSARY`** export in `classifierData.js`: maps exact term strings to definitions. First entry: `'Gram Tana'`
+- **`renderWithDefs(text)`** helper in `NewApplicationFirstPage.jsx`: splits any string on glossary terms, wraps matches in `<Tooltip variant="definition">`, returns string (no match) or React element array (match found)
+- Wired to both question text (`node.question`) and option text (`option.text`) — automatically applies across all current and future questionnaire nodes
+- **To add more definitions:** just add entries to `GLOSSARY` in `classifierData.js` — no other code changes needed
+
+### Build Status
+All changes verified: `npm run build` passes cleanly (136 modules, 0 errors)
+
+---
+
+## Session — Homepage Popup Implementation
+
+### New Component: HomePagePopup (src/components/HomePagePopup/)
+- Modal shell with dark semi-transparent backdrop, white panel (680px wide, 80vh max)
+- Header: title + X close button; body: scrollable
+- Closes on backdrop click, X click, or Escape key
+- Body uses `hp-popup__intro`, `hp-popup__items`, `hp-popup__item`, `hp-popup__item-label`, `hp-popup__item-text` CSS classes
+
+### HomePage.jsx changes
+- Added `useState` for `activePopup` (string key or null)
+- `openPopup(key)` / `closePopup()` handlers
+- `POPUP_CONTENT` object with content for 8 popup keys: `newEkhata`, `pidEkhata`, `newLayouts`, `newApartments`, `conv11ATo11B`, `convApartments`, `conv11BTransactable`, `mutation`
+- `PopupBody` component renders intro + item list from POPUP_CONTENT
+
+### e-Khata Related Services section
+- "Apply for New e-Khata" → no description, opens `newEkhata` popup
+- "Apply for e-Khata for Properties with a PID" (title updated) → no description, opens `pidEkhata` popup
+- "Apply for e-Khata for New Layouts" → no description, opens `newLayouts` popup
+- "Apply for e-Khata for New Apartments" → no description, opens `newApartments` popup
+- "Complete Pending Application" → new description (formal resume-application wording), no popup
+- "Report an Objection" → unchanged
+- "Return Applications (for Modifications)" → description kept as-is, no popup
+
+### Conversions section
+- All 3 cards: descriptions removed; each opens respective popup
+- "Conversion of Form 11B from non-transact-able to transact-able" → title updated to "Non-Transactable to Transactable"
+
+### Check Status, Download & Print section
+- "Check Status of Application" → updated description
+- "Download and Print e-Khata" → updated description
+- New card added: "Check Whether Property Can Be Registered or Not" (no popup, icon: check_circle)
+
+### Mutation & Transfer section
+- "Mutation" and "Transfer" combined into single "Mutation and Transfer" card, no description, opens `mutation` popup
+
+### Reports & Dashboards section
+- Description updated to meaningful explanation

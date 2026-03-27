@@ -37,7 +37,7 @@ const computeOddArea = (sideValues, sidesCount) => {
   return 0;
 };
 
-const PropertyDetails_SiteDimensions = ({ acceptedAreaSqft, wasRejected, onAreaMatch }) => {
+const PropertyDetails_SiteDimensions = ({ acceptedAreaSqmt, wasRejected, onAreaMatch }) => {
 
   /* ── Odd / Even question ────────────────────────────────── */
   const [oddChoice, setOddChoice] = useState(''); // '' | 'yes' | 'no'
@@ -54,17 +54,18 @@ const PropertyDetails_SiteDimensions = ({ acceptedAreaSqft, wasRejected, onAreaM
   const [calculating, setCalculating] = useState(false);
   const [calcOddSqft, setCalcOddSqft] = useState(0);
 
-  /* ── Reference area ──────────────────────────────────────── */
-  const existingSqft = acceptedAreaSqft || 0;
-  const existingSqmt = existingSqft > 0 ? (existingSqft * 0.0929).toFixed(2) : '';
+  /* ── Reference area (already in Sq.Mt) ───────────────────── */
+  const existingSqmt = parseFloat(acceptedAreaSqmt) || 0;
+  /* Back-convert to Sq.Ft for display in the comparison card */
+  const existingSqft = existingSqmt > 0 ? (existingSqmt / 0.0929) : 0;
 
   /* ── Even flow: derived ──────────────────────────────────── */
   const ns       = parseFloat(nsVal) || 0;
   const ew       = parseFloat(ewVal) || 0;
   const calcSqft = ns * ew;
-  const calcSqmt = calcSqft > 0 ? (calcSqft * 0.0929).toFixed(2) : '';
+  const calcSqmt = calcSqft > 0 ? (calcSqft * 0.0929) : 0;
 
-  const isMatch    = oddChoice === 'no' && ns > 0 && ew > 0 && Math.abs(calcSqft - existingSqft) < 0.5;
+  const isMatch    = oddChoice === 'no' && ns > 0 && ew > 0 && Math.abs(calcSqmt - existingSqmt) < 0.5;
   const isMismatch = oddChoice === 'no' && ns > 0 && ew > 0 && !isMatch;
 
   /* ── Odd flow: derived ───────────────────────────────────── */
@@ -271,13 +272,13 @@ const PropertyDetails_SiteDimensions = ({ acceptedAreaSqft, wasRejected, onAreaM
               <div className="pd-sd__data-row">
                 <Input
                   label="Area in Sq.Ft"
-                  value={existingSqft > 0 ? String(existingSqft) : ''}
+                  value={existingSqft > 0 ? existingSqft.toFixed(2) : ''}
                   frozen
                   required
                 />
                 <Input
                   label="Area in Sq.Mt"
-                  value={existingSqmt}
+                  value={existingSqmt > 0 ? existingSqmt.toFixed(2) : ''}
                   frozenBlue
                   required
                 />
@@ -290,13 +291,13 @@ const PropertyDetails_SiteDimensions = ({ acceptedAreaSqft, wasRejected, onAreaM
               <div className="pd-sd__data-row">
                 <Input
                   label="Area in Sq.Ft"
-                  value={calcSqft > 0 ? String(calcSqft) : ''}
+                  value={calcSqft > 0 ? calcSqft.toFixed(2) : ''}
                   frozenBlue
                   required
                 />
                 <Input
                   label="Area in Sq.Mt"
-                  value={calcSqmt}
+                  value={calcSqmt > 0 ? calcSqmt.toFixed(2) : ''}
                   frozenBlue
                   required
                 />

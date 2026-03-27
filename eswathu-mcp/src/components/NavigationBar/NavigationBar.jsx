@@ -1,5 +1,7 @@
 ﻿import { useState, useRef, useEffect } from 'react';
 import Button from '../Button/Button';
+import { useLanguage } from '../../context/LanguageContext';
+import { useTranslation } from '../../i18n';
 import './NavigationBar.css';
 
 import karnatakaLogo from '/images/Karnataka.png';
@@ -30,6 +32,8 @@ const NavigationBar = ({
 }) => {
   const isHomepage = variant === 'homepage';
   const [openDropdown, setOpenDropdown] = useState(null);
+  const { lang, setLang } = useLanguage();
+  const { t } = useTranslation('common');
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -62,8 +66,16 @@ const NavigationBar = ({
             <button className="navbar__font-btn" type="button" aria-label="Increase font size">A<sup>+</sup></button>
           </div>
           <div className="navbar__lang">
-            <button className="navbar__lang-btn" type="button">ಕನ್ನಡ</button>
-            <button className="navbar__lang-btn navbar__lang-btn--active" type="button">English</button>
+            <button
+              className={`navbar__lang-btn${lang === 'kn' ? ' navbar__lang-btn--active' : ''}`}
+              type="button"
+              onClick={() => setLang('kn')}
+            >ಕನ್ನಡ</button>
+            <button
+              className={`navbar__lang-btn${lang === 'en' ? ' navbar__lang-btn--active' : ''}`}
+              type="button"
+              onClick={() => setLang('en')}
+            >English</button>
           </div>
         </div>
       </div>
@@ -90,8 +102,8 @@ const NavigationBar = ({
           {isHomepage ? (
             <>
               <nav className="navbar__nav">
-                <button type="button" className="navbar__link" onClick={() => handleLinkClick('/')}>Home</button>
-                <button type="button" className="navbar__link" onClick={() => handleLinkClick('/about')}>About us</button>
+                <button type="button" className="navbar__link" onClick={() => handleLinkClick('/')}>{t('navHome')}</button>
+                <button type="button" className="navbar__link" onClick={() => handleLinkClick('/about')}>{t('navAbout')}</button>
 
                 {/* Citizen Services dropdown */}
                 <div className="navbar__dropdown-wrapper">
@@ -101,7 +113,7 @@ const NavigationBar = ({
                     onClick={() => toggleDropdown('citizen')}
                     aria-expanded={openDropdown === 'citizen'}
                   >
-                    Citizen Services
+                    {t('navCitizenServices')}
                     <span className={`material-icons-outlined navbar__link-chevron ${openDropdown === 'citizen' ? 'navbar__link-chevron--open' : ''}`}>expand_more</span>
                   </button>
                   {openDropdown === 'citizen' && (
@@ -128,7 +140,7 @@ const NavigationBar = ({
                     onClick={() => toggleDropdown('useful')}
                     aria-expanded={openDropdown === 'useful'}
                   >
-                    Useful links
+                    {t('navUsefulLinks')}
                     <span className={`material-icons-outlined navbar__link-chevron ${openDropdown === 'useful' ? 'navbar__link-chevron--open' : ''}`}>expand_more</span>
                   </button>
                   {openDropdown === 'useful' && (
@@ -146,17 +158,19 @@ const NavigationBar = ({
                     </div>
                   )}
                 </div>
+
+                <button type="button" className="navbar__link" onClick={() => handleLinkClick('glossary')}>{t('navGlossary')}</button>
               </nav>
               <div className="navbar__actions">
-                <Button variant="white" onClick={onCitizenLogin}>Citizen Login</Button>
-                <Button variant="primary" onClick={onDeptLogin}>Department Login</Button>
+                <Button variant="white" onClick={onCitizenLogin}>{t('navCitizenLogin')}</Button>
+                <Button variant="primary" onClick={onDeptLogin}>{t('navDeptLogin')}</Button>
               </div>
             </>
           ) : (
             <>
               <nav className="navbar__breadcrumb">
                 <span className="material-icons-outlined navbar__home-icon">home</span>
-                <button type="button" className="navbar__crumb" onClick={() => handleLinkClick('/')}>Home</button>
+                <button type="button" className="navbar__crumb" onClick={() => handleLinkClick('/')}>{t('navHome')}</button>
 
                 {/* Citizen Services dropdown in breadcrumb */}
                 <div className="navbar__dropdown-wrapper">
@@ -166,7 +180,7 @@ const NavigationBar = ({
                     onClick={() => toggleDropdown('citizen')}
                     aria-expanded={openDropdown === 'citizen'}
                   >
-                    Citizen Services
+                    {t('navCitizenServices')}
                     <span className={`material-icons-outlined navbar__link-chevron ${openDropdown === 'citizen' ? 'navbar__link-chevron--open' : ''}`}>expand_more</span>
                   </button>
                   {openDropdown === 'citizen' && (
@@ -186,8 +200,8 @@ const NavigationBar = ({
                 </div>
               </nav>
               <div className="navbar__user">
-                <span className="navbar__username">Username: {username}</span>
-                <Button variant="white" onClick={onLogout}>Logout</Button>
+                <span className="navbar__username">{t('navUsername')}: {username}</span>
+                <Button variant="white" onClick={onLogout}>{t('navLogout')}</Button>
               </div>
             </>
           )}

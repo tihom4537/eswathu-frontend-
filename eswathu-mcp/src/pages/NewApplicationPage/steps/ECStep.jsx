@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
-import Breadcrumb from '../../../components/Breadcrumb/Breadcrumb';
 import StepHeader from '../../../components/StepHeader/StepHeader';
-import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import InfoBox from '../../../components/InfoBox/InfoBox';
 import Dropdown from '../../../components/Dropdown/Dropdown';
@@ -164,17 +162,6 @@ const ECStep = ({
         username={username}
         onLogout={() => onNavigate?.('login')}
       />
-
-      {/* ── Breadcrumb ──────────────────────────────────────── */}
-      <Breadcrumb
-        steps={bcStepNames}
-        currentStep={currentBCStep}
-        completedSteps={completedBCSteps}
-        onStepClick={onBCStepClick}
-      />
-
-      {/* ── Stepper ─────────────────────────────────────────── */}
-      <Stepper activeStep={4} />
 
       {/* ── Step header ─────────────────────────────────────── */}
       <StepHeader

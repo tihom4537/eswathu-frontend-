@@ -1,26 +1,57 @@
+import { useState } from 'react';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
 import PageHeading from '../../components/PageHeading/PageHeading';
 import HomepageSection from '../../components/HomepageSection/HomepageSection';
 import CardHomepage from '../../components/CardHomepage/CardHomepage';
+import HomePagePopup from '../../components/HomePagePopup/HomePagePopup';
+import { useTranslation } from '../../i18n';
+import POPUP_CONTENT, { loc } from './homePopupContent';
 import './CitizenLogin-HomePage.css';
 
+/* ── Popup body renderer ──────────────────────────────────────── */
+const PopupBody = ({ contentKey, lang }) => {
+  const content = POPUP_CONTENT[contentKey];
+  if (!content) return null;
+  return (
+    <>
+      {content.intro && <p className="hp-popup__intro">{loc(content.intro, lang)}</p>}
+      <ul className="hp-popup__items">
+        {content.items.map((item, i) => (
+          <li key={i} className="hp-popup__item">
+            {item.label && <span className="hp-popup__item-label">{loc(item.label, lang)}</span>}
+            <p className="hp-popup__item-text">{loc(item.text, lang)}</p>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+/* ── Component ────────────────────────────────────────────────── */
 const CitizenLoginHomePage = ({ onNavigate, username = '' }) => {
+  const [activePopup, setActivePopup] = useState(null);
+  const { t, lang } = useTranslation('home');
+
+  const openPopup = (key) => setActivePopup(key);
+  const closePopup = () => setActivePopup(null);
+  const activeContent = activePopup ? POPUP_CONTENT[activePopup] : null;
+
   const checkStatusHeader = (
     <div className="citizen-home__multi-header">
       <div className="citizen-home__multi-header-item">
         <span className="material-icons-outlined">image_search</span>
-        <span>Check Status</span>
+        <span>{t('hp_section_checkStatus')}</span>
       </div>
       <span className="citizen-home__multi-header-sep">|</span>
       <div className="citizen-home__multi-header-item">
         <span className="material-icons-outlined">download</span>
-        <span>Download</span>
+        <span>{t('hp_section_download')}</span>
       </div>
       <span className="citizen-home__multi-header-sep">|</span>
       <div className="citizen-home__multi-header-item">
         <span className="material-icons-outlined">print</span>
-        <span>Print</span>
+        <span>{t('hp_section_print')}</span>
       </div>
     </div>
   );
@@ -34,116 +65,126 @@ const CitizenLoginHomePage = ({ onNavigate, username = '' }) => {
       />
 
       <main className="citizen-home-page__content">
-        <PageHeading subtitle="All Citizen Services" title="What would you like to do today?" />
+        <PageHeading subtitle={t('hp_services_subtitle')} title={t('hp_services_title')} />
 
-        {/* e-Khata related Services — 7 cards */}
-        <HomepageSection icon="file_copy" title="e-Khata related Services">
+        {/* e-Khata Related Services */}
+        <HomepageSection icon="file_copy" title={t('hp_section_ekhata')}>
           <div className="citizen-home-page__grid">
             <CardHomepage
               icon="add_circle_outline"
-              title="Apply for New e-Khata"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
-              onClick={() => onNavigate && onNavigate('new-application')}
+              title={t('card_newEkhata_title')}
+              onClick={() => openPopup('newEkhata')}
             />
             <CardHomepage
               icon="search"
-              title="Apply for e-khata for properties you are already paying tax for"
-              description="If your property is listed in Panchatantra and tax is already being paid, you can proceed here without creating a new entry"
+              title={t('card_pidEkhata_title')}
+              onClick={() => openPopup('pidEkhata')}
             />
             <CardHomepage
               icon="add_circle_outline"
-              title="Apply for e-Khata for New layouts"
-              description="If your property is listed in Panchatantra and tax is already being paid, you can proceed here without creating a new entry"
+              title={t('card_newLayouts_title')}
+              onClick={() => openPopup('newLayouts')}
             />
             <CardHomepage
               icon="add_circle_outline"
-              title="Apply for e-Khata for New Apartments"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+              title={t('card_newApartments_title')}
+              onClick={() => openPopup('newApartments')}
             />
             <CardHomepage
               icon="pending_actions"
-              title="Complete Pending application"
-              description="If your property is listed in Panchatantra and tax is already being paid, you can proceed here without creating a new entry"
+              title={t('card_pending_title')}
+              description={t('card_pending_desc')}
+              onClick={() => onNavigate && onNavigate('new-application')}
             />
             <CardHomepage
               icon="error_outline"
-              title="Report an Objection"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+              title={t('card_reportObjection_title')}
+              description={t('card_reportObjection_desc')}
             />
             <CardHomepage
               icon="assignment_return"
-              title="Returned applications (for modifications)"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+              title={t('card_returnApps_title')}
+              description={t('card_returnApps_desc')}
             />
           </div>
         </HomepageSection>
 
-        {/* Conversions — 3 cards */}
-        <HomepageSection icon="file_copy" title="Conversions">
+        {/* Conversions */}
+        <HomepageSection icon="file_copy" title={t('hp_section_conversions')}>
           <div className="citizen-home-page__grid">
             <CardHomepage
               icon="file_copy"
-              title="Conversion of Form 11A to Form 11B"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+              title={t('card_conv11ATo11B_title')}
+              onClick={() => openPopup('conv11ATo11B')}
             />
             <CardHomepage
               icon="file_copy"
-              title="Conversion of Form 11A/11B to Apartment/Flats"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+              title={t('card_convApartments_title')}
+              onClick={() => openPopup('convApartments')}
             />
             <CardHomepage
               icon="file_copy"
-              title="Conversion of Form 11B from non-transact-able to transact-able"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+              title={t('card_conv11BTransactable_title')}
+              onClick={() => openPopup('conv11BTransactable')}
             />
           </div>
         </HomepageSection>
 
-        {/* Check Status | Download | Print — 2 cards */}
+        {/* Check Status | Download | Print */}
         <HomepageSection header={checkStatusHeader}>
           <div className="citizen-home-page__grid">
             <CardHomepage
               icon="image_search"
-              title="Check Status of Application"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+              title={t('card_checkStatus_title')}
+              description={t('card_checkStatus_desc')}
             />
             <CardHomepage
               icon="download"
-              title="Download and Print e-Khata"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+              title={t('card_downloadEkhata_title')}
+              description={t('card_downloadEkhata_desc')}
+            />
+            <CardHomepage
+              icon="check_circle"
+              title={t('card_checkRegistrable_title')}
             />
           </div>
         </HomepageSection>
 
-        {/* Mutation and Transfer Applications — 2 cards */}
-        <HomepageSection icon="people" title="Mutation and Transfer Applications">
+        {/* Mutation and Transfer */}
+        <HomepageSection icon="people" title={t('hp_section_mutation')}>
           <div className="citizen-home-page__grid">
             <CardHomepage
               icon="people"
-              title="Mutation"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
-            />
-            <CardHomepage
-              icon="people"
-              title="Transfer"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+              title={t('card_mutation_title')}
+              onClick={() => openPopup('mutation')}
             />
           </div>
         </HomepageSection>
 
-        {/* Reports and Dashboards — 1 card */}
-        <HomepageSection icon="dashboard" title="Reports and Dashboards">
+        {/* Reports and Dashboards */}
+        <HomepageSection icon="dashboard" title={t('hp_section_reports')}>
           <div className="citizen-home-page__grid">
             <CardHomepage
               icon="dashboard"
-              title="Reports and Dashboards"
-              description="If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments"
+              title={t('card_reports_title')}
+              description={t('card_reports_desc')}
             />
           </div>
         </HomepageSection>
       </main>
 
       <Footer variant="postLogin" />
+
+      {activeContent && (
+        <HomePagePopup
+          title={loc(activeContent.title, lang)}
+          onClose={closePopup}
+          onProceed={() => onNavigate && onNavigate('new-application')}
+          proceedLabel="Proceed to Application"
+        >
+          <PopupBody contentKey={activePopup} lang={lang} />
+        </HomePagePopup>
+      )}
     </div>
   );
 };

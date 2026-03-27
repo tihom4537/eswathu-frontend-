@@ -1,15 +1,17 @@
-﻿/* ── Table ─────────────────────────────────────────────── */
+/* ── Table with Button ──────────────────────────────────── */
 
 .table-wrapper {
   width: 100%;
   max-width: 1107px;
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
 }
+
+/* ── Header row ─────────────────────────────────────────── */
 
 .data-table__header {
   height: 50px;
@@ -20,17 +22,16 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 16px;
-  line-height: 24px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
   color: var(--text-dark);
   text-align: left;
-  padding: 15px 16px;
-  white-space: nowrap;
+  padding: 15px 10px;
   border: 1px solid var(--neutral-600);
+  white-space: nowrap;
 }
 
-.data-table__row {
-  /* height auto-sizes from content + padding */
-}
+/* ── Content rows ───────────────────────────────────────── */
 
 .data-table__td {
   font-family: var(--font-family);
@@ -38,16 +39,27 @@
   font-size: 16px;
   line-height: 24px;
   color: var(--text-dark);
-  padding: 10px 16px;
+  padding: 10px;
   border: 1px solid var(--neutral-600);
+  vertical-align: middle;
 }
+
+/* ── Input cell — contains a form component (Input, Dropdown, etc.) ── */
+
+.data-table__td--input {
+  padding: 8px;
+  vertical-align: middle;
+}
+
+/* ── Add-row button bar ──────────────────────────────────── */
 
 .data-table__action {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 0;
-  background: var(--primary-50);
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  cursor: pointer;
+  height: 30px;
+  background: var(--primary-100);
+  border-radius: var(--radius-md);
+  border: none;
+  margin-top: 8px;
 }
