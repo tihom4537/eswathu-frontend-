@@ -400,12 +400,32 @@ const HomePage = ({ onNavigate }) => {
     onNavigate && onNavigate('login');
   };
 
-  const classificationItems = [
-    t('hp_class_item1'),
-    t('hp_class_item2'),
-    t('hp_class_item3'),
-    t('hp_class_item4'),
-    t('hp_class_item5'),
+  const classification11AItems = [
+    t('hp_class_11a_item1'),
+    t('hp_class_11a_item2'),
+    t('hp_class_11a_item3'),
+    t('hp_class_11a_item4'),
+    t('hp_class_11a_item5'),
+    t('hp_class_11a_item6'),
+    t('hp_class_11a_item7'),
+    t('hp_class_11a_item8'),
+    t('hp_class_11a_item9'),
+    t('hp_class_11a_item10'),
+    t('hp_class_11a_item11'),
+    t('hp_class_11a_item12'),
+    t('hp_class_11a_item13'),
+    t('hp_class_11a_item14'),
+    t('hp_class_11a_item15'),
+  ];
+
+  const classification11BItems = [
+    t('hp_class_11b_item1'),
+    t('hp_class_11b_item2'),
+    t('hp_class_11b_item3'),
+    t('hp_class_11b_item4'),
+    t('hp_class_11b_item5'),
+    t('hp_class_11b_item6'),
+    t('hp_class_11b_item7'),
   ];
 
   const openPopup = (key) => setActivePopup(key);
@@ -618,13 +638,13 @@ const HomePage = ({ onNavigate }) => {
               subtitle={t('hp_class_11a_subtitle')}
               title={t('hp_class_11a_title')}
               description={t('hp_class_11a_desc')}
-              items={classificationItems}
+              items={classification11AItems}
             />
             <HelpCardList
               subtitle={t('hp_class_11b_subtitle')}
               title={t('hp_class_11b_title')}
               description={t('hp_class_11b_desc')}
-              items={classificationItems}
+              items={classification11BItems}
             />
           </div>
 
@@ -640,30 +660,30 @@ const HomePage = ({ onNavigate }) => {
       {/* 6. Need Help */}
       <section className="hp-help">
         <div className="hp-help__inner">
-          <PageHeading subtitle="Support" title="Need Help?" />
+          <PageHeading subtitle={t('hp_support_subtitle')} title={t('hp_support_title')} />
           <p className="hp-help__desc">
-            We're here to guide you through every step.
+            {t('hp_support_desc')}
           </p>
           <div className="hp-help__cards">
             <HelpCards
               icon="phone"
-              title="Contact/Helpline Numbers"
-              description="Speak to a support agent in Kannada or English. Available Monday to Saturday, 9 AM – 5 PM."
-              buttonLabel="Call Support→"
+              title={t('hp_support_card1_title')}
+              description={t('hp_support_card1_desc')}
+              buttonLabel={t('hp_support_card1_btn')}
               onButtonClick={() => {}}
             />
             <HelpCards
               icon="video_library"
-              title="User Guides & Videos"
-              description="Step-by-step guides in Kannada and English, including video tutorials for every service on this portal."
-              buttonLabel="Browse Help Resources→"
+              title={t('hp_support_card2_title')}
+              description={t('hp_support_card2_desc')}
+              buttonLabel={t('hp_support_card2_btn')}
               onButtonClick={() => {}}
             />
             <HelpCards
               icon="place"
-              title="Visit Your Gram Panchayat/Ask your GP staff"
-              description="Walk into your local GP office and ask for the PDO. They are trained to assist you with the online application process."
-              buttonLabel="Find your GP office contacts→"
+              title={t('hp_support_card3_title')}
+              description={t('hp_support_card3_desc')}
+              buttonLabel={t('hp_support_card3_btn')}
               onButtonClick={() => {}}
             />
           </div>
@@ -674,29 +694,29 @@ const HomePage = ({ onNavigate }) => {
       <section className="hp-connected">
         <div className="hp-connected__inner">
           <PageHeading
-            subtitle="Connected Services"
-            title="Related Websites and Portals and Useful Links"
+            subtitle={t('hp_connected_subtitle')}
+            title={t('hp_connected_title')}
           />
           <div className="hp-connected__cards">
             <HelpCards
               icon="public"
-              title="Bhoomi — Land Records"
-              description="Access comprehensive land and property records from the Bhoomi platform."
-              buttonLabel="Visit Website→"
+              title={t('hp_connected_card1_title')}
+              description={t('hp_connected_card1_desc')}
+              buttonLabel={t('hp_connected_card_btn')}
               onButtonClick={() => window.open('https://landrecords.karnataka.gov.in', '_blank', 'noopener')}
             />
             <HelpCards
               icon="public"
-              title="Kaveri Online Services"
-              description="Complete property registration services through Kaveri Online."
-              buttonLabel="Visit Website→"
+              title={t('hp_connected_card2_title')}
+              description={t('hp_connected_card2_desc')}
+              buttonLabel={t('hp_connected_card_btn')}
               onButtonClick={() => window.open('https://kaverionline.karnataka.gov.in', '_blank', 'noopener')}
             />
             <HelpCards
               icon="public"
-              title="KSRSAC"
-              description="Access spatial data and survey records from KSRSAC."
-              buttonLabel="Visit Website→"
+              title={t('hp_connected_card3_title')}
+              description={t('hp_connected_card3_desc')}
+              buttonLabel={t('hp_connected_card_btn')}
               onButtonClick={() => window.open('https://ksrsac.karnataka.gov.in', '_blank', 'noopener')}
             />
           </div>
