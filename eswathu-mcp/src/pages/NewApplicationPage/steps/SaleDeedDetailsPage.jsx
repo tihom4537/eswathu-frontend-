@@ -13,6 +13,7 @@ import ProgressCircle from '../../../components/ProgressCircle/ProgressCircle';
 import CollapseHeader from '../../../components/CollapseHeader/CollapseHeader';
 import Table from '../../../components/Table/Table';
 import Tooltip from '../../../components/Tooltip/Tooltip';
+import { useTranslation } from '../../../i18n';
 import './SaleDeedDetailsPage.css';
 
 /* ── Mock Kaveri API response ──────────────────────────────── */
@@ -60,18 +61,6 @@ const MOCK_KAVERI = {
   generatedPropertyId: 'P-2024-54321',
 };
 
-/* ── No-flow document type options ─────────────────────────── */
-const NO_FLOW_DOC_OPTIONS = [
-  { value: 'property_card',        label: 'Property card' },
-  { value: 'inherited_property',   label: 'Inherited property' },
-  { value: 'division_of_property', label: 'Division of property' },
-  { value: 'gift_deed',            label: 'Gift Deed' },
-  { value: 'will',                 label: 'Will' },
-  { value: 'release_deed',         label: 'Release Deed' },
-  { value: 'transfer_certificate', label: 'Transfer certificate' },
-  { value: 'court_order',          label: 'Court order' },
-  { value: 'division_letter',      label: 'Division letter' },
-];
 
 const SaleDeedDetailsPage = ({
   onNavigate,
@@ -88,6 +77,21 @@ const SaleDeedDetailsPage = ({
   onVillageChange,
   onFlowChange,
 }) => {
+  const { t } = useTranslation('step1');
+
+  /* ── No-flow document type options (translated) ─────────── */
+  const NO_FLOW_DOC_OPTIONS = [
+    { value: 'property_card',        label: t('s12_opt_property_card') },
+    { value: 'inherited_property',   label: t('s12_opt_inherited') },
+    { value: 'division_of_property', label: t('s12_opt_division') },
+    { value: 'gift_deed',            label: t('s12_opt_gift_deed') },
+    { value: 'will',                 label: t('s12_opt_will') },
+    { value: 'release_deed',         label: t('s12_opt_release_deed') },
+    { value: 'transfer_certificate', label: t('s12_opt_transfer_cert') },
+    { value: 'court_order',          label: t('s12_opt_court_order') },
+    { value: 'division_letter',      label: t('s12_opt_division_letter') },
+  ];
+
   /* ── Page-level completion ───────────────────────────────── */
   const [isPageComplete, setIsPageComplete] = useState(false);
 
@@ -375,8 +379,8 @@ const SaleDeedDetailsPage = ({
       />
 
       <StepHeader
-        step="Step 1"
-        title="Sale/ property registration deed details"
+        step={t('step_label')}
+        title={t('step_title')}
         onBack={onBack}
         onNext={onNext}
         isBackEnabled={isBackEnabled}
@@ -386,14 +390,14 @@ const SaleDeedDetailsPage = ({
       <div className="sd-page__sections">
 
         {/* ═══ SECTION 1.1 — Location and property document details ═══ */}
-        <SectionBox number="1.1" title="Location and property document details" open className="sd-s11-box">
+        <SectionBox number="1.1" title={t('s11_title')} open className="sd-s11-box">
           <div className="sd-s12">
 
             <div className="sd-s12__group">
-              <p className="sd-s12__group-label">Location details</p>
+              <p className="sd-s12__group-label">{t('s11_location_group')}</p>
               <div className="sd-s12__four-col">
                 <Dropdown
-                  label="District"
+                  label={t('s11_district')}
                   required
                   value={locDistrict}
                   onChange={(e) => setLocDistrict(e.target.value)}
@@ -407,7 +411,7 @@ const SaleDeedDetailsPage = ({
                   ]}
                 />
                 <Dropdown
-                  label="Taluk"
+                  label={t('s11_taluk')}
                   required
                   value={locTaluk}
                   onChange={(e) => setLocTaluk(e.target.value)}
@@ -421,7 +425,7 @@ const SaleDeedDetailsPage = ({
                   ]}
                 />
                 <Dropdown
-                  label="Panchayat"
+                  label={t('s11_panchayat')}
                   required
                   value={locPanchayat}
                   onChange={(e) => setLocPanchayat(e.target.value)}
@@ -435,7 +439,7 @@ const SaleDeedDetailsPage = ({
                   ]}
                 />
                 <Dropdown
-                  label="Village"
+                  label={t('s11_village')}
                   required
                   value={locVillage}
                   onChange={(e) => setLocVillage(e.target.value)}
@@ -452,12 +456,12 @@ const SaleDeedDetailsPage = ({
             </div>
 
             <div className="sd-s12__group">
-              <p className="sd-s12__group-label">Please enter your document details</p>
+              <p className="sd-s12__group-label">{t('s11_doc_group')}</p>
               <div className="sd-s12__doc-row">
                 <div className="sd-s12__asset-input">
                   <Input
-                    label="Asset Number"
-                    placeholder="Enter your Asset Number"
+                    label={t('s11_asset_label')}
+                    placeholder={t('s11_asset_placeholder')}
                     value={assetNumber}
                     onChange={(e) => setAssetNumber(e.target.value)}
                     disabled={s11Saved}
@@ -466,10 +470,10 @@ const SaleDeedDetailsPage = ({
                   />
                 </div>
                 <Tooltip
-                  label="Where to find your Asset Number"
+                  label={t('s11_tooltip_asset_label')}
                   imageSrc="/images/sample-asset.png"
                   imageAlt="Sample asset document"
-                  caption="Click to view sample"
+                  caption={t('s11_tooltip_caption')}
                   className="sd-s12__tooltip"
                 />
               </div>
@@ -477,10 +481,10 @@ const SaleDeedDetailsPage = ({
 
             <div className="sd-s12__actions">
               <Button variant="primary" disabled={!canSave11} onClick={handleSave11}>
-                Save and Continue
+                {t('s11_btn_save')}
               </Button>
               <Button variant="error" disabled={!s11Saved} onClick={handleEdit11}>
-                Edit
+                {t('s11_btn_edit')}
               </Button>
             </div>
 
@@ -490,19 +494,19 @@ const SaleDeedDetailsPage = ({
         {/* ═══ SECTION 1.2 — Property registration details ════════ */}
         {s12Visible && (
           <div ref={s12Ref}>
-          <SectionBox number="1.2" title="Property registration details" open className="sd-s12-box">
+          <SectionBox number="1.2" title={t('s12_title')} open className="sd-s12-box">
             <div className="sd-s11">
 
               {/* Radio */}
               <div className="sd-s11__q-block">
                 <p className="sd-s11__question">
-                  Did the property registration happen after 01/04/2004?
+                  {t('s12_question')}
                 </p>
                 <div className="sd-s11__radios">
                   <RadioButton
                     name="kaveriFlow"
                     value="yes"
-                    label="Yes"
+                    label={t('s12_yes')}
                     checked={kaveriYes === true}
                     onChange={() => handleFlowSelect(true)}
                     disabled={fetchStatus === 'loading' || s12Saved}
@@ -510,7 +514,7 @@ const SaleDeedDetailsPage = ({
                   <RadioButton
                     name="kaveriFlow"
                     value="no"
-                    label="No"
+                    label={t('s12_no')}
                     checked={kaveriYes === false}
                     onChange={() => handleFlowSelect(false)}
                     disabled={fetchStatus === 'loading' || s12Saved}
@@ -525,8 +529,8 @@ const SaleDeedDetailsPage = ({
                   <div className="sd-s11__reg-row">
                     <div className="sd-s11__reg-input">
                       <Input
-                        label="Registration Number"
-                        placeholder="Enter your Kaveri Registration Number"
+                        label={t('s12_reg_label')}
+                        placeholder={t('s12_reg_placeholder')}
                         value={regNumber}
                         onChange={(e) => setRegNumber(e.target.value)}
                         disabled={fetchStatus === 'loading' || s12Saved}
@@ -539,10 +543,10 @@ const SaleDeedDetailsPage = ({
                       />
                     </div>
                     <Tooltip
-                      label="Where to find your Registration Number"
+                      label={t('s12_tooltip_reg_label')}
                       imageSrc="/images/sample-registration.png"
                       imageAlt="Sample registration document"
-                      caption="Click to view sample"
+                      caption={t('s11_tooltip_caption')}
                       className="sd-s11__tooltip"
                     />
                   </div>
@@ -554,7 +558,7 @@ const SaleDeedDetailsPage = ({
                         disabled={!regNumber.trim() || fetchStatus === 'loading'}
                         onClick={handleFetch}
                       >
-                        Fetch Property Details
+                        {t('s12_fetch_btn')}
                       </Button>
                     </div>
                   )}
@@ -564,12 +568,12 @@ const SaleDeedDetailsPage = ({
                       <div className="sd-s11__success-row">
                         <span className="material-icons-outlined sd-s11__success-icon">check_circle_outline</span>
                         <span className="sd-s11__success-text">
-                          Kaveri details fetched successfully. Please proceed to next step.
+                          {t('s12_fetch_success')}
                         </span>
                       </div>
 
                       <CollapseHeader
-                        title="Kaveri table"
+                        title={t('s12_kaveri_collapse')}
                         open={kaveriTableOpen}
                         onToggle={setKaveriTableOpen}
                         className="sd-s11__collapse"
@@ -577,27 +581,27 @@ const SaleDeedDetailsPage = ({
                         <div className="kaveri-table">
                           <div className="kaveri-table__registration">
                             <div className="kaveri-table__row">
-                              <div className="kaveri-table__label">Registration number</div>
+                              <div className="kaveri-table__label">{t('s12_kav_reg_no')}</div>
                               <div className="kaveri-table__value">{MOCK_KAVERI.registrationNumber}</div>
-                              <div className="kaveri-table__label">Village</div>
+                              <div className="kaveri-table__label">{t('s12_kav_village')}</div>
                               <div className="kaveri-table__value kaveri-table__value--last">{MOCK_KAVERI.village}</div>
                             </div>
                             <div className="kaveri-table__row kaveri-table__row--mid">
-                              <div className="kaveri-table__label">Nature of deed</div>
+                              <div className="kaveri-table__label">{t('s12_kav_nature_deed')}</div>
                               <div className="kaveri-table__value">{MOCK_KAVERI.natureOfDeed}</div>
-                              <div className="kaveri-table__label">Hobli</div>
+                              <div className="kaveri-table__label">{t('s12_kav_hobli')}</div>
                               <div className="kaveri-table__value kaveri-table__value--last">{MOCK_KAVERI.hobli}</div>
                             </div>
                             <div className="kaveri-table__row kaveri-table__row--mid">
-                              <div className="kaveri-table__label">Property ID</div>
+                              <div className="kaveri-table__label">{t('s12_kav_prop_id')}</div>
                               <div className="kaveri-table__value">{MOCK_KAVERI.propertyId}</div>
-                              <div className="kaveri-table__label">SRO name</div>
+                              <div className="kaveri-table__label">{t('s12_kav_sro')}</div>
                               <div className="kaveri-table__value kaveri-table__value--last">{MOCK_KAVERI.sroName}</div>
                             </div>
                             <div className="kaveri-table__row kaveri-table__row--mid">
-                              <div className="kaveri-table__label">Document ID</div>
+                              <div className="kaveri-table__label">{t('s12_kav_doc_id')}</div>
                               <div className="kaveri-table__value">{MOCK_KAVERI.documentId}</div>
-                              <div className="kaveri-table__label">Zone name</div>
+                              <div className="kaveri-table__label">{t('s12_kav_zone')}</div>
                               <div className="kaveri-table__value kaveri-table__value--last">{MOCK_KAVERI.zoneName}</div>
                             </div>
                           </div>
@@ -606,14 +610,14 @@ const SaleDeedDetailsPage = ({
 
                           <div className="kaveri-table__boundaries">
                             <div className="kaveri-table__bnd-header">
-                              <div className="kaveri-table__bnd-label">Directions</div>
-                              <div className="kaveri-table__bnd-cell">East</div>
-                              <div className="kaveri-table__bnd-cell">West</div>
-                              <div className="kaveri-table__bnd-cell">North</div>
-                              <div className="kaveri-table__bnd-cell kaveri-table__bnd-cell--last">South</div>
+                              <div className="kaveri-table__bnd-label">{t('s12_kav_directions')}</div>
+                              <div className="kaveri-table__bnd-cell">{t('s12_kav_east')}</div>
+                              <div className="kaveri-table__bnd-cell">{t('s12_kav_west')}</div>
+                              <div className="kaveri-table__bnd-cell">{t('s12_kav_north')}</div>
+                              <div className="kaveri-table__bnd-cell kaveri-table__bnd-cell--last">{t('s12_kav_south')}</div>
                             </div>
                             <div className="kaveri-table__bnd-body">
-                              <div className="kaveri-table__bnd-label">Checkbandi</div>
+                              <div className="kaveri-table__bnd-label">{t('s12_kav_checkbandi')}</div>
                               <div className="kaveri-table__bnd-cell">{MOCK_KAVERI.boundaries.east}</div>
                               <div className="kaveri-table__bnd-cell">{MOCK_KAVERI.boundaries.west}</div>
                               <div className="kaveri-table__bnd-cell">{MOCK_KAVERI.boundaries.north}</div>
@@ -625,13 +629,13 @@ const SaleDeedDetailsPage = ({
 
                           <div className="kaveri-table__schedule">
                             <div className="kaveri-table__row">
-                              <div className="kaveri-table__label">Schedule type</div>
+                              <div className="kaveri-table__label">{t('s12_kav_sch_type')}</div>
                               <div className="kaveri-table__value">{MOCK_KAVERI.schedules[0].type}</div>
-                              <div className="kaveri-table__label">Property area</div>
+                              <div className="kaveri-table__label">{t('s12_kav_prop_area')}</div>
                               <div className="kaveri-table__value kaveri-table__value--last">{MOCK_KAVERI.schedules[0].propertyArea}</div>
                             </div>
                             <div className="kaveri-table__row kaveri-table__row--mid">
-                              <div className="kaveri-table__label">Schedule description</div>
+                              <div className="kaveri-table__label">{t('s12_kav_sch_desc')}</div>
                               <div className="kaveri-table__value kaveri-table__value--span">{MOCK_KAVERI.schedules[0].description}</div>
                             </div>
                           </div>
@@ -643,16 +647,16 @@ const SaleDeedDetailsPage = ({
                               <div className="kaveri-table__party" key={i}>
                                 <div className="kaveri-table__party-left">
                                   <div className={`kaveri-table__row${i === 0 ? '' : ' kaveri-table__row--party-top'}`}>
-                                    <div className="kaveri-table__label">Party Name</div>
+                                    <div className="kaveri-table__label">{t('s12_kav_party_name')}</div>
                                     <div className="kaveri-table__value kaveri-table__value--last">{party.name}</div>
                                   </div>
                                   <div className="kaveri-table__row kaveri-table__row--mid">
-                                    <div className="kaveri-table__label">Party type</div>
+                                    <div className="kaveri-table__label">{t('s12_kav_party_type')}</div>
                                     <div className="kaveri-table__value kaveri-table__value--last">{party.type}</div>
                                   </div>
                                 </div>
                                 <div className="kaveri-table__party-right">
-                                  <div className="kaveri-table__label">Party Address</div>
+                                  <div className="kaveri-table__label">{t('s12_kav_party_addr')}</div>
                                   <div className="kaveri-table__value kaveri-table__value--last">{party.address}</div>
                                 </div>
                               </div>
@@ -663,14 +667,14 @@ const SaleDeedDetailsPage = ({
 
                       {/* Select property and schedule */}
                       <div className="sd-s12__group">
-                        <p className="sd-s12__group-label">Select property and schedule details</p>
+                        <p className="sd-s12__group-label">{t('s12_select_group')}</p>
                         <Table
-                          columns={['Select property', 'Property ID', 'Document ID', 'Village', 'SRO Name']}
+                          columns={[t('s12_col_sel_prop'), t('s12_col_prop_id'), t('s12_col_doc_id'), t('s12_col_village'), t('s12_col_sro')]}
                           rows={propertyRows}
                           className="sd-s12__table"
                         />
                         <Table
-                          columns={['Select schedule', 'Schedule type', 'Schedule description']}
+                          columns={[t('s12_col_sel_sch'), t('s12_col_sch_type'), t('s12_col_sch_desc')]}
                           rows={scheduleRows}
                           className="sd-s12__table sd-s12__table--gap"
                         />
@@ -679,10 +683,10 @@ const SaleDeedDetailsPage = ({
                       {/* Yes-flow Save and Continue / Edit */}
                       <div className="sd-s12__actions">
                         <Button variant="primary" disabled={!canSave12} onClick={handleSave12}>
-                          Save and Continue
+                          {t('s12_btn_save')}
                         </Button>
                         <Button variant="error" disabled={!s12Saved} onClick={handleEdit12}>
-                          Edit
+                          {t('s12_btn_edit')}
                         </Button>
                       </div>
                     </>
@@ -695,37 +699,37 @@ const SaleDeedDetailsPage = ({
                 <div className="sd-s12__no-flow">
                   <div className="sd-s12__no-flow-row">
                     <Dropdown
-                      label="Document Type"
+                      label={t('s12_no_doc_type')}
                       required
                       value={noFlowDocType}
                       onChange={(e) => setNoFlowDocType(e.target.value)}
                       options={NO_FLOW_DOC_OPTIONS}
-                      caption="Please select any of these other documents"
+                      caption={t('s12_no_doc_caption')}
                       captionVariant="info"
                     />
                     <Input
-                      label="Document No."
+                      label={t('s12_no_doc_no')}
                       required
                       placeholder="e.g. XXX-X-XXXXX-2004-05"
                       value={noFlowDocNo}
                       onChange={(e) => setNoFlowDocNo(e.target.value)}
                       inputType="alphanumeric-code"
-                      caption="Enter the number relevant to selected document"
+                      caption={t('s12_no_doc_no_caption')}
                       captionVariant="info"
                     />
                     <DatePicker
-                      label="Document Date"
+                      label={t('s12_no_doc_date')}
                       required
                       value={noFlowDocDate}
                       onChange={(e) => setNoFlowDocDate(e.target.value)}
-                      caption="Please enter day-month-year"
+                      caption={t('s12_no_doc_date_caption')}
                       captionVariant="info"
                     />
                   </div>
 
                   <div className="sd-s12__upload-block">
                     <FileUpload
-                      label="Upload Document"
+                      label={t('s12_no_upload')}
                       required
                       fileName={noFlowFileName}
                       uploadStatus={noFlowUploadStatus}
@@ -733,10 +737,10 @@ const SaleDeedDetailsPage = ({
                       onRemove={handleNoFlowFileRemove}
                       caption={
                         noFlowUploadStatus === 'error'
-                          ? 'Document exceeds 5MB'
+                          ? t('s12_no_upload_error')
                           : noFlowUploadStatus === 'success'
-                          ? 'Document uploaded successfully'
-                          : 'Only PDF size up-to 5MB allowed'
+                          ? t('s12_no_upload_success')
+                          : t('s12_no_upload_info')
                       }
                       captionVariant={
                         noFlowUploadStatus === 'error' ? 'error'
@@ -760,27 +764,26 @@ const SaleDeedDetailsPage = ({
 
             {kaveriYes === true ? (
               /* ── 1.3 Yes flow — Review ─────────────────────── */
-              <SectionBox number="1.3" title="Review" open className="sd-s13-box">
+              <SectionBox number="1.3" title={t('s13_title_yes')} open className="sd-s13-box">
                 <div className="sd-s13">
                   <Table
-                    columns={['Gram Panchayat', 'Village', 'Registration number', 'Asset number']}
+                    columns={[t('s13_col_gp'), t('s13_col_village'), t('s13_col_reg_no'), t('s13_col_asset')]}
                     rows={yesReviewRow}
                     className="sd-s13__summary-table"
                   />
                   <div className="sd-s13__success-row">
                     <span className="material-icons-outlined sd-s13__success-icon">check_circle_outline</span>
                     <span className="sd-s13__success-text">
-                      Application and Property ID have been generated. Kindly note both the IDs
-                      for future use to track the status of your application.
+                      {t('s13_success_yes')}
                     </span>
                   </div>
                   <div className="sd-s13__id-row">
                     <div className="sd-s13__id-field">
-                      <span className="sd-s13__id-label">Application ID</span>
+                      <span className="sd-s13__id-label">{t('s13_app_id')}</span>
                       <span className="sd-s13__id-value">{MOCK_KAVERI.appId}</span>
                     </div>
                     <div className="sd-s13__id-field">
-                      <span className="sd-s13__id-label">Property ID (eswathu)</span>
+                      <span className="sd-s13__id-label">{t('s13_prop_id_eswathu')}</span>
                       <span className="sd-s13__id-value">{MOCK_KAVERI.generatedPropertyId}</span>
                     </div>
                   </div>
@@ -788,27 +791,26 @@ const SaleDeedDetailsPage = ({
               </SectionBox>
             ) : (
               /* ── 1.3 No flow — Review Details ──────────────── */
-              <SectionBox number="1.3" title="Review Details" open className="sd-s13-box">
+              <SectionBox number="1.3" title={t('s13_title_no')} open className="sd-s13-box">
                 <div className="sd-s13">
                   <Table
-                    columns={['Gram Panchayat', 'Village', 'Document type', 'Document number', 'Document registration date', 'Asset number']}
+                    columns={[t('s13_col_gp'), t('s13_col_village'), t('s13_col_doc_type'), t('s13_col_doc_no'), t('s13_col_doc_date'), t('s13_col_asset')]}
                     rows={noReviewRow}
                     className="sd-s13__summary-table"
                   />
                   <div className="sd-s13__success-row">
                     <span className="material-icons-outlined sd-s13__success-icon">check_circle_outline</span>
                     <span className="sd-s13__success-text">
-                      Application No. and Property ID have been generated. Kindly note both the IDs
-                      for future use to track the status of your application.
+                      {t('s13_success_no')}
                     </span>
                   </div>
                   <div className="sd-s13__id-row">
                     <div className="sd-s13__id-field">
-                      <span className="sd-s13__id-label">Application No.</span>
+                      <span className="sd-s13__id-label">{t('s13_app_no')}</span>
                       <span className="sd-s13__id-value">{MOCK_KAVERI.appId}</span>
                     </div>
                     <div className="sd-s13__id-field">
-                      <span className="sd-s13__id-label">Property ID (eswathu)</span>
+                      <span className="sd-s13__id-label">{t('s13_prop_id_eswathu')}</span>
                       <span className="sd-s13__id-value">{MOCK_KAVERI.generatedPropertyId}</span>
                     </div>
                   </div>
@@ -824,9 +826,10 @@ const SaleDeedDetailsPage = ({
           <div className="sd-page__proceed">
             <Button
               variant="primary"
+              disabled={isPageComplete}
               onClick={() => { setIsPageComplete(true); onNext?.(); }}
             >
-              Save and Proceed
+              {t('btn_save_proceed')}
             </Button>
           </div>
         )}
@@ -843,7 +846,7 @@ const SaleDeedDetailsPage = ({
       {fetchStatus === 'error' && (
         <div className="sd-page__overlay">
           <ErrorMessageCard
-            message="Error in fetching details from Kaveri. Please Retry or Contact Kaveri helpline XXXXXXXXXX."
+            message={t('err_kaveri_fetch')}
             onOk={handleErrorDismiss}
           />
         </div>
@@ -853,11 +856,11 @@ const SaleDeedDetailsPage = ({
         <div className="sd-page__overlay" onClick={handleKaveriWarnCancel}>
           <div onClick={(e) => e.stopPropagation()}>
             <ErrorMessageCard
-              message="Editing the Kaveri Registration Number will cause you to lose progress in multiple sections of the form including Owner KYC, Property Details and Property Classification. Are you sure you want to proceed?"
-              subMessage="This action cannot be undone."
+              message={t('err_kaveri_warn')}
+              subMessage={t('err_kaveri_warn_sub')}
               actions={[
-                { label: 'Yes, Edit', variant: 'primary', onClick: handleKaveriWarnConfirm },
-                { label: 'Cancel',    variant: 'error',   onClick: handleKaveriWarnCancel  },
+                { label: t('err_kaveri_yes_edit'), variant: 'primary', onClick: handleKaveriWarnConfirm },
+                { label: t('err_kaveri_cancel'),   variant: 'error',   onClick: handleKaveriWarnCancel  },
               ]}
             />
           </div>

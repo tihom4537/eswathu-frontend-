@@ -1,21 +1,44 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './Tooltip.css';
+
+const BOX_WIDTH = 520;
+const MARGIN = 12; // min gap from viewport edge
 
 const Tooltip = ({ label, imageSrc, imageAlt = 'Sample', caption, className = '', variant, definition, children }) => {
   const [imgError, setImgError] = useState(false);
   const [showDef, setShowDef] = useState(false);
+  const [boxStyle, setBoxStyle] = useState({});
+  const termRef = useRef(null);
 
   /* ── Definition variant — inline underlined term + hover box ── */
   if (variant === 'definition') {
+    const handleMouseEnter = () => {
+      if (termRef.current) {
+        const rect = termRef.current.getBoundingClientRect();
+        const top = rect.bottom + 8;
+        // Decide left vs right alignment based on available space
+        const spaceOnRight = window.innerWidth - rect.left;
+        if (spaceOnRight >= BOX_WIDTH + MARGIN) {
+          setBoxStyle({ top, left: rect.left });
+        } else {
+          // Align right edge of box to right edge of term
+          const right = window.innerWidth - rect.right;
+          setBoxStyle({ top, right: Math.max(right, MARGIN) });
+        }
+      }
+      setShowDef(true);
+    };
+
     return (
       <span
         className={`tooltip-def ${className}`}
-        onMouseEnter={() => setShowDef(true)}
+        ref={termRef}
+        onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setShowDef(false)}
       >
         <span className="tooltip-def__term">{children}</span>
         {showDef && (
-          <span className="tooltip-def__box" role="tooltip">
+          <span className="tooltip-def__box" role="tooltip" style={boxStyle}>
             {definition}
           </span>
         )}

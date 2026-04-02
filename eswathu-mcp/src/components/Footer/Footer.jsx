@@ -1,17 +1,17 @@
-﻿import './Footer.css';
+﻿import { useTranslation } from '../../i18n';
+import './Footer.css';
 
 const Footer = ({ variant = 'homepage' }) => {
   const isHomepage = variant === 'homepage';
+  const { t } = useTranslation('home');
 
   if (!isHomepage) {
     return (
       <footer className="footer footer--postlogin">
         <div className="footer__bottom">
-          <p className="footer__credit">Designed and Developed by NIC.</p>
-          <p className="footer__copyright">
-            Copyright © 2025, Rural Development and Panchayati Raj Department, Government of Karnataka
-          </p>
-          <p className="footer__rights">All Rights Reserved.</p>
+          <p className="footer__credit">{t('footer_credit')}</p>
+          <p className="footer__copyright">{t('footer_copyright')}</p>
+          <p className="footer__rights">{t('footer_rights')}</p>
         </div>
       </footer>
     );
@@ -23,37 +23,37 @@ const Footer = ({ variant = 'homepage' }) => {
         <div className="footer__top-inner">
           {/* All Pages */}
           <div className="footer__col">
-            <h4 className="footer__heading">All Pages</h4>
+            <h4 className="footer__heading">{t('footer_allpages')}</h4>
             <div className="footer__link-list">
-              <a href="#" className="footer__link">Home</a>
-              <a href="#" className="footer__link">About e-Swathu 2.0 and e-Khata</a>
-              <a href="#" className="footer__link">Citizen services</a>
-              <a href="#" className="footer__link">Useful Links</a>
+              <a href="#" className="footer__link">{t('footer_link_home')}</a>
+              <a href="#" className="footer__link">{t('footer_link_about')}</a>
+              <a href="#" className="footer__link">{t('footer_link_citizen')}</a>
+              <a href="#" className="footer__link">{t('footer_link_useful')}</a>
             </div>
           </div>
 
           {/* Working Hours */}
           <div className="footer__col">
-            <h4 className="footer__heading">Working Hours</h4>
+            <h4 className="footer__heading">{t('footer_hours')}</h4>
             <div className="footer__hours-group">
               <div className="footer__hours-times">
-                <p className="footer__text">Monday - Friday</p>
-                <p className="footer__text">9:00 AM - 6:00 PM</p>
-                <p className="footer__text">Lunch: 1:30 PM - 2:00 PM</p>
+                <p className="footer__text">{t('footer_hours_days')}</p>
+                <p className="footer__text">{t('footer_hours_time')}</p>
+                <p className="footer__text">{t('footer_hours_lunch')}</p>
               </div>
-              <p className="footer__text">Closed on Public holidays</p>
+              <p className="footer__text">{t('footer_hours_closed')}</p>
             </div>
           </div>
 
           {/* Office Address */}
           <div className="footer__col footer__col--wide">
-            <h4 className="footer__heading">Office Address</h4>
+            <h4 className="footer__heading">{t('footer_address')}</h4>
             <div className="footer__offices">
               <div className="footer__office">
-                <p className="footer__org">National Informatics Centre</p>
+                <p className="footer__org">{t('footer_nic_name')}</p>
                 <div className="footer__address">
                   <span className="material-icons-outlined footer__addr-icon">place</span>
-                  <p className="footer__text">6th &amp; 7th Floor, Mini Tower, Ambedkar Veedhi, Bengaluru 560001</p>
+                  <p className="footer__text">{t('footer_nic_addr')}</p>
                 </div>
                 <div className="footer__socials">
                   <a href="#" className="footer__social" aria-label="Facebook">
@@ -69,10 +69,10 @@ const Footer = ({ variant = 'homepage' }) => {
               </div>
 
               <div className="footer__office">
-                <p className="footer__org">Rural Development and Panchayati Raj Department</p>
+                <p className="footer__org">{t('footer_rdpr_name')}</p>
                 <div className="footer__address">
                   <span className="material-icons-outlined footer__addr-icon">place</span>
-                  <p className="footer__text">3rd Gate, 3rd Floor, MS Building, Bengaluru 560001</p>
+                  <p className="footer__text">{t('footer_rdpr_addr')}</p>
                 </div>
                 <div className="footer__socials">
                   <a href="#" className="footer__social" aria-label="Facebook">
@@ -92,12 +92,10 @@ const Footer = ({ variant = 'homepage' }) => {
       </div>
 
       <div className="footer__bottom">
-        <p className="footer__visitors">Number of Visitors on Site : XXXXX</p>
-        <p className="footer__credit">Designed and Developed by NIC.</p>
-        <p className="footer__copyright">
-          Copyright © 2025, Rural Development and Panchayati Raj Department, Government of Karnataka
-        </p>
-        <p className="footer__rights">All Rights Reserved.</p>
+        <p className="footer__visitors">{t('footer_visitors')}</p>
+        <p className="footer__credit">{t('footer_credit')}</p>
+        <p className="footer__copyright">{t('footer_copyright')}</p>
+        <p className="footer__rights">{t('footer_rights')}</p>
       </div>
     </footer>
   );

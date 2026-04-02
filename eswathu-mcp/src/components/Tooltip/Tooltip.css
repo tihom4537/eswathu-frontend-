@@ -1,8 +1,7 @@
 /* ── Definition variant ──────────────────────────────────── */
 
-/* Wrapper: inline-block so position:relative works for absolute child */
+/* Wrapper: inline so it sits naturally within text flow */
 .tooltip-def {
-  position: relative;
   display: inline-block;
 }
 
@@ -17,25 +16,24 @@
   color: inherit;
 }
 
-/* Definition box — appears below the term */
+/* Definition box — fixed to viewport so it's never clipped by any ancestor */
 .tooltip-def__box {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
+  position: fixed;
+  /* top / left / right set via inline style in Tooltip.jsx */
   width: 520px;
+  max-width: calc(100vw - 24px);
   background: #ffffff;
   border: 1px solid var(--neutral-300);
   border-radius: var(--radius-md);
   padding: 14px 18px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
-  z-index: 200;
+  z-index: 9999;
   display: block;
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
   color: var(--text-dark);
-  /* Prevent the box itself from inheriting underline */
   text-decoration: none;
   white-space: normal;
   cursor: default;

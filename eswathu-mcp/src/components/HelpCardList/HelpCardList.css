@@ -73,6 +73,10 @@
   letter-spacing: 0.5px;
 }
 
+.hcl--document .hcl__list {
+  gap: 16px;
+}
+
 .hcl--document .hcl__item {
   padding: 10px;
 }
