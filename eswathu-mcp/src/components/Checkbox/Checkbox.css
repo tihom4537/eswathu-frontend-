@@ -28,7 +28,7 @@
 }
 
 .checkbox__icon {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-light);
 }
 
@@ -91,7 +91,7 @@
 
 .checkbox__label {
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   line-height: 20px;
   color: var(--text-dark);

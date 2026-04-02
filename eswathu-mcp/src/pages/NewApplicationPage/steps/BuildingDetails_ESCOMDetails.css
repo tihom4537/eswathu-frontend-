@@ -81,7 +81,7 @@
 
 .bd-escom__th {
   background: var(--secondary);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--text-dark);
   padding: 6px 10px;
@@ -109,7 +109,7 @@
   padding: 10px;
   border-right: 1px solid #727272;
   vertical-align: middle;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-dark);
   height: 78px;
 }

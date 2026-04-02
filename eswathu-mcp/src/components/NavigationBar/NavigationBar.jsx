@@ -102,7 +102,7 @@ const NavigationBar = ({
           {isHomepage ? (
             <>
               <nav className="navbar__nav">
-                <button type="button" className="navbar__link" onClick={() => handleLinkClick('/')}>{t('navHome')}</button>
+                <button type="button" className="navbar__link" onClick={() => handleLinkClick('home')}>{t('navHome')}</button>
                 <button type="button" className="navbar__link" onClick={() => handleLinkClick('/about')}>{t('navAbout')}</button>
 
                 {/* Citizen Services dropdown */}
@@ -169,8 +169,8 @@ const NavigationBar = ({
           ) : (
             <>
               <nav className="navbar__breadcrumb">
-                <span className="material-icons-outlined navbar__home-icon">home</span>
-                <button type="button" className="navbar__crumb" onClick={() => handleLinkClick('/')}>{t('navHome')}</button>
+                <span className="material-icons-outlined navbar__home-icon" style={{ cursor: 'pointer' }} onClick={() => handleLinkClick('citizen-home')}>home</span>
+                <button type="button" className="navbar__crumb" onClick={() => handleLinkClick('citizen-home')}>{t('navHome')}</button>
 
                 {/* Citizen Services dropdown in breadcrumb */}
                 <div className="navbar__dropdown-wrapper">

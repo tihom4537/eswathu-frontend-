@@ -150,7 +150,7 @@
 .pc-doc-table__th {
   font-family: var(--font-family);
   font-weight: 500;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--text-dark);
   padding: 10px;
   border: 1px solid #727272;
@@ -163,7 +163,7 @@
   padding: 10px;
   border: 1px solid #727272;
   vertical-align: middle;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--neutral-600);
   height: 115px;
   box-sizing: border-box;
@@ -338,7 +338,7 @@
 
 .pc-viewfile-popup__name {
   font-family: var(--font-family);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--text-dark);
   margin: 0;
@@ -351,7 +351,7 @@
   align-items: center;
   gap: 8px;
   color: var(--neutral-500);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .pc-viewfile-popup__icon {
@@ -399,7 +399,7 @@
 }
 
 .pc-doc__file-name {
-  font-size: 13px;
+  font-size: 16px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -419,7 +419,7 @@
 }
 
 .pc-doc__file-remove .material-icons-outlined {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--white);
 }
 
@@ -437,7 +437,7 @@
   align-items: center;
   gap: 4px;
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 16px;
   color: var(--primary);
   text-decoration: none;
 }
@@ -585,7 +585,7 @@
 .pc-rtc-table__th {
   font-family: var(--font-family);
   font-weight: 500;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--text-dark);
   padding: 10px;
   border: 1px solid #727272;
@@ -599,7 +599,7 @@
   padding: 10px;
   border: 1px solid #727272;
   vertical-align: middle;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--neutral-600);
   height: 66px;
 }
@@ -828,7 +828,7 @@
 
 .pc-modal__progress {
   font-family: var(--font-family);
-  font-size: 13px;
+  font-size: 16px;
   color: var(--neutral-500);
   margin: 0;
 }
@@ -864,7 +864,7 @@
 
 .pc-modal__question-label {
   font-family: var(--font-family);
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--neutral-500);
   text-transform: uppercase;
@@ -902,7 +902,7 @@
 
 .pc-modal__result-label {
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 16px;
   color: var(--neutral-600);
   margin: 0;
 }

@@ -27,7 +27,7 @@
 .error-card__sub-message {
   font-family: var(--font-family);
   font-weight: 400;
-  font-size: 13px;
+  font-size: 16px;
   line-height: 18px;
   color: #B0B0B0;
   margin-bottom: 30px;
@@ -44,7 +44,7 @@
   color: var(--primary-50);
   font-family: var(--font-family);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   letter-spacing: 0.1px;
   cursor: pointer;

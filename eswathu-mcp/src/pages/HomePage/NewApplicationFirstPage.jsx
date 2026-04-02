@@ -126,6 +126,7 @@ const NewApplicationFirstPage = ({ onNavigate, username = '', onClassificationCo
       <NavigationBar
         variant="postLogin"
         username={username}
+        onNavigate={onNavigate}
         onLogout={() => onNavigate && onNavigate('login')}
       />
 

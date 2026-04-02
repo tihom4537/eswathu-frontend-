@@ -61,6 +61,7 @@ const CitizenLoginHomePage = ({ onNavigate, username = '' }) => {
       <NavigationBar
         variant="postLogin"
         username={username}
+        onNavigate={onNavigate}
         onLogout={() => onNavigate && onNavigate('login')}
       />
 

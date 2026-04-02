@@ -68,7 +68,7 @@
 }
 
 .hp-classification__desc {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   letter-spacing: 0.25px;
   color: var(--text-light);
@@ -103,7 +103,7 @@
 }
 
 .hp-help__desc {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   letter-spacing: 0.25px;
   color: var(--text-dark);

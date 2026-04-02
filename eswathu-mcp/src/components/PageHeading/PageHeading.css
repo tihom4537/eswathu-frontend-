@@ -10,7 +10,7 @@
 .page-heading__subtitle {
   font-family: var(--font-family);
   font-weight: 400;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   letter-spacing: 0.25px;
   color: var(--text-dark);

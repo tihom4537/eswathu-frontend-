@@ -94,7 +94,7 @@
 }
 
 .bd-multi__success-text {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--success, #2e7d32);
   font-weight: 500;
 }

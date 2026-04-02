@@ -484,7 +484,7 @@ const PropertyClassificationPage = ({
 
   return (
     <div className="pc-page">
-      <NavigationBar variant="postLogin" username={username} onLogout={() => onNavigate?.('login')} />
+      <NavigationBar variant="postLogin" username={username} onNavigate={onNavigate} onLogout={() => onNavigate?.('login')} />
 
       <StepHeader
         step="Step 4"

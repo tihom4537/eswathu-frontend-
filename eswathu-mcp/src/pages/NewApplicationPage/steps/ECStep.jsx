@@ -160,6 +160,7 @@ const ECStep = ({
       <NavigationBar
         variant="postLogin"
         username={username}
+        onNavigate={onNavigate}
         onLogout={() => onNavigate?.('login')}
       />
 

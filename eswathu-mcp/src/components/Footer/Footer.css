@@ -138,7 +138,7 @@
   border: 1px solid var(--text-light);
   padding: 4px 12px;
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-light);
   margin-bottom: 8px;
 }
@@ -147,7 +147,7 @@
 .footer__copyright,
 .footer__rights {
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 22px;
   color: var(--text-light);
 }

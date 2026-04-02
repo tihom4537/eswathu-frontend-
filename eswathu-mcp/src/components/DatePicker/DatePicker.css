@@ -9,7 +9,7 @@
 .datepicker__label {
   font-family: var(--font-family);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   letter-spacing: 0.1px;
   color: var(--text-dark);
@@ -40,7 +40,7 @@
   background: transparent;
   font-family: var(--font-family);
   font-weight: 400;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   letter-spacing: 0.25px;
   color: var(--text-dark);

@@ -1,0 +1,205 @@
+/*
+ * Kannada (ಕನ್ನಡ) font-size overrides
+ * Applied when .lang-kn class is on <html> element.
+ * All text elements are bumped to minimum 18px for Kannada script readability.
+ */
+
+/* ── Components ──────────────────────────────────────────── */
+
+.lang-kn .breadcrumb__label,
+.lang-kn .breadcrumb__divider { font-size: 18px; }
+
+.lang-kn .caption-msg__text,
+.lang-kn .caption-msg__icon { font-size: 18px; }
+
+.lang-kn .card-homepage__desc { font-size: 18px; }
+
+.lang-kn .carousel__subtitle,
+.lang-kn .carousel__desc { font-size: 18px; }
+
+.lang-kn .checkbox__label { font-size: 18px; }
+
+.lang-kn .datepicker__label,
+.lang-kn .datepicker__input { font-size: 18px; }
+
+.lang-kn .dropdown__label,
+.lang-kn .dropdown__item { font-size: 18px; }
+
+.lang-kn .error-card__sub-message { font-size: 18px; }
+
+.lang-kn .file-upload-field__label,
+.lang-kn .file-upload-btn__text,
+.lang-kn .file-upload-btn__name { font-size: 18px; }
+
+.lang-kn .footer__visitors,
+.lang-kn .footer__rights { font-size: 18px; }
+
+.lang-kn .hcl__subtitle,
+.lang-kn .hcl__desc,
+.lang-kn .hcl__doc-heading,
+.lang-kn .hcl--document .hcl__item-text,
+.lang-kn .hcl__no-doc,
+.lang-kn .hcl__item-text { font-size: 18px; }
+
+.lang-kn .help-card__desc,
+.lang-kn .help-card__btn { font-size: 18px; }
+
+.lang-kn .hp-popup__intro,
+.lang-kn .hp-popup__item-label,
+.lang-kn .hp-popup__item-text { font-size: 18px; }
+
+.lang-kn .info-box__text { font-size: 18px; }
+
+.lang-kn .input-field__label,
+.lang-kn .input-field__input,
+.lang-kn .input-field--big .input-field__label { font-size: 18px; }
+
+.lang-kn .navbar__font-btn,
+.lang-kn .navbar__lang-btn,
+.lang-kn .navbar__subtitle,
+.lang-kn .navbar__link,
+.lang-kn .navbar__dropdown-item,
+.lang-kn .navbar__crumb,
+.lang-kn .navbar__username { font-size: 18px; }
+
+.lang-kn .owner-table,
+.lang-kn .owner-table__label { font-size: 18px; }
+
+.lang-kn .page-heading__subtitle { font-size: 18px; }
+
+.lang-kn .progress-circle__label { font-size: 18px; }
+
+.lang-kn .questionnaire-field__text,
+.lang-kn .questionnaire-field__sub { font-size: 18px; }
+
+.lang-kn .radio__label { font-size: 18px; }
+
+.lang-kn .search__input { font-size: 18px; }
+
+.lang-kn .stepper__number,
+.lang-kn .stepper__check,
+.lang-kn .stepper__label { font-size: 18px; }
+
+.lang-kn .data-table__th,
+.lang-kn .data-table__td { font-size: 18px; }
+
+.lang-kn .tooltip-card__label-text,
+.lang-kn .tooltip-card__caption-text { font-size: 18px; }
+
+/* ── Pages ───────────────────────────────────────────────── */
+
+.lang-kn .glossary-page__subtitle,
+.lang-kn .glossary-term__title-en,
+.lang-kn .glossary-term__title-kn,
+.lang-kn .glossary-term__lang-label,
+.lang-kn .glossary-term__def-text p,
+.lang-kn .glossary-term__examples li { font-size: 18px; }
+
+.lang-kn .hp-classification__desc,
+.lang-kn .hp-help__desc { font-size: 18px; }
+
+.lang-kn .login-captcha__label,
+.lang-kn .login-card__otp-timer { font-size: 18px; }
+
+.lang-kn .new-app-s01__mandatory-text,
+.lang-kn .new-app-s01__doc-desc,
+.lang-kn .new-app-s02__intro,
+.lang-kn .new-app-s02__question-label { font-size: 18px; }
+
+.lang-kn .ar-page__question { font-size: 18px; }
+
+.lang-kn .bd-page__placeholder-text { font-size: 18px; }
+
+.lang-kn .bd-area__success-text { font-size: 18px; }
+
+.lang-kn .bd-escom__fetched-label,
+.lang-kn .bd-escom__th,
+.lang-kn .bd-escom__td { font-size: 18px; }
+
+.lang-kn .bd-gf__kv-label,
+.lang-kn .bd-gf__kv-value,
+.lang-kn .bd-gf__td-no { font-size: 18px; }
+
+.lang-kn .bd-multi__flat-type-label,
+.lang-kn .bd-multi__success-text { font-size: 18px; }
+
+.lang-kn .bd-tenant__desc,
+.lang-kn .bd-tenant__th,
+.lang-kn .bd-tenant__td { font-size: 18px; }
+
+.lang-kn .ec-s51__info-text,
+.lang-kn .ec-s52__text,
+.lang-kn .ec-s54__success-text { font-size: 18px; }
+
+.lang-kn .ekyc-s21__question-text,
+.lang-kn .ekyc-s21__th,
+.lang-kn .ekyc-s21__td,
+.lang-kn .ekyc-s21__td--no,
+.lang-kn .ekyc-s21__success-text,
+.lang-kn .ekyc-s22__done-badge,
+.lang-kn .ekyc-s22__detail-photo-label,
+.lang-kn .ekyc-s22__detail-row--header .ekyc-s22__detail-cell,
+.lang-kn .ekyc-s22__detail-row--value .ekyc-s22__detail-cell,
+.lang-kn .ekyc-popup__section-label,
+.lang-kn .ekyc-popup__otp-success,
+.lang-kn .ekyc-s23__th,
+.lang-kn .ekyc-s23__td,
+.lang-kn .ekyc-s23__td--no,
+.lang-kn .ekyc-s23__placeholder-row,
+.lang-kn .ekyc-s23__placeholder-note,
+.lang-kn .ekyc-s23__doc-th,
+.lang-kn .ekyc-s23__doc-td,
+.lang-kn .ekyc-s23__file-name,
+.lang-kn .ekyc-viewfile-popup__name { font-size: 18px; }
+
+.lang-kn .pc-s41__doc-instruction,
+.lang-kn .pc-s41__doc-done-text,
+.lang-kn .pc-doc-table__th,
+.lang-kn .pc-doc-table__td,
+.lang-kn .pc-s41__no-docs,
+.lang-kn .pc-viewfile-popup__name,
+.lang-kn .pc-viewfile-popup__preview,
+.lang-kn .pc-doc__file-name,
+.lang-kn .pc-doc__view-link,
+.lang-kn .pc-s42__rtc-instruction,
+.lang-kn .pc-rtc-table__th,
+.lang-kn .pc-rtc-table__td,
+.lang-kn .pc-s42__radio-question,
+.lang-kn .pc-s42__add-owners-label,
+.lang-kn .pc-addowner-table__th,
+.lang-kn .pc-addowner-table__td--no,
+.lang-kn .pc-s42__reentry-label,
+.lang-kn .pc-modal__progress,
+.lang-kn .pc-modal__question,
+.lang-kn .pc-modal__question-label,
+.lang-kn .pc-modal__result-label,
+.lang-kn .pc-s42__placeholder-text,
+.lang-kn .pc-s43__info-text { font-size: 18px; }
+
+.lang-kn .pd-s31__map-text,
+.lang-kn .pd-s31__upload-label,
+.lang-kn .pd-s31__doc-name { font-size: 18px; }
+
+.lang-kn .pd-ad__subheading,
+.lang-kn .pd-ad__label { font-size: 18px; }
+
+.lang-kn .pd-cb__subheading { font-size: 18px; }
+
+.lang-kn .pd-rd__table-wrap .data-table__th,
+.lang-kn .pd-rd__table-wrap .data-table__td,
+.lang-kn .pd-rd__no-photo,
+.lang-kn .pd-rd__caption-text { font-size: 18px; }
+
+.lang-kn .pd-sd__subheading,
+.lang-kn .pd-sd__label { font-size: 18px; }
+
+.lang-kn .sd-s11__success-text,
+.lang-kn .kaveri-table__value,
+.lang-kn .kaveri-table__bnd-label,
+.lang-kn .kaveri-table__bnd-cell,
+.lang-kn .sd-s13__success-text,
+.lang-kn .sd-s13__id-label,
+.lang-kn .sd-s13__id-value { font-size: 18px; }
+
+/* ── PageNavigation ──────────────────────────────────────── */
+.lang-kn .page-nav__button-text { font-size: 18px; }

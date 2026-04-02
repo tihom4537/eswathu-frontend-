@@ -268,6 +268,7 @@ const PropertyDetailsPage = ({
       <NavigationBar
         variant="postLogin"
         username={username}
+        onNavigate={onNavigate}
         onLogout={() => onNavigate?.('login')}
       />
 

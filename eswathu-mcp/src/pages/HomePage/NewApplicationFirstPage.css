@@ -130,7 +130,7 @@
   justify-content: center;
   flex-shrink: 0;
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   line-height: 20px;
   color: #727272;
@@ -210,7 +210,7 @@
 .new-app-s01__doc-desc {
   font-family: var(--font-family);
   font-weight: 400;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   color: var(--text-dark);
   margin: 0;
@@ -268,7 +268,7 @@
 .new-app-s02__question-label {
   font-family: var(--font-family);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 16px;
   line-height: 16px;
   color: var(--neutral-600);
   text-transform: uppercase;

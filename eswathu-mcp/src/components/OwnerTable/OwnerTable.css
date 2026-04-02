@@ -4,7 +4,7 @@
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   letter-spacing: 0.25px;
   color: var(--text-dark);
@@ -17,7 +17,7 @@
 .owner-table__label {
   background: var(--secondary, #f2f2f2);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   letter-spacing: 0.1px;
   padding: 10px;
@@ -36,7 +36,7 @@
 .owner-table__photo-header {
   background: var(--secondary, #f2f2f2);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   letter-spacing: 0.1px;
   padding: 10px;
