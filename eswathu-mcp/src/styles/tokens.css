@@ -26,8 +26,10 @@
   --secondary-400:  #999999;   /* dropdown placeholder text */
 
   --danger:         #B7131A;   /* error — borders, icons, text */
+  --danger-50:      #FFEEEA;   /* error light fill */
   --success:        #3C9718;   /* success — borders, icons, text */
   --warning:        #B77224;   /* warning — borders, icons, text */
+  --warning-50:     #FEF1E7;   /* warning light fill */
 
   /* ── Typography ──────────────────────────────────────────── */
   --font-family:    'Noto Sans', 'Noto Sans Kannada', sans-serif;

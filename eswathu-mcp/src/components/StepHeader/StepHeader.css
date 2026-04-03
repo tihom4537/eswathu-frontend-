@@ -9,7 +9,9 @@
 }
 
 .step-header__inner {
+  max-width: 1200px;
   width: 100%;
+  margin-inline: auto;
   display: flex;
   align-items: flex-start;
   gap: 32px;
@@ -28,7 +30,7 @@
   font-family: var(--font-family);
   font-weight: 400;
   font-size: 24px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.25px;
   color: #000000;
   margin: 0;
@@ -38,7 +40,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 40px;
-  line-height: 48px;
+  line-height: 1.2;
   color: #024c97;
   margin: 0;
 }

@@ -11,7 +11,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.1px;
   color: var(--text-dark);
   margin-bottom: var(--space-xs);
@@ -33,7 +33,7 @@
   cursor: pointer;
   font-family: var(--font-family);
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   color: var(--text-dark);
   transition: border-color 0.15s ease;
   outline: none;
@@ -85,7 +85,7 @@
   padding: 11px 24px;
   font-family: var(--font-family);
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   color: var(--text-dark);
   cursor: pointer;
   overflow: hidden;

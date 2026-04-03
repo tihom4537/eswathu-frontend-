@@ -34,7 +34,7 @@ const home = {
     card_pending_desc: 'Find and resume your application from where you left off — continue any previously started application through to completion.',
     card_reportObjection_title: 'Report an Objection',
     card_reportObjection_desc: 'If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments',
-    card_returnApps_title: 'Return Applications (for Modifications)',
+    card_returnApps_title: 'Returned Application (for Modifications)',
     card_returnApps_desc: 'If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments',
 
     /* ── Conversions ── */
@@ -119,14 +119,21 @@ const home = {
 
     /* ── Connected Services section ── */
     hp_connected_subtitle: 'Connected Services',
-    hp_connected_title: 'Related Websites and Portals and Useful Links',
+    hp_connected_title: 'Useful Website/ Portal Links',
     hp_connected_card_btn: 'Visit Website→',
+    hp_connected_card_btn_download: 'Download Mobile Application→',
     hp_connected_card1_title: 'Bhoomi — Land Records',
     hp_connected_card1_desc: 'Access comprehensive land and property records from the Bhoomi platform.',
     hp_connected_card2_title: 'Kaveri Online Services',
     hp_connected_card2_desc: 'Complete property registration services through Kaveri Online.',
     hp_connected_card3_title: 'KSRSAC',
     hp_connected_card3_desc: 'Access spatial data and survey records from KSRSAC.',
+    hp_connected_card4_title: 'Grama One',
+    hp_connected_card4_desc: 'Assistance centre for all citizen centric activities like G2C services, Banking services, RTI queries etc.',
+    hp_connected_card5_title: 'Dishank',
+    hp_connected_card5_desc: 'Identify survey numbers and land details across Karnataka using the mobile GIS application.',
+    hp_connected_card6_title: 'Property Tax (BSK)',
+    hp_connected_card6_desc: 'Pay property tax online using the Bapuji Seva Kendra portal.',
 
     /* ── Footer (homepage variant) ── */
     footer_allpages: 'All Pages',
@@ -296,14 +303,21 @@ const home = {
 
     /* ── Connected Services section ── */
     hp_connected_subtitle: 'ಸಂಬಂಧಿತ ಸೇವೆಗಳು',
-    hp_connected_title: 'ಸಂಬಂಧಿತ ವೆಬ್‌ಸೈಟ್‌ಗಳು, ಪೋರ್ಟಲ್‌ಗಳು ಮತ್ತು ಉಪಯುಕ್ತ ಕೊಂಡಿಗಳು',
+    hp_connected_title: 'ಉಪಯುಕ್ತ ವೆಬ್‌ಸೈಟ್/ ಪೋರ್ಟಲ್ ಕೊಂಡಿಗಳು',
     hp_connected_card_btn: 'ವೆಬ್‌ಸೈಟ್ ತೆರೆಯಿರಿ→',
+    hp_connected_card_btn_download: 'ಮೊಬೈಲ್ ಅಪ್ಲಿಕೇಶನ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ→',
     hp_connected_card1_title: 'ಭೂಮಿ — ಭೂ ದಾಖಲೆಗಳು',
     hp_connected_card1_desc: 'ಭೂಮಿ ವೇದಿಕೆಯಿಂದ ಸಮಗ್ರ ಭೂ ಮತ್ತು ಆಸ್ತಿ ದಾಖಲೆಗಳನ್ನು ಪಡೆಯಿರಿ.',
     hp_connected_card2_title: 'ಕಾವೇರಿ ಆನ್‌ಲೈನ್ ಸೇವೆಗಳು',
     hp_connected_card2_desc: 'ಕಾವೇರಿ ಆನ್‌ಲೈನ್ ಮೂಲಕ ಆಸ್ತಿ ನೋಂದಣಿ ಸೇವೆಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ.',
     hp_connected_card3_title: 'KSRSAC',
     hp_connected_card3_desc: 'KSRSAC ನಿಂದ ಭೌಗೋಳಿಕ ಮಾಹಿತಿ ಮತ್ತು ಸರ್ವೆ ದಾಖಲೆಗಳನ್ನು ಪಡೆಯಿರಿ.',
+    hp_connected_card4_title: 'ಗ್ರಾಮ ಒನ್',
+    hp_connected_card4_desc: 'G2C ಸೇವೆಗಳು, ಬ್ಯಾಂಕಿಂಗ್ ಸೇವೆಗಳು, RTI ಪ್ರಶ್ನೆಗಳು ಮುಂತಾದ ಎಲ್ಲಾ ನಾಗರಿಕ-ಕೇಂದ್ರಿತ ಚಟುವಟಿಕೆಗಳಿಗೆ ಸಹಾಯ ಕೇಂದ್ರ.',
+    hp_connected_card5_title: 'ದಿಶಾಂಕ್',
+    hp_connected_card5_desc: 'ಮೊಬೈಲ್ GIS ಅಪ್ಲಿಕೇಶನ್ ಬಳಸಿ ಕರ್ನಾಟಕದಾದ್ಯಂತ ಸರ್ವೆ ಸಂಖ್ಯೆ ಮತ್ತು ಭೂಮಿ ವಿವರಗಳನ್ನು ಗುರುತಿಸಿ.',
+    hp_connected_card6_title: 'ಆಸ್ತಿ ತೆರಿಗೆ (ಬಿಎಸ್‌ಕೆ)',
+    hp_connected_card6_desc: 'ಬಾಪೂಜಿ ಸೇವಾ ಕೇಂದ್ರ ಪೋರ್ಟಲ್ ಮೂಲಕ ಆಸ್ತಿ ತೆರಿಗೆಯನ್ನು ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಪಾವತಿಸಿ.',
 
     /* ── Footer ── */
     footer_allpages: 'ಎಲ್ಲಾ ಪುಟಗಳು',

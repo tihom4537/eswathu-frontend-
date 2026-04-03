@@ -49,7 +49,7 @@ export default function AvailRebatesPage({
           <div className="ar-page__body">
 
             {/* Red info box */}
-            <InfoBox variant="red">
+            <InfoBox variant="warning">
               {/* TODO: add rebates info link */}
               <a href="#" className="ar-page__info-link">
                 Click here to know more about Rebates

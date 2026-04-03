@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import './index.css';
 import { LanguageProvider } from './context/LanguageContext';
+import { FontSizeProvider } from './context/FontSizeContext';
+import { useLanguage } from './context/LanguageContext';
 import HomePage from './pages/HomePage/HomePage';
 import LoginPage from './pages/HomePage/LoginPage';
 import CitizenLoginHomePage from './pages/HomePage/CitizenLogin-HomePage';
@@ -11,6 +13,8 @@ import PropertyDetailsPage from './pages/NewApplicationPage/steps/PropertyDetail
 import PropertyClassificationPage from './pages/NewApplicationPage/steps/PropertyClassificationPage';
 import ECStep from './pages/NewApplicationPage/steps/ECStep';
 import GlossaryPage from './pages/GlossaryPage/GlossaryPage';
+import HomePagePopup from './components/HomePagePopup/HomePagePopup';
+import POPUP_CONTENT, { loc } from './pages/HomePage/homePopupContent';
 
 /* ─── New Application flow config ───────────────────────────── */
 
@@ -49,8 +53,37 @@ const BC_IDX_TO_ROUTE_KEY = {
 
 const NEW_APP_ROUTE_KEYS = new Set(ROUTE_ORDER.map((r) => r.key));
 
+/* Renders popup body — used when a citizen-services dropdown item is clicked */
+const PopupBody = ({ contentKey, lang }) => {
+  const content = POPUP_CONTENT[contentKey];
+  if (!content) return null;
+  return (
+    <>
+      {content.intro && <p className="hp-popup__intro">{loc(content.intro, lang)}</p>}
+      <ul className="hp-popup__items">
+        {content.items.map((item, i) => (
+          <li key={i} className="hp-popup__item">
+            {item.label && <span className="hp-popup__item-label">{loc(item.label, lang)}</span>}
+            <p className="hp-popup__item-text">{loc(item.text, lang)}</p>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+const PRE_LOGIN_PAGES = new Set(['home', 'login', 'glossary']);
+
+/* Services that have a popup in homePopupContent.js */
+const SERVICE_HAS_POPUP = new Set([
+  'newEkhata', 'pidEkhata', 'newLayouts', 'newApartments',
+  'conv11ATo11B', 'convApartments', 'conv11BTransactable', 'mutation',
+]);
+
 function App() {
+  const { lang } = useLanguage();
   const [page, setPage] = useState('home');
+  const [pendingServiceKey, setPendingServiceKey] = useState(null);
 
   /**
    * mountedSteps — which route steps have ever been visited.
@@ -123,6 +156,17 @@ function App() {
 
   /* ── Smart navigate: ensures new-app steps are also mounted ── */
   const handleNavigate = (key) => {
+    if (key.startsWith('service:')) {
+      const serviceKey = key.slice('service:'.length);
+      if (SERVICE_HAS_POPUP.has(serviceKey)) {
+        setPendingServiceKey(serviceKey);
+      } else {
+        // No popup for this service — go directly to login or new-application
+        const isPreLogin = PRE_LOGIN_PAGES.has(page);
+        setPage(isPreLogin ? 'login' : 'new-application');
+      }
+      return;
+    }
     if (NEW_APP_ROUTE_KEYS.has(key)) {
       setMountedSteps((prev) => new Set([...prev, key]));
     }
@@ -166,92 +210,92 @@ function App() {
   });
 
   /* ─────────────────────────────────────────────────────────────
-     NEW APPLICATION FLOW  (lazy-mount, keep-alive strategy)
-     ─────────────────────────────────────────────────────────────
-     All visited step pages stay mounted so React state is never lost.
-     Only the active step is visible; others are hidden via display:none.
+     PAGE RENDERER — single return so the service popup can overlay
+     any page without duplicating its JSX.
   ───────────────────────────────────────────────────────────── */
-  if (NEW_APP_ROUTE_KEYS.has(page)) {
-    return (
-      <div style={{ background: '#ffffff', minHeight: '100vh' }}>
-        {mountedSteps.has('new-application-step1') && (
-          <div style={{ display: page === 'new-application-step1' ? 'block' : 'none' }}>
-            <SaleDeedDetailsPage
-              onNavigate={handleNavigate}
-              onResetDownstream={() => { resetStepsFrom(1); setStep1HasKaveri(true); }}
-              onVillageChange={setStep1Village}
-              onFlowChange={setStep1HasKaveri}
-              {...navProps(0)}
-            />
-          </div>
-        )}
+  const renderPage = () => {
+    /* NEW APPLICATION FLOW — lazy-mount keep-alive */
+    if (NEW_APP_ROUTE_KEYS.has(page)) {
+      return (
+        <div style={{ background: '#ffffff', minHeight: '100vh' }}>
+          {mountedSteps.has('new-application-step1') && (
+            <div style={{ display: page === 'new-application-step1' ? 'block' : 'none' }}>
+              <SaleDeedDetailsPage
+                onNavigate={handleNavigate}
+                onResetDownstream={() => { resetStepsFrom(1); setStep1HasKaveri(true); }}
+                onVillageChange={setStep1Village}
+                onFlowChange={setStep1HasKaveri}
+                {...navProps(0)}
+              />
+            </div>
+          )}
+          {mountedSteps.has('new-application-step2') && (
+            <div style={{ display: page === 'new-application-step2' ? 'block' : 'none' }}>
+              <OwnerEKYCPage onNavigate={handleNavigate} hasKaveri={step1HasKaveri} {...navProps(1)} />
+            </div>
+          )}
+          {mountedSteps.has('new-application-step3') && (
+            <div style={{ display: page === 'new-application-step3' ? 'block' : 'none' }}>
+              <PropertyDetailsPage onNavigate={handleNavigate} hasKaveri={step1HasKaveri} {...navProps(2)} />
+            </div>
+          )}
+          {mountedSteps.has('new-application-step4') && (
+            <div style={{ display: page === 'new-application-step4' ? 'block' : 'none' }}>
+              <PropertyClassificationPage
+                onNavigate={handleNavigate}
+                step1Village={step1Village}
+                step0Classification={step0Classification}
+                {...navProps(3)}
+              />
+            </div>
+          )}
+          {mountedSteps.has('new-application-step7') && (
+            <div style={{ display: page === 'new-application-step7' ? 'block' : 'none' }}>
+              <ECStep onNavigate={handleNavigate} {...navProps(4)} />
+            </div>
+          )}
+        </div>
+      );
+    }
+    if (page === 'new-application') return <NewApplicationFirstPage onNavigate={handleNavigate} onClassificationConfirmed={setStep0Classification} />;
+    if (page === 'citizen-home')   return <CitizenLoginHomePage onNavigate={handleNavigate} />;
+    if (page === 'login')          return <LoginPage onLogin={() => handleNavigate('citizen-home')} onNavigate={handleNavigate} />;
+    if (page === 'glossary')       return <GlossaryPage onNavigate={handleNavigate} />;
+    return <HomePage onNavigate={handleNavigate} />;
+  };
 
-        {mountedSteps.has('new-application-step2') && (
-          <div style={{ display: page === 'new-application-step2' ? 'block' : 'none' }}>
-            <OwnerEKYCPage
-              onNavigate={handleNavigate}
-              hasKaveri={step1HasKaveri}
-              {...navProps(1)}
-            />
-          </div>
-        )}
+  /* When a service dropdown item is clicked, determine where "Proceed" goes */
+  const isPreLogin = PRE_LOGIN_PAGES.has(page);
+  const pendingContent = pendingServiceKey ? POPUP_CONTENT[pendingServiceKey] : null;
 
-        {mountedSteps.has('new-application-step3') && (
-          <div style={{ display: page === 'new-application-step3' ? 'block' : 'none' }}>
-            <PropertyDetailsPage
-              onNavigate={handleNavigate}
-              hasKaveri={step1HasKaveri}
-              {...navProps(2)}
-            />
-          </div>
-        )}
+  const handleServiceProceed = () => {
+    setPendingServiceKey(null);
+    setPage(isPreLogin ? 'login' : 'new-application');
+  };
 
-        {mountedSteps.has('new-application-step4') && (
-          <div style={{ display: page === 'new-application-step4' ? 'block' : 'none' }}>
-            <PropertyClassificationPage
-              onNavigate={handleNavigate}
-              step1Village={step1Village}
-              step0Classification={step0Classification}
-              {...navProps(3)}
-            />
-          </div>
-        )}
-
-        {mountedSteps.has('new-application-step7') && (
-          <div style={{ display: page === 'new-application-step7' ? 'block' : 'none' }}>
-            <ECStep
-              onNavigate={handleNavigate}
-              {...navProps(4)}
-            />
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (page === 'new-application') {
-    return <NewApplicationFirstPage onNavigate={handleNavigate} onClassificationConfirmed={setStep0Classification} />;
-  }
-
-  if (page === 'citizen-home') {
-    return <CitizenLoginHomePage onNavigate={handleNavigate} />;
-  }
-
-  if (page === 'login') {
-    return <LoginPage onLogin={() => handleNavigate('citizen-home')} />;
-  }
-
-  if (page === 'glossary') {
-    return <GlossaryPage onNavigate={handleNavigate} />;
-  }
-
-  return <HomePage onNavigate={handleNavigate} />;
+  return (
+    <>
+      {renderPage()}
+      {pendingContent && (
+        <HomePagePopup
+          title={loc(pendingContent.title, lang)}
+          onClose={() => setPendingServiceKey(null)}
+          onProceed={handleServiceProceed}
+          proceedLabel={isPreLogin ? 'Login to Apply' : 'Proceed to Application'}
+        >
+          <PopupBody contentKey={pendingServiceKey} lang={lang} />
+        </HomePagePopup>
+      )}
+    </>
+  );
 }
 
 function AppWithProviders() {
   return (
     <LanguageProvider>
-      <App />
+      <FontSizeProvider>
+        <App />
+      </FontSizeProvider>
     </LanguageProvider>
   );
 }

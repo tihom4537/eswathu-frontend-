@@ -9,14 +9,20 @@
 
 .bd-page__heading-wrap {
   background: var(--secondary-50, #f2f2f2);
-  padding: 50px 120px;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding: 50px 1.5rem;
 }
 
 .bd-page__content {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 0 120px 80px;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding: 0 1.5rem 80px;
 }
 
 /* ── SectionBox body pre-allocation ─────────────────────────── */
@@ -105,7 +111,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 18px;
-  line-height: 30px;
+  line-height: 1.5;
   color: var(--neutral-400);
   margin: 0;
   padding: 0 15px;

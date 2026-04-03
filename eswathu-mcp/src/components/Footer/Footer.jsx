@@ -25,10 +25,25 @@ const Footer = ({ variant = 'homepage' }) => {
           <div className="footer__col">
             <h4 className="footer__heading">{t('footer_allpages')}</h4>
             <div className="footer__link-list">
-              <a href="#" className="footer__link">{t('footer_link_home')}</a>
-              <a href="#" className="footer__link">{t('footer_link_about')}</a>
-              <a href="#" className="footer__link">{t('footer_link_citizen')}</a>
-              <a href="#" className="footer__link">{t('footer_link_useful')}</a>
+              <button
+                type="button"
+                className="footer__link"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >{t('footer_link_home')}</button>
+              <button
+                type="button"
+                className="footer__link"
+              >{t('footer_link_about')}</button>
+              <button
+                type="button"
+                className="footer__link"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >{t('footer_link_citizen')}</button>
+              <button
+                type="button"
+                className="footer__link"
+                onClick={() => document.getElementById('hp-connected')?.scrollIntoView({ behavior: 'smooth' })}
+              >{t('footer_link_useful')}</button>
             </div>
           </div>
 

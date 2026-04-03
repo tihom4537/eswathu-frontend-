@@ -1,0 +1,825 @@
+/*
+ * Font-scale overrides — A+ (large) mode
+ *
+ * .font-lg class is applied to <html> when the user selects A+.
+ * Selectors mirror lang-kn.css: same elements, same specificity (0,2,0).
+ *
+ * .font-lg          → English A+   : 16px → 18px
+ * .lang-kn.font-lg  → Kannada A+   : 18px → 20px
+ */
+
+/* ═══════════════════════════════════════════════════════
+   English A+ (16px → 18px)
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Components ──────────────────────────────────────────── */
+
+.font-lg .breadcrumb__label,
+.font-lg .breadcrumb__divider { font-size: 18px; }
+
+.font-lg .caption-msg__text,
+.font-lg .caption-msg__icon { font-size: 18px; }
+
+.font-lg .card-homepage__desc { font-size: 18px; }
+
+.font-lg .carousel__subtitle,
+.font-lg .carousel__desc { font-size: 18px; }
+
+.font-lg .checkbox__label { font-size: 18px; }
+
+.font-lg .datepicker__label,
+.font-lg .datepicker__input { font-size: 18px; }
+
+.font-lg .dropdown__label,
+.font-lg .dropdown__item { font-size: 18px; }
+
+.font-lg .error-card__sub-message { font-size: 18px; }
+
+.font-lg .file-upload-field__label,
+.font-lg .file-upload-btn__text,
+.font-lg .file-upload-btn__name { font-size: 18px; }
+
+.font-lg .footer__visitors,
+.font-lg .footer__rights { font-size: 18px; }
+
+.font-lg .hcl__subtitle,
+.font-lg .hcl__desc,
+.font-lg .hcl__doc-heading,
+.font-lg .hcl--document .hcl__item-text,
+.font-lg .hcl__no-doc,
+.font-lg .hcl__item-text { font-size: 18px; }
+
+.font-lg .help-card__desc,
+.font-lg .help-card__btn { font-size: 18px; }
+
+.font-lg .hp-popup__intro,
+.font-lg .hp-popup__item-label,
+.font-lg .hp-popup__item-text { font-size: 18px; }
+
+.font-lg .info-box__text { font-size: 18px; }
+
+.font-lg .input-field__label,
+.font-lg .input-field__input,
+.font-lg .input-field--big .input-field__label { font-size: 18px; }
+
+.font-lg .navbar__font-btn,
+.font-lg .navbar__lang-btn,
+.font-lg .navbar__subtitle,
+.font-lg .navbar__link,
+.font-lg .navbar__dropdown-item,
+.font-lg .navbar__crumb,
+.font-lg .navbar__username { font-size: 18px; }
+
+.font-lg .owner-table,
+.font-lg .owner-table__label { font-size: 18px; }
+
+.font-lg .page-heading__subtitle { font-size: 18px; }
+
+.font-lg .progress-circle__label { font-size: 18px; }
+
+.font-lg .questionnaire-field__text,
+.font-lg .questionnaire-field__sub { font-size: 18px; }
+
+.font-lg .radio__label { font-size: 18px; }
+
+.font-lg .search__input { font-size: 18px; }
+
+.font-lg .stepper__number,
+.font-lg .stepper__check,
+.font-lg .stepper__label { font-size: 18px; }
+
+.font-lg .data-table__th,
+.font-lg .data-table__td { font-size: 18px; }
+
+.font-lg .tooltip-card__label-text,
+.font-lg .tooltip-card__caption-text { font-size: 18px; }
+
+/* ── Pages ───────────────────────────────────────────────── */
+
+.font-lg .glossary-page__subtitle,
+.font-lg .glossary-term__title-en,
+.font-lg .glossary-term__title-kn,
+.font-lg .glossary-term__lang-label,
+.font-lg .glossary-term__def-text p,
+.font-lg .glossary-term__examples li { font-size: 18px; }
+
+.font-lg .hp-classification__desc,
+.font-lg .hp-help__desc { font-size: 18px; }
+
+.font-lg .login-captcha__label,
+.font-lg .login-card__otp-timer { font-size: 18px; }
+
+.font-lg .new-app-s01__mandatory-text,
+.font-lg .new-app-s01__doc-desc,
+.font-lg .new-app-s02__intro,
+.font-lg .new-app-s02__question-label { font-size: 18px; }
+
+.font-lg .ar-page__question { font-size: 18px; }
+
+.font-lg .bd-page__placeholder-text { font-size: 18px; }
+
+.font-lg .bd-area__success-text { font-size: 18px; }
+
+.font-lg .bd-escom__fetched-label,
+.font-lg .bd-escom__th,
+.font-lg .bd-escom__td { font-size: 18px; }
+
+.font-lg .bd-gf__kv-label,
+.font-lg .bd-gf__kv-value,
+.font-lg .bd-gf__td-no { font-size: 18px; }
+
+.font-lg .bd-multi__flat-type-label,
+.font-lg .bd-multi__success-text { font-size: 18px; }
+
+.font-lg .bd-tenant__desc,
+.font-lg .bd-tenant__th,
+.font-lg .bd-tenant__td { font-size: 18px; }
+
+.font-lg .ec-s51__info-text,
+.font-lg .ec-s52__text,
+.font-lg .ec-s54__success-text { font-size: 18px; }
+
+.font-lg .ekyc-s21__question-text,
+.font-lg .ekyc-s21__th,
+.font-lg .ekyc-s21__td,
+.font-lg .ekyc-s21__td--no,
+.font-lg .ekyc-s21__success-text,
+.font-lg .ekyc-s22__done-badge,
+.font-lg .ekyc-s22__detail-photo-label,
+.font-lg .ekyc-s22__detail-row--header .ekyc-s22__detail-cell,
+.font-lg .ekyc-s22__detail-row--value .ekyc-s22__detail-cell,
+.font-lg .ekyc-popup__section-label,
+.font-lg .ekyc-popup__otp-success,
+.font-lg .ekyc-s23__th,
+.font-lg .ekyc-s23__td,
+.font-lg .ekyc-s23__td--no,
+.font-lg .ekyc-s23__placeholder-row,
+.font-lg .ekyc-s23__placeholder-note,
+.font-lg .ekyc-s23__doc-th,
+.font-lg .ekyc-s23__doc-td,
+.font-lg .ekyc-s23__file-name,
+.font-lg .ekyc-viewfile-popup__name { font-size: 18px; }
+
+.font-lg .pc-s41__doc-instruction,
+.font-lg .pc-s41__doc-done-text,
+.font-lg .pc-doc-table__th,
+.font-lg .pc-doc-table__td,
+.font-lg .pc-s41__no-docs,
+.font-lg .pc-viewfile-popup__name,
+.font-lg .pc-viewfile-popup__preview,
+.font-lg .pc-doc__file-name,
+.font-lg .pc-doc__view-link,
+.font-lg .pc-s42__rtc-instruction,
+.font-lg .pc-rtc-table__th,
+.font-lg .pc-rtc-table__td,
+.font-lg .pc-s42__radio-question,
+.font-lg .pc-s42__add-owners-label,
+.font-lg .pc-addowner-table__th,
+.font-lg .pc-addowner-table__td--no,
+.font-lg .pc-s42__reentry-label,
+.font-lg .pc-modal__progress,
+.font-lg .pc-modal__question,
+.font-lg .pc-modal__question-label,
+.font-lg .pc-modal__result-label,
+.font-lg .pc-s42__placeholder-text,
+.font-lg .pc-s43__info-text { font-size: 18px; }
+
+.font-lg .pd-s31__map-text,
+.font-lg .pd-s31__upload-label,
+.font-lg .pd-s31__doc-name { font-size: 18px; }
+
+.font-lg .pd-ad__subheading,
+.font-lg .pd-ad__label { font-size: 18px; }
+
+.font-lg .pd-cb__subheading { font-size: 18px; }
+
+.font-lg .pd-rd__table-wrap .data-table__th,
+.font-lg .pd-rd__table-wrap .data-table__td,
+.font-lg .pd-rd__no-photo,
+.font-lg .pd-rd__caption-text { font-size: 18px; }
+
+.font-lg .pd-sd__subheading,
+.font-lg .pd-sd__label { font-size: 18px; }
+
+.font-lg .sd-s11__success-text,
+.font-lg .kaveri-table__value,
+.font-lg .kaveri-table__bnd-label,
+.font-lg .kaveri-table__bnd-cell,
+.font-lg .sd-s13__success-text,
+.font-lg .sd-s13__id-label,
+.font-lg .sd-s13__id-value { font-size: 18px; }
+
+.font-lg .page-nav__button-text { font-size: 18px; }
+
+
+/* ═══════════════════════════════════════════════════════
+   Kannada A+ (18px → 20px)
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Components ──────────────────────────────────────────── */
+
+.lang-kn.font-lg .breadcrumb__label,
+.lang-kn.font-lg .breadcrumb__divider { font-size: 20px; }
+
+.lang-kn.font-lg .caption-msg__text,
+.lang-kn.font-lg .caption-msg__icon { font-size: 20px; }
+
+.lang-kn.font-lg .card-homepage__desc { font-size: 20px; }
+
+.lang-kn.font-lg .carousel__subtitle,
+.lang-kn.font-lg .carousel__desc { font-size: 20px; }
+
+.lang-kn.font-lg .checkbox__label { font-size: 20px; }
+
+.lang-kn.font-lg .datepicker__label,
+.lang-kn.font-lg .datepicker__input { font-size: 20px; }
+
+.lang-kn.font-lg .dropdown__label,
+.lang-kn.font-lg .dropdown__item { font-size: 20px; }
+
+.lang-kn.font-lg .error-card__sub-message { font-size: 20px; }
+
+.lang-kn.font-lg .file-upload-field__label,
+.lang-kn.font-lg .file-upload-btn__text,
+.lang-kn.font-lg .file-upload-btn__name { font-size: 20px; }
+
+.lang-kn.font-lg .footer__visitors,
+.lang-kn.font-lg .footer__rights { font-size: 20px; }
+
+.lang-kn.font-lg .hcl__subtitle,
+.lang-kn.font-lg .hcl__desc,
+.lang-kn.font-lg .hcl__doc-heading,
+.lang-kn.font-lg .hcl--document .hcl__item-text,
+.lang-kn.font-lg .hcl__no-doc,
+.lang-kn.font-lg .hcl__item-text { font-size: 20px; }
+
+.lang-kn.font-lg .help-card__desc,
+.lang-kn.font-lg .help-card__btn { font-size: 20px; }
+
+.lang-kn.font-lg .hp-popup__intro,
+.lang-kn.font-lg .hp-popup__item-label,
+.lang-kn.font-lg .hp-popup__item-text { font-size: 20px; }
+
+.lang-kn.font-lg .info-box__text { font-size: 20px; }
+
+.lang-kn.font-lg .input-field__label,
+.lang-kn.font-lg .input-field__input,
+.lang-kn.font-lg .input-field--big .input-field__label { font-size: 20px; }
+
+.lang-kn.font-lg .navbar__font-btn,
+.lang-kn.font-lg .navbar__lang-btn,
+.lang-kn.font-lg .navbar__subtitle,
+.lang-kn.font-lg .navbar__link,
+.lang-kn.font-lg .navbar__dropdown-item,
+.lang-kn.font-lg .navbar__crumb,
+.lang-kn.font-lg .navbar__username { font-size: 20px; }
+
+.lang-kn.font-lg .owner-table,
+.lang-kn.font-lg .owner-table__label { font-size: 20px; }
+
+.lang-kn.font-lg .page-heading__subtitle { font-size: 20px; }
+
+.lang-kn.font-lg .progress-circle__label { font-size: 20px; }
+
+.lang-kn.font-lg .questionnaire-field__text,
+.lang-kn.font-lg .questionnaire-field__sub { font-size: 20px; }
+
+.lang-kn.font-lg .radio__label { font-size: 20px; }
+
+.lang-kn.font-lg .search__input { font-size: 20px; }
+
+.lang-kn.font-lg .stepper__number,
+.lang-kn.font-lg .stepper__check,
+.lang-kn.font-lg .stepper__label { font-size: 20px; }
+
+.lang-kn.font-lg .data-table__th,
+.lang-kn.font-lg .data-table__td { font-size: 20px; }
+
+.lang-kn.font-lg .tooltip-card__label-text,
+.lang-kn.font-lg .tooltip-card__caption-text { font-size: 20px; }
+
+/* ── Pages ───────────────────────────────────────────────── */
+
+.lang-kn.font-lg .glossary-page__subtitle,
+.lang-kn.font-lg .glossary-term__title-en,
+.lang-kn.font-lg .glossary-term__title-kn,
+.lang-kn.font-lg .glossary-term__lang-label,
+.lang-kn.font-lg .glossary-term__def-text p,
+.lang-kn.font-lg .glossary-term__examples li { font-size: 20px; }
+
+.lang-kn.font-lg .hp-classification__desc,
+.lang-kn.font-lg .hp-help__desc { font-size: 20px; }
+
+.lang-kn.font-lg .login-captcha__label,
+.lang-kn.font-lg .login-card__otp-timer { font-size: 20px; }
+
+.lang-kn.font-lg .new-app-s01__mandatory-text,
+.lang-kn.font-lg .new-app-s01__doc-desc,
+.lang-kn.font-lg .new-app-s02__intro,
+.lang-kn.font-lg .new-app-s02__question-label { font-size: 20px; }
+
+.lang-kn.font-lg .ar-page__question { font-size: 20px; }
+
+.lang-kn.font-lg .bd-page__placeholder-text { font-size: 20px; }
+
+.lang-kn.font-lg .bd-area__success-text { font-size: 20px; }
+
+.lang-kn.font-lg .bd-escom__fetched-label,
+.lang-kn.font-lg .bd-escom__th,
+.lang-kn.font-lg .bd-escom__td { font-size: 20px; }
+
+.lang-kn.font-lg .bd-gf__kv-label,
+.lang-kn.font-lg .bd-gf__kv-value,
+.lang-kn.font-lg .bd-gf__td-no { font-size: 20px; }
+
+.lang-kn.font-lg .bd-multi__flat-type-label,
+.lang-kn.font-lg .bd-multi__success-text { font-size: 20px; }
+
+.lang-kn.font-lg .bd-tenant__desc,
+.lang-kn.font-lg .bd-tenant__th,
+.lang-kn.font-lg .bd-tenant__td { font-size: 20px; }
+
+.lang-kn.font-lg .ec-s51__info-text,
+.lang-kn.font-lg .ec-s52__text,
+.lang-kn.font-lg .ec-s54__success-text { font-size: 20px; }
+
+.lang-kn.font-lg .ekyc-s21__question-text,
+.lang-kn.font-lg .ekyc-s21__th,
+.lang-kn.font-lg .ekyc-s21__td,
+.lang-kn.font-lg .ekyc-s21__td--no,
+.lang-kn.font-lg .ekyc-s21__success-text,
+.lang-kn.font-lg .ekyc-s22__done-badge,
+.lang-kn.font-lg .ekyc-s22__detail-photo-label,
+.lang-kn.font-lg .ekyc-s22__detail-row--header .ekyc-s22__detail-cell,
+.lang-kn.font-lg .ekyc-s22__detail-row--value .ekyc-s22__detail-cell,
+.lang-kn.font-lg .ekyc-popup__section-label,
+.lang-kn.font-lg .ekyc-popup__otp-success,
+.lang-kn.font-lg .ekyc-s23__th,
+.lang-kn.font-lg .ekyc-s23__td,
+.lang-kn.font-lg .ekyc-s23__td--no,
+.lang-kn.font-lg .ekyc-s23__placeholder-row,
+.lang-kn.font-lg .ekyc-s23__placeholder-note,
+.lang-kn.font-lg .ekyc-s23__doc-th,
+.lang-kn.font-lg .ekyc-s23__doc-td,
+.lang-kn.font-lg .ekyc-s23__file-name,
+.lang-kn.font-lg .ekyc-viewfile-popup__name { font-size: 20px; }
+
+.lang-kn.font-lg .pc-s41__doc-instruction,
+.lang-kn.font-lg .pc-s41__doc-done-text,
+.lang-kn.font-lg .pc-doc-table__th,
+.lang-kn.font-lg .pc-doc-table__td,
+.lang-kn.font-lg .pc-s41__no-docs,
+.lang-kn.font-lg .pc-viewfile-popup__name,
+.lang-kn.font-lg .pc-viewfile-popup__preview,
+.lang-kn.font-lg .pc-doc__file-name,
+.lang-kn.font-lg .pc-doc__view-link,
+.lang-kn.font-lg .pc-s42__rtc-instruction,
+.lang-kn.font-lg .pc-rtc-table__th,
+.lang-kn.font-lg .pc-rtc-table__td,
+.lang-kn.font-lg .pc-s42__radio-question,
+.lang-kn.font-lg .pc-s42__add-owners-label,
+.lang-kn.font-lg .pc-addowner-table__th,
+.lang-kn.font-lg .pc-addowner-table__td--no,
+.lang-kn.font-lg .pc-s42__reentry-label,
+.lang-kn.font-lg .pc-modal__progress,
+.lang-kn.font-lg .pc-modal__question,
+.lang-kn.font-lg .pc-modal__question-label,
+.lang-kn.font-lg .pc-modal__result-label,
+.lang-kn.font-lg .pc-s42__placeholder-text,
+.lang-kn.font-lg .pc-s43__info-text { font-size: 20px; }
+
+.lang-kn.font-lg .pd-s31__map-text,
+.lang-kn.font-lg .pd-s31__upload-label,
+.lang-kn.font-lg .pd-s31__doc-name { font-size: 20px; }
+
+.lang-kn.font-lg .pd-ad__subheading,
+.lang-kn.font-lg .pd-ad__label { font-size: 20px; }
+
+.lang-kn.font-lg .pd-cb__subheading { font-size: 20px; }
+
+.lang-kn.font-lg .pd-rd__table-wrap .data-table__th,
+.lang-kn.font-lg .pd-rd__table-wrap .data-table__td,
+.lang-kn.font-lg .pd-rd__no-photo,
+.lang-kn.font-lg .pd-rd__caption-text { font-size: 20px; }
+
+.lang-kn.font-lg .pd-sd__subheading,
+.lang-kn.font-lg .pd-sd__label { font-size: 20px; }
+
+.lang-kn.font-lg .sd-s11__success-text,
+.lang-kn.font-lg .kaveri-table__value,
+.lang-kn.font-lg .kaveri-table__bnd-label,
+.lang-kn.font-lg .kaveri-table__bnd-cell,
+.lang-kn.font-lg .sd-s13__success-text,
+.lang-kn.font-lg .sd-s13__id-label,
+.lang-kn.font-lg .sd-s13__id-value { font-size: 20px; }
+
+.lang-kn.font-lg .page-nav__button-text { font-size: 20px; }
+
+
+/* ═══════════════════════════════════════════════════════
+   English A- (16px → 14px)
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Components ──────────────────────────────────────────── */
+
+.font-sm .breadcrumb__label,
+.font-sm .breadcrumb__divider { font-size: 14px; }
+
+.font-sm .caption-msg__text,
+.font-sm .caption-msg__icon { font-size: 14px; }
+
+.font-sm .card-homepage__desc { font-size: 14px; }
+
+.font-sm .carousel__subtitle,
+.font-sm .carousel__desc { font-size: 14px; }
+
+.font-sm .checkbox__label { font-size: 14px; }
+
+.font-sm .datepicker__label,
+.font-sm .datepicker__input { font-size: 14px; }
+
+.font-sm .dropdown__label,
+.font-sm .dropdown__item { font-size: 14px; }
+
+.font-sm .error-card__sub-message { font-size: 14px; }
+
+.font-sm .file-upload-field__label,
+.font-sm .file-upload-btn__text,
+.font-sm .file-upload-btn__name { font-size: 14px; }
+
+.font-sm .footer__visitors,
+.font-sm .footer__rights { font-size: 14px; }
+
+.font-sm .hcl__subtitle,
+.font-sm .hcl__desc,
+.font-sm .hcl__doc-heading,
+.font-sm .hcl--document .hcl__item-text,
+.font-sm .hcl__no-doc,
+.font-sm .hcl__item-text { font-size: 14px; }
+
+.font-sm .help-card__desc,
+.font-sm .help-card__btn { font-size: 14px; }
+
+.font-sm .hp-popup__intro,
+.font-sm .hp-popup__item-label,
+.font-sm .hp-popup__item-text { font-size: 14px; }
+
+.font-sm .info-box__text { font-size: 14px; }
+
+.font-sm .input-field__label,
+.font-sm .input-field__input,
+.font-sm .input-field--big .input-field__label { font-size: 14px; }
+
+.font-sm .navbar__font-btn,
+.font-sm .navbar__lang-btn,
+.font-sm .navbar__subtitle,
+.font-sm .navbar__link,
+.font-sm .navbar__dropdown-item,
+.font-sm .navbar__crumb,
+.font-sm .navbar__username { font-size: 14px; }
+
+.font-sm .owner-table,
+.font-sm .owner-table__label { font-size: 14px; }
+
+.font-sm .page-heading__subtitle { font-size: 14px; }
+
+.font-sm .progress-circle__label { font-size: 14px; }
+
+.font-sm .questionnaire-field__text,
+.font-sm .questionnaire-field__sub { font-size: 14px; }
+
+.font-sm .radio__label { font-size: 14px; }
+
+.font-sm .search__input { font-size: 14px; }
+
+.font-sm .stepper__number,
+.font-sm .stepper__check,
+.font-sm .stepper__label { font-size: 14px; }
+
+.font-sm .data-table__th,
+.font-sm .data-table__td { font-size: 14px; }
+
+.font-sm .tooltip-card__label-text,
+.font-sm .tooltip-card__caption-text { font-size: 14px; }
+
+/* ── Pages ───────────────────────────────────────────────── */
+
+.font-sm .glossary-page__subtitle,
+.font-sm .glossary-term__title-en,
+.font-sm .glossary-term__title-kn,
+.font-sm .glossary-term__lang-label,
+.font-sm .glossary-term__def-text p,
+.font-sm .glossary-term__examples li { font-size: 14px; }
+
+.font-sm .hp-classification__desc,
+.font-sm .hp-help__desc { font-size: 14px; }
+
+.font-sm .login-captcha__label,
+.font-sm .login-card__otp-timer { font-size: 14px; }
+
+.font-sm .new-app-s01__mandatory-text,
+.font-sm .new-app-s01__doc-desc,
+.font-sm .new-app-s02__intro,
+.font-sm .new-app-s02__question-label { font-size: 14px; }
+
+.font-sm .ar-page__question { font-size: 14px; }
+
+.font-sm .bd-page__placeholder-text { font-size: 14px; }
+
+.font-sm .bd-area__success-text { font-size: 14px; }
+
+.font-sm .bd-escom__fetched-label,
+.font-sm .bd-escom__th,
+.font-sm .bd-escom__td { font-size: 14px; }
+
+.font-sm .bd-gf__kv-label,
+.font-sm .bd-gf__kv-value,
+.font-sm .bd-gf__td-no { font-size: 14px; }
+
+.font-sm .bd-multi__flat-type-label,
+.font-sm .bd-multi__success-text { font-size: 14px; }
+
+.font-sm .bd-tenant__desc,
+.font-sm .bd-tenant__th,
+.font-sm .bd-tenant__td { font-size: 14px; }
+
+.font-sm .ec-s51__info-text,
+.font-sm .ec-s52__text,
+.font-sm .ec-s54__success-text { font-size: 14px; }
+
+.font-sm .ekyc-s21__question-text,
+.font-sm .ekyc-s21__th,
+.font-sm .ekyc-s21__td,
+.font-sm .ekyc-s21__td--no,
+.font-sm .ekyc-s21__success-text,
+.font-sm .ekyc-s22__done-badge,
+.font-sm .ekyc-s22__detail-photo-label,
+.font-sm .ekyc-s22__detail-row--header .ekyc-s22__detail-cell,
+.font-sm .ekyc-s22__detail-row--value .ekyc-s22__detail-cell,
+.font-sm .ekyc-popup__section-label,
+.font-sm .ekyc-popup__otp-success,
+.font-sm .ekyc-s23__th,
+.font-sm .ekyc-s23__td,
+.font-sm .ekyc-s23__td--no,
+.font-sm .ekyc-s23__placeholder-row,
+.font-sm .ekyc-s23__placeholder-note,
+.font-sm .ekyc-s23__doc-th,
+.font-sm .ekyc-s23__doc-td,
+.font-sm .ekyc-s23__file-name,
+.font-sm .ekyc-viewfile-popup__name { font-size: 14px; }
+
+.font-sm .pc-s41__doc-instruction,
+.font-sm .pc-s41__doc-done-text,
+.font-sm .pc-doc-table__th,
+.font-sm .pc-doc-table__td,
+.font-sm .pc-s41__no-docs,
+.font-sm .pc-viewfile-popup__name,
+.font-sm .pc-viewfile-popup__preview,
+.font-sm .pc-doc__file-name,
+.font-sm .pc-doc__view-link,
+.font-sm .pc-s42__rtc-instruction,
+.font-sm .pc-rtc-table__th,
+.font-sm .pc-rtc-table__td,
+.font-sm .pc-s42__radio-question,
+.font-sm .pc-s42__add-owners-label,
+.font-sm .pc-addowner-table__th,
+.font-sm .pc-addowner-table__td--no,
+.font-sm .pc-s42__reentry-label,
+.font-sm .pc-modal__progress,
+.font-sm .pc-modal__question,
+.font-sm .pc-modal__question-label,
+.font-sm .pc-modal__result-label,
+.font-sm .pc-s42__placeholder-text,
+.font-sm .pc-s43__info-text { font-size: 14px; }
+
+.font-sm .pd-s31__map-text,
+.font-sm .pd-s31__upload-label,
+.font-sm .pd-s31__doc-name { font-size: 14px; }
+
+.font-sm .pd-ad__subheading,
+.font-sm .pd-ad__label { font-size: 14px; }
+
+.font-sm .pd-cb__subheading { font-size: 14px; }
+
+.font-sm .pd-rd__table-wrap .data-table__th,
+.font-sm .pd-rd__table-wrap .data-table__td,
+.font-sm .pd-rd__no-photo,
+.font-sm .pd-rd__caption-text { font-size: 14px; }
+
+.font-sm .pd-sd__subheading,
+.font-sm .pd-sd__label { font-size: 14px; }
+
+.font-sm .sd-s11__success-text,
+.font-sm .kaveri-table__value,
+.font-sm .kaveri-table__bnd-label,
+.font-sm .kaveri-table__bnd-cell,
+.font-sm .sd-s13__success-text,
+.font-sm .sd-s13__id-label,
+.font-sm .sd-s13__id-value { font-size: 14px; }
+
+.font-sm .page-nav__button-text { font-size: 14px; }
+
+
+/* ═══════════════════════════════════════════════════════
+   Kannada A- (16px → 14px)
+   Uses (0,3,0) specificity to override lang-kn.css (0,2,0)
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Components ──────────────────────────────────────────── */
+
+.lang-kn.font-sm .breadcrumb__label,
+.lang-kn.font-sm .breadcrumb__divider { font-size: 14px; }
+
+.lang-kn.font-sm .caption-msg__text,
+.lang-kn.font-sm .caption-msg__icon { font-size: 14px; }
+
+.lang-kn.font-sm .card-homepage__desc { font-size: 14px; }
+
+.lang-kn.font-sm .carousel__subtitle,
+.lang-kn.font-sm .carousel__desc { font-size: 14px; }
+
+.lang-kn.font-sm .checkbox__label { font-size: 14px; }
+
+.lang-kn.font-sm .datepicker__label,
+.lang-kn.font-sm .datepicker__input { font-size: 14px; }
+
+.lang-kn.font-sm .dropdown__label,
+.lang-kn.font-sm .dropdown__item { font-size: 14px; }
+
+.lang-kn.font-sm .error-card__sub-message { font-size: 14px; }
+
+.lang-kn.font-sm .file-upload-field__label,
+.lang-kn.font-sm .file-upload-btn__text,
+.lang-kn.font-sm .file-upload-btn__name { font-size: 14px; }
+
+.lang-kn.font-sm .footer__visitors,
+.lang-kn.font-sm .footer__rights { font-size: 14px; }
+
+.lang-kn.font-sm .hcl__subtitle,
+.lang-kn.font-sm .hcl__desc,
+.lang-kn.font-sm .hcl__doc-heading,
+.lang-kn.font-sm .hcl--document .hcl__item-text,
+.lang-kn.font-sm .hcl__no-doc,
+.lang-kn.font-sm .hcl__item-text { font-size: 14px; }
+
+.lang-kn.font-sm .help-card__desc,
+.lang-kn.font-sm .help-card__btn { font-size: 14px; }
+
+.lang-kn.font-sm .hp-popup__intro,
+.lang-kn.font-sm .hp-popup__item-label,
+.lang-kn.font-sm .hp-popup__item-text { font-size: 14px; }
+
+.lang-kn.font-sm .info-box__text { font-size: 14px; }
+
+.lang-kn.font-sm .input-field__label,
+.lang-kn.font-sm .input-field__input,
+.lang-kn.font-sm .input-field--big .input-field__label { font-size: 14px; }
+
+.lang-kn.font-sm .navbar__font-btn,
+.lang-kn.font-sm .navbar__lang-btn,
+.lang-kn.font-sm .navbar__subtitle,
+.lang-kn.font-sm .navbar__link,
+.lang-kn.font-sm .navbar__dropdown-item,
+.lang-kn.font-sm .navbar__crumb,
+.lang-kn.font-sm .navbar__username { font-size: 14px; }
+
+.lang-kn.font-sm .owner-table,
+.lang-kn.font-sm .owner-table__label { font-size: 14px; }
+
+.lang-kn.font-sm .page-heading__subtitle { font-size: 14px; }
+
+.lang-kn.font-sm .progress-circle__label { font-size: 14px; }
+
+.lang-kn.font-sm .questionnaire-field__text,
+.lang-kn.font-sm .questionnaire-field__sub { font-size: 14px; }
+
+.lang-kn.font-sm .radio__label { font-size: 14px; }
+
+.lang-kn.font-sm .search__input { font-size: 14px; }
+
+.lang-kn.font-sm .stepper__number,
+.lang-kn.font-sm .stepper__check,
+.lang-kn.font-sm .stepper__label { font-size: 14px; }
+
+.lang-kn.font-sm .data-table__th,
+.lang-kn.font-sm .data-table__td { font-size: 14px; }
+
+.lang-kn.font-sm .tooltip-card__label-text,
+.lang-kn.font-sm .tooltip-card__caption-text { font-size: 14px; }
+
+/* ── Pages ───────────────────────────────────────────────── */
+
+.lang-kn.font-sm .glossary-page__subtitle,
+.lang-kn.font-sm .glossary-term__title-en,
+.lang-kn.font-sm .glossary-term__title-kn,
+.lang-kn.font-sm .glossary-term__lang-label,
+.lang-kn.font-sm .glossary-term__def-text p,
+.lang-kn.font-sm .glossary-term__examples li { font-size: 14px; }
+
+.lang-kn.font-sm .hp-classification__desc,
+.lang-kn.font-sm .hp-help__desc { font-size: 14px; }
+
+.lang-kn.font-sm .login-captcha__label,
+.lang-kn.font-sm .login-card__otp-timer { font-size: 14px; }
+
+.lang-kn.font-sm .new-app-s01__mandatory-text,
+.lang-kn.font-sm .new-app-s01__doc-desc,
+.lang-kn.font-sm .new-app-s02__intro,
+.lang-kn.font-sm .new-app-s02__question-label { font-size: 14px; }
+
+.lang-kn.font-sm .ar-page__question { font-size: 14px; }
+
+.lang-kn.font-sm .bd-page__placeholder-text { font-size: 14px; }
+
+.lang-kn.font-sm .bd-area__success-text { font-size: 14px; }
+
+.lang-kn.font-sm .bd-escom__fetched-label,
+.lang-kn.font-sm .bd-escom__th,
+.lang-kn.font-sm .bd-escom__td { font-size: 14px; }
+
+.lang-kn.font-sm .bd-gf__kv-label,
+.lang-kn.font-sm .bd-gf__kv-value,
+.lang-kn.font-sm .bd-gf__td-no { font-size: 14px; }
+
+.lang-kn.font-sm .bd-multi__flat-type-label,
+.lang-kn.font-sm .bd-multi__success-text { font-size: 14px; }
+
+.lang-kn.font-sm .bd-tenant__desc,
+.lang-kn.font-sm .bd-tenant__th,
+.lang-kn.font-sm .bd-tenant__td { font-size: 14px; }
+
+.lang-kn.font-sm .ec-s51__info-text,
+.lang-kn.font-sm .ec-s52__text,
+.lang-kn.font-sm .ec-s54__success-text { font-size: 14px; }
+
+.lang-kn.font-sm .ekyc-s21__question-text,
+.lang-kn.font-sm .ekyc-s21__th,
+.lang-kn.font-sm .ekyc-s21__td,
+.lang-kn.font-sm .ekyc-s21__td--no,
+.lang-kn.font-sm .ekyc-s21__success-text,
+.lang-kn.font-sm .ekyc-s22__done-badge,
+.lang-kn.font-sm .ekyc-s22__detail-photo-label,
+.lang-kn.font-sm .ekyc-s22__detail-row--header .ekyc-s22__detail-cell,
+.lang-kn.font-sm .ekyc-s22__detail-row--value .ekyc-s22__detail-cell,
+.lang-kn.font-sm .ekyc-popup__section-label,
+.lang-kn.font-sm .ekyc-popup__otp-success,
+.lang-kn.font-sm .ekyc-s23__th,
+.lang-kn.font-sm .ekyc-s23__td,
+.lang-kn.font-sm .ekyc-s23__td--no,
+.lang-kn.font-sm .ekyc-s23__placeholder-row,
+.lang-kn.font-sm .ekyc-s23__placeholder-note,
+.lang-kn.font-sm .ekyc-s23__doc-th,
+.lang-kn.font-sm .ekyc-s23__doc-td,
+.lang-kn.font-sm .ekyc-s23__file-name,
+.lang-kn.font-sm .ekyc-viewfile-popup__name { font-size: 14px; }
+
+.lang-kn.font-sm .pc-s41__doc-instruction,
+.lang-kn.font-sm .pc-s41__doc-done-text,
+.lang-kn.font-sm .pc-doc-table__th,
+.lang-kn.font-sm .pc-doc-table__td,
+.lang-kn.font-sm .pc-s41__no-docs,
+.lang-kn.font-sm .pc-viewfile-popup__name,
+.lang-kn.font-sm .pc-viewfile-popup__preview,
+.lang-kn.font-sm .pc-doc__file-name,
+.lang-kn.font-sm .pc-doc__view-link,
+.lang-kn.font-sm .pc-s42__rtc-instruction,
+.lang-kn.font-sm .pc-rtc-table__th,
+.lang-kn.font-sm .pc-rtc-table__td,
+.lang-kn.font-sm .pc-s42__radio-question,
+.lang-kn.font-sm .pc-s42__add-owners-label,
+.lang-kn.font-sm .pc-addowner-table__th,
+.lang-kn.font-sm .pc-addowner-table__td--no,
+.lang-kn.font-sm .pc-s42__reentry-label,
+.lang-kn.font-sm .pc-modal__progress,
+.lang-kn.font-sm .pc-modal__question,
+.lang-kn.font-sm .pc-modal__question-label,
+.lang-kn.font-sm .pc-modal__result-label,
+.lang-kn.font-sm .pc-s42__placeholder-text,
+.lang-kn.font-sm .pc-s43__info-text { font-size: 14px; }
+
+.lang-kn.font-sm .pd-s31__map-text,
+.lang-kn.font-sm .pd-s31__upload-label,
+.lang-kn.font-sm .pd-s31__doc-name { font-size: 14px; }
+
+.lang-kn.font-sm .pd-ad__subheading,
+.lang-kn.font-sm .pd-ad__label { font-size: 14px; }
+
+.lang-kn.font-sm .pd-cb__subheading { font-size: 14px; }
+
+.lang-kn.font-sm .pd-rd__table-wrap .data-table__th,
+.lang-kn.font-sm .pd-rd__table-wrap .data-table__td,
+.lang-kn.font-sm .pd-rd__no-photo,
+.lang-kn.font-sm .pd-rd__caption-text { font-size: 14px; }
+
+.lang-kn.font-sm .pd-sd__subheading,
+.lang-kn.font-sm .pd-sd__label { font-size: 14px; }
+
+.lang-kn.font-sm .sd-s11__success-text,
+.lang-kn.font-sm .kaveri-table__value,
+.lang-kn.font-sm .kaveri-table__bnd-label,
+.lang-kn.font-sm .kaveri-table__bnd-cell,
+.lang-kn.font-sm .sd-s13__success-text,
+.lang-kn.font-sm .sd-s13__id-label,
+.lang-kn.font-sm .sd-s13__id-value { font-size: 14px; }
+
+.lang-kn.font-sm .page-nav__button-text { font-size: 14px; }

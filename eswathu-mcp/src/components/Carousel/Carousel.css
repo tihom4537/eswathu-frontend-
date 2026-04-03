@@ -7,7 +7,10 @@
 }
 
 .carousel__slide {
-  padding: 90px 100px 70px;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding: 90px 1.5rem 70px;
 }
 
 .carousel__content {
@@ -18,7 +21,7 @@
   font-family: var(--font-family);
   font-weight: 400;
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.25px;
   color: var(--text-light);
   margin-bottom: 8px;
@@ -28,7 +31,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 40px;
-  line-height: 48px;
+  line-height: 1.2;
   color: var(--text-light);
   margin-bottom: 16px;
 }
@@ -37,7 +40,7 @@
   font-family: var(--font-family);
   font-weight: 400;
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.25px;
   color: var(--text-light);
   margin-bottom: 32px;

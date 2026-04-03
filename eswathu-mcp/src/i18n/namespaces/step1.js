@@ -31,6 +31,35 @@ const step1 = {
     s11_tooltip_caption: 'Click to view sample',
     s11_btn_save: 'Save and Continue',
     s11_btn_edit: 'Edit',
+    s11_save_success: 'Location and Property Document Details saved successfully',
+
+    /* Section 1.1 — District dropdown options */
+    s11_opt_dist_bengaluru_rural: 'Bengaluru Rural',
+    s11_opt_dist_bengaluru_urban: 'Bengaluru Urban',
+    s11_opt_dist_mysuru: 'Mysuru',
+    s11_opt_dist_tumkur: 'Tumkur',
+    s11_opt_dist_mandya: 'Mandya',
+
+    /* Section 1.1 — Taluk dropdown options */
+    s11_opt_taluk_devanahalli: 'Devanahalli',
+    s11_opt_taluk_hosakote: 'Hosakote',
+    s11_opt_taluk_nelamangala: 'Nelamangala',
+    s11_opt_taluk_doddaballapura: 'Doddaballapura',
+    s11_opt_taluk_ramanagara: 'Ramanagara',
+
+    /* Section 1.1 — Panchayat dropdown options */
+    s11_opt_gp_doddahasala: 'Doddahasala GP',
+    s11_opt_gp_sadahalli: 'Sadahalli GP',
+    s11_opt_gp_vijayapura: 'Vijayapura GP',
+    s11_opt_gp_bashettihalli: 'Bashettihalli GP',
+    s11_opt_gp_yelahanka: 'Yelahanka GP',
+
+    /* Section 1.1 — Village dropdown options */
+    s11_opt_vill_doddahasala: 'Doddahasala',
+    s11_opt_vill_sadahalli: 'Sadahalli',
+    s11_opt_vill_vijayapura: 'Vijayapura',
+    s11_opt_vill_bashettihalli: 'Bashettihalli',
+    s11_opt_vill_yelahanka: 'Yelahanka',
 
     /* ── Section 1.2 ── */
     s12_title: 'Property registration details',
@@ -147,6 +176,35 @@ const step1 = {
     s11_tooltip_caption: 'ಮಾದರಿ ನೋಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ',
     s11_btn_save: 'ಉಳಿಸಿ ಮುಂದುವರಿಯಿರಿ',
     s11_btn_edit: 'ತಿದ್ದುಪಡಿ ಮಾಡಿ',
+    s11_save_success: 'ಸ್ಥಳ ಮತ್ತು ಆಸ್ತಿ ದಾಖಲೆ ವಿವರಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ',
+
+    /* Section 1.1 — District dropdown options */
+    s11_opt_dist_bengaluru_rural: 'ಬೆಂಗಳೂರು ಗ್ರಾಮಾಂತರ',
+    s11_opt_dist_bengaluru_urban: 'ಬೆಂಗಳೂರು ನಗರ',
+    s11_opt_dist_mysuru: 'ಮೈಸೂರು',
+    s11_opt_dist_tumkur: 'ತುಮಕೂರು',
+    s11_opt_dist_mandya: 'ಮಂಡ್ಯ',
+
+    /* Section 1.1 — Taluk dropdown options */
+    s11_opt_taluk_devanahalli: 'ದೇವನಹಳ್ಳಿ',
+    s11_opt_taluk_hosakote: 'ಹೊಸಕೋಟೆ',
+    s11_opt_taluk_nelamangala: 'ನೆಲಮಂಗಲ',
+    s11_opt_taluk_doddaballapura: 'ದೊಡ್ಡಬಳ್ಳಾಪುರ',
+    s11_opt_taluk_ramanagara: 'ರಾಮನಗರ',
+
+    /* Section 1.1 — Panchayat dropdown options */
+    s11_opt_gp_doddahasala: 'ದೊಡ್ಡಹಸಲ ಗ್ರಾಪಂ',
+    s11_opt_gp_sadahalli: 'ಸದಾಹಳ್ಳಿ ಗ್ರಾಪಂ',
+    s11_opt_gp_vijayapura: 'ವಿಜಯಪುರ ಗ್ರಾಪಂ',
+    s11_opt_gp_bashettihalli: 'ಬಸೆಟ್ಟಿಹಳ್ಳಿ ಗ್ರಾಪಂ',
+    s11_opt_gp_yelahanka: 'ಯಲಹಂಕ ಗ್ರಾಪಂ',
+
+    /* Section 1.1 — Village dropdown options */
+    s11_opt_vill_doddahasala: 'ದೊಡ್ಡಹಸಲ',
+    s11_opt_vill_sadahalli: 'ಸದಾಹಳ್ಳಿ',
+    s11_opt_vill_vijayapura: 'ವಿಜಯಪುರ',
+    s11_opt_vill_bashettihalli: 'ಬಸೆಟ್ಟಿಹಳ್ಳಿ',
+    s11_opt_vill_yelahanka: 'ಯಲಹಂಕ',
 
     /* ── Section 1.2 ── */
     s12_title: 'ಆಸ್ತಿ ನೋಂದಣಿ ವಿವರಗಳು',

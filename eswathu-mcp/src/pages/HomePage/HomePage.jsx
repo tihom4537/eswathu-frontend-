@@ -13,16 +13,6 @@ import HomePagePopup from '../../components/HomePagePopup/HomePagePopup';
 import { useTranslation } from '../../i18n';
 import './HomePage.css';
 
-const CITIZEN_SERVICES_ITEMS = [
-  { label: 'Get EKhata', path: '/get-ekhata' },
-  { label: 'Citizen Pending Applications', path: '/pending-applications' },
-  { label: 'Submitted Applications', path: '/submitted-applications' },
-  { label: 'Objection Report', path: '/objection-report' },
-  { label: 'Returned Applications for Modification', path: '/returned-applications' },
-  { label: 'New Applications', path: '/new-applications' },
-  { label: 'Download Khatha (Successful Payment)', path: '/download-khatha' },
-];
-
 // CLASSIFICATION_ITEMS is now derived from t() inside the component
 
 /* ── Bilingual popup content ─────────────────────────────────────────
@@ -439,7 +429,6 @@ const HomePage = ({ onNavigate }) => {
       {/* 1. Navigation Bar */}
       <NavigationBar
         variant="homepage"
-        citizenServicesItems={CITIZEN_SERVICES_ITEMS}
         onCitizenLogin={handleApplyNewEKhata}
         onDeptLogin={() => {}}
         onNavigate={onNavigate}
@@ -648,7 +637,7 @@ const HomePage = ({ onNavigate }) => {
             />
           </div>
 
-          <InfoBox variant="red">
+          <InfoBox variant="warning">
             <div>
               <strong>{t('hp_class_infobox_strong')}</strong>
               <p>{t('hp_class_infobox_desc')}</p>
@@ -691,7 +680,7 @@ const HomePage = ({ onNavigate }) => {
       </section>
 
       {/* 7. Connected Services */}
-      <section className="hp-connected">
+      <section id="hp-connected" className="hp-connected">
         <div className="hp-connected__inner">
           <PageHeading
             subtitle={t('hp_connected_subtitle')}
@@ -718,6 +707,27 @@ const HomePage = ({ onNavigate }) => {
               description={t('hp_connected_card3_desc')}
               buttonLabel={t('hp_connected_card_btn')}
               onButtonClick={() => window.open('https://ksrsac.karnataka.gov.in', '_blank', 'noopener')}
+            />
+            <HelpCards
+              icon="public"
+              title={t('hp_connected_card4_title')}
+              description={t('hp_connected_card4_desc')}
+              buttonLabel={t('hp_connected_card_btn')}
+              onButtonClick={() => window.open('https://gramaone.karnataka.gov.in', '_blank', 'noopener')}
+            />
+            <HelpCards
+              icon="smartphone"
+              title={t('hp_connected_card5_title')}
+              description={t('hp_connected_card5_desc')}
+              buttonLabel={t('hp_connected_card_btn_download')}
+              onButtonClick={() => window.open('https://dishank.karnataka.gov.in', '_blank', 'noopener')}
+            />
+            <HelpCards
+              icon="public"
+              title={t('hp_connected_card6_title')}
+              description={t('hp_connected_card6_desc')}
+              buttonLabel={t('hp_connected_card_btn')}
+              onButtonClick={() => window.open('https://bbmppropertytax.in', '_blank', 'noopener')}
             />
           </div>
         </div>

@@ -7,6 +7,7 @@ import Input from '../../../components/Input/Input';
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import DatePicker from '../../../components/DatePicker/DatePicker';
 import Button from '../../../components/Button/Button';
+import CaptionMessage from '../../../components/CaptionMessage/CaptionMessage';
 import FileUpload from '../../../components/FileUpload/FileUpload';
 import ErrorMessageCard from '../../../components/ErrorMessageCard/ErrorMessageCard';
 import ProgressCircle from '../../../components/ProgressCircle/ProgressCircle';
@@ -78,6 +79,36 @@ const SaleDeedDetailsPage = ({
   onFlowChange,
 }) => {
   const { t } = useTranslation('step1');
+
+  /* ── Section 1.1 — Location dropdown options (translated) ── */
+  const DISTRICT_OPTIONS = [
+    { value: 'Bengaluru Rural',  label: t('s11_opt_dist_bengaluru_rural') },
+    { value: 'Bengaluru Urban',  label: t('s11_opt_dist_bengaluru_urban') },
+    { value: 'Mysuru',           label: t('s11_opt_dist_mysuru') },
+    { value: 'Tumkur',           label: t('s11_opt_dist_tumkur') },
+    { value: 'Mandya',           label: t('s11_opt_dist_mandya') },
+  ];
+  const TALUK_OPTIONS = [
+    { value: 'Devanahalli',      label: t('s11_opt_taluk_devanahalli') },
+    { value: 'Hosakote',         label: t('s11_opt_taluk_hosakote') },
+    { value: 'Nelamangala',      label: t('s11_opt_taluk_nelamangala') },
+    { value: 'Doddaballapura',   label: t('s11_opt_taluk_doddaballapura') },
+    { value: 'Ramanagara',       label: t('s11_opt_taluk_ramanagara') },
+  ];
+  const PANCHAYAT_OPTIONS = [
+    { value: 'Doddahasala GP',   label: t('s11_opt_gp_doddahasala') },
+    { value: 'Sadahalli GP',     label: t('s11_opt_gp_sadahalli') },
+    { value: 'Vijayapura GP',    label: t('s11_opt_gp_vijayapura') },
+    { value: 'Bashettihalli GP', label: t('s11_opt_gp_bashettihalli') },
+    { value: 'Yelahanka GP',     label: t('s11_opt_gp_yelahanka') },
+  ];
+  const VILLAGE_OPTIONS = [
+    { value: 'Doddahasala',      label: t('s11_opt_vill_doddahasala') },
+    { value: 'Sadahalli',        label: t('s11_opt_vill_sadahalli') },
+    { value: 'Vijayapura',       label: t('s11_opt_vill_vijayapura') },
+    { value: 'Bashettihalli',    label: t('s11_opt_vill_bashettihalli') },
+    { value: 'Yelahanka',        label: t('s11_opt_vill_yelahanka') },
+  ];
 
   /* ── No-flow document type options (translated) ─────────── */
   const NO_FLOW_DOC_OPTIONS = [
@@ -403,13 +434,7 @@ const SaleDeedDetailsPage = ({
                   value={locDistrict}
                   onChange={(e) => setLocDistrict(e.target.value)}
                   disabled={s11Saved}
-                  options={[
-                    { value: 'Bengaluru Rural',  label: 'Bengaluru Rural' },
-                    { value: 'Bengaluru Urban',  label: 'Bengaluru Urban' },
-                    { value: 'Mysuru',           label: 'Mysuru' },
-                    { value: 'Tumkur',           label: 'Tumkur' },
-                    { value: 'Mandya',           label: 'Mandya' },
-                  ]}
+                  options={DISTRICT_OPTIONS}
                 />
                 <Dropdown
                   label={t('s11_taluk')}
@@ -417,13 +442,7 @@ const SaleDeedDetailsPage = ({
                   value={locTaluk}
                   onChange={(e) => setLocTaluk(e.target.value)}
                   disabled={s11Saved}
-                  options={[
-                    { value: 'Devanahalli',      label: 'Devanahalli' },
-                    { value: 'Hosakote',         label: 'Hosakote' },
-                    { value: 'Nelamangala',      label: 'Nelamangala' },
-                    { value: 'Doddaballapura',   label: 'Doddaballapura' },
-                    { value: 'Ramanagara',       label: 'Ramanagara' },
-                  ]}
+                  options={TALUK_OPTIONS}
                 />
                 <Dropdown
                   label={t('s11_panchayat')}
@@ -431,13 +450,7 @@ const SaleDeedDetailsPage = ({
                   value={locPanchayat}
                   onChange={(e) => setLocPanchayat(e.target.value)}
                   disabled={s11Saved}
-                  options={[
-                    { value: 'Doddahasala GP',   label: 'Doddahasala GP' },
-                    { value: 'Sadahalli GP',     label: 'Sadahalli GP' },
-                    { value: 'Vijayapura GP',    label: 'Vijayapura GP' },
-                    { value: 'Bashettihalli GP', label: 'Bashettihalli GP' },
-                    { value: 'Yelahanka GP',     label: 'Yelahanka GP' },
-                  ]}
+                  options={PANCHAYAT_OPTIONS}
                 />
                 <Dropdown
                   label={t('s11_village')}
@@ -445,13 +458,7 @@ const SaleDeedDetailsPage = ({
                   value={locVillage}
                   onChange={(e) => setLocVillage(e.target.value)}
                   disabled={s11Saved}
-                  options={[
-                    { value: 'Doddahasala',      label: 'Doddahasala' },
-                    { value: 'Sadahalli',        label: 'Sadahalli' },
-                    { value: 'Vijayapura',       label: 'Vijayapura' },
-                    { value: 'Bashettihalli',    label: 'Bashettihalli' },
-                    { value: 'Yelahanka',        label: 'Yelahanka' },
-                  ]}
+                  options={VILLAGE_OPTIONS}
                 />
               </div>
             </div>
@@ -488,6 +495,11 @@ const SaleDeedDetailsPage = ({
                 {t('s11_btn_edit')}
               </Button>
             </div>
+            {s11Saved && (
+              <CaptionMessage variant="success">
+                {t('s11_save_success')}
+              </CaptionMessage>
+            )}
 
           </div>
         </SectionBox>
@@ -827,7 +839,7 @@ const SaleDeedDetailsPage = ({
           <div className="sd-page__proceed">
             <Button
               variant="primary"
-              disabled={isPageComplete}
+              disabled={true}
               onClick={() => { setIsPageComplete(true); onNext?.(); }}
             >
               {t('btn_save_proceed')}

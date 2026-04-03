@@ -6,15 +6,20 @@
   padding: 0;
 }
 
+html {
+  /* Controlled by FontSizeContext — falls back to 1rem (16px) */
+  font-size: var(--base-font-size, 1rem);
+}
+
 html, body {
   font-family: var(--font-family);
-  font-size: 16px;
   color: var(--text-dark);
   background-color: #ffffff;
   color-scheme: light;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-width: 1280px;
+  line-height: 1.6;
 }
 
 #root {
@@ -29,4 +34,14 @@ a {
 button, input, select, textarea {
   font-family: inherit;
 }
+
+/* ── Minimum font-size safety net ───────────────────────────
+   Browser UA stylesheets shrink certain elements (small, sub,
+   sup, caption, th) below 16px. Override them globally.
+   Kannada mode bumps the floor to 18px via lang-kn.css.
+─────────────────────────────────────────────────────────── */
+small, sub, sup, caption, figcaption {
+  font-size: 16px;
+}
+
 

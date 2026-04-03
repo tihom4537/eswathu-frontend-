@@ -12,7 +12,10 @@
 /* ── Sections wrapper ────────────────────────────────────── */
 
 .pc-page__sections {
-  padding: 40px 120px;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding: 40px 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -55,7 +58,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 20px;
-  line-height: 30px;
+  line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
 }
@@ -77,7 +80,7 @@
 .pc-s41__doc-instruction {
   font-family: var(--font-family);
   font-size: 16px;
-  line-height: 24px;
+  line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
 }
@@ -121,7 +124,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 18px;
-  line-height: 30px;
+  line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
 }
@@ -271,7 +274,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 20px;
-  line-height: 27px;
+  line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
 }
@@ -559,7 +562,7 @@
 .pc-s42__rtc-instruction {
   font-family: var(--font-family);
   font-size: 16px;
-  line-height: 27px;
+  line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
 }
@@ -763,7 +766,10 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 24px 120px 48px;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding: 24px 1.5rem 48px;
 }
 
 /* ══ QUESTIONNAIRE MODAL ════════════════════════════════════ */
@@ -837,7 +843,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 16px;
-  line-height: 26px;
+  line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
 }
@@ -967,7 +973,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 18px;
-  line-height: 30px;
+  line-height: 1.5;
   color: var(--neutral-400);
   margin: 0;
 }

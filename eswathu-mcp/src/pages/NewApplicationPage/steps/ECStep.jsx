@@ -179,7 +179,7 @@ const ECStep = ({
 
         {/* ── Page-level notice (above SectionBox) ────────── */}
         <div className="ec-page__notice">
-          <InfoBox variant="red">
+          <InfoBox variant="warning">
             If you do not have your Encumbrance Certificate (Form 15),{' '}
             <a href="#" className="ec-page__notice-link">please click here</a>{' '}
             to issue the document and then complete this last step.

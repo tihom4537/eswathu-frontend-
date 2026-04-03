@@ -536,7 +536,7 @@ const OwnerEKYCPage = ({
                 </div>
               </div>
 
-              <InfoBox variant="red">
+              <InfoBox variant="warning">
                 If owner name is spelled wrong, missing, clubbed together by mistake or there are new owner/s to be added, please add them below.
               </InfoBox>
 
@@ -559,7 +559,7 @@ const OwnerEKYCPage = ({
               </div>
 
               {addNewOwner && (
-                <InfoBox variant="red">
+                <InfoBox variant="warning">
                   When you add new owners, these names will be considered by ekyc (not the ones fetched from Kaveri Deed Details)
                 </InfoBox>
               )}
@@ -823,7 +823,7 @@ const OwnerEKYCPage = ({
 
                   {/* UIDAI failure message — shown after redirect returns without opening popup */}
                   {ekycFailedOwners.has(owner.id) && (
-                    <InfoBox variant="red">
+                    <InfoBox variant="warning">
                       There was an error in completing eKYC due to UIDAI server issues. Please try again after 15–20 minutes.
                     </InfoBox>
                   )}
@@ -889,8 +889,8 @@ const OwnerEKYCPage = ({
           open={s23Visible}
           className="ekyc-s23-box"
         >
-          <InfoBox variant="red">
-            There is a Mismatch in the Owner Name Details.
+          <InfoBox variant="warning">
+            There is a mismatch in the Owner Name Details. Please select the reason for the mismatch.
           </InfoBox>
 
           {/* ── Case 1: Kaveri owners vs eKYC mismatch ─── */}

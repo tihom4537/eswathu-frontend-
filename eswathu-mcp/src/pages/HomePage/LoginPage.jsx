@@ -54,7 +54,7 @@ const CaptchaBlock = ({ captchaText, onRefresh, answer, onAnswerChange, errorMes
   </div>
 );
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = ({ onLogin, onNavigate }) => {
   const { t } = useTranslation('home');
   const [loginType, setLoginType] = useState('citizen');
   const [inputValue, setInputValue] = useState('');
@@ -113,7 +113,7 @@ const LoginPage = ({ onLogin }) => {
 
   return (
     <div className="page-login">
-      <NavigationBar variant="homepage" />
+      <NavigationBar variant="homepage" onNavigate={onNavigate} />
 
       <section className="login-content">
         <PageHeading subtitle={t('login_subtitle')} title={t('login_title')} />

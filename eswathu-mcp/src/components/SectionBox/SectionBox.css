@@ -3,6 +3,8 @@
 .section-box {
   width: 100%;
   max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: var(--radius-md);
   overflow: visible; /* Must not clip dropdown/datepicker popups */
 }
@@ -22,7 +24,7 @@
   font-family: var(--font-family);
   font-weight: 600;
   font-size: 28px;
-  line-height: 32px;
+  line-height: 1.4;
   color: var(--neutral-300);
 }
 
@@ -30,7 +32,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 22px;
-  line-height: 28px;
+  line-height: 1.5;
   color: var(--neutral-300);
 }
 
@@ -53,7 +55,7 @@
   font-family: var(--font-family);
   font-weight: 600;
   font-size: 28px;
-  line-height: 32px;
+  line-height: 1.4;
   color: var(--text-dark);
 }
 
@@ -61,7 +63,7 @@
   font-family: var(--font-family);
   font-weight: 600;
   font-size: 24px;
-  line-height: 28px;
+  line-height: 1.5;
   color: var(--text-dark);
 }
 

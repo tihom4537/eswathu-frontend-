@@ -9,12 +9,14 @@
 /* ── Top bar (accessibility + language) ──────────────────── */
 .navbar__topbar {
   background: var(--primary);
-  padding: 10px 30px;
+  padding: 10px 0;
 }
 
 .navbar__topbar-inner {
-  max-width: 1440px;
-  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -61,7 +63,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.1px;
   cursor: pointer;
 }
@@ -74,13 +76,15 @@
 /* ── Main bar (logos + title) ────────────────────────────── */
 .navbar__main {
   background: var(--white);
-  padding: 10px 70px;
+  padding: 10px 0;
   border-top: 1px solid var(--neutral-100);
 }
 
 .navbar__main-inner {
-  max-width: 1440px;
-  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -113,7 +117,7 @@
   font-family: var(--font-family);
   font-weight: 700;
   font-size: 18px;
-  line-height: 28px;
+  line-height: 1.5;
   color: var(--text-dark);
 }
 
@@ -121,7 +125,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 16px;
-  line-height: 28px;
+  line-height: 1.5;
   color: var(--text-dark);
 }
 
@@ -138,13 +142,15 @@
 /* ── Bottom bar ──────────────────────────────────────────── */
 .navbar__bottombar {
   background: var(--primary-50);
-  padding: 16px 70px;
+  padding: 16px 0;
   border-top: 1px solid var(--neutral-100);
 }
 
 .navbar__bottombar-inner {
-  max-width: 1440px;
-  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -161,7 +167,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.1px;
   color: #151515;
   text-decoration: none;
@@ -214,7 +220,7 @@
   font-family: var(--font-family);
   font-weight: 400;
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   color: var(--text-dark);
   cursor: pointer;
   text-align: left;
@@ -239,7 +245,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.1px;
   color: #151515;
   text-decoration: none;

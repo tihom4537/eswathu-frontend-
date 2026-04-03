@@ -16,12 +16,14 @@
 
 /* ── 3. Services section ── */
 .hp-services {
-  padding: 90px 120px 80px;
+  padding: 90px 0 80px;
 }
 
 .hp-services__inner {
-  max-width: var(--content-max-width);
-  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 55px;
@@ -36,12 +38,14 @@
 /* ── 4. Understanding E-Khata ── */
 .hp-ekhata {
   background: var(--primary-50);
-  padding: 90px 100px;
+  padding: 90px 0;
 }
 
 .hp-ekhata__inner {
-  max-width: var(--content-max-width);
-  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 59px;
@@ -56,12 +60,14 @@
 /* ── 5. Classification types ── */
 .hp-classification {
   background: var(--primary);
-  padding: 70px 100px;
+  padding: 70px 0;
 }
 
 .hp-classification__inner {
-  max-width: var(--content-max-width);
-  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -69,7 +75,7 @@
 
 .hp-classification__desc {
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.25px;
   color: var(--text-light);
   margin-top: -5px;
@@ -91,12 +97,14 @@
 /* ── 6. Need Help ── */
 .hp-help {
   background: var(--secondary);
-  padding: 90px 100px;
+  padding: 90px 0;
 }
 
 .hp-help__inner {
-  max-width: var(--content-max-width);
-  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -104,7 +112,7 @@
 
 .hp-help__desc {
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.25px;
   color: var(--text-dark);
   margin-top: -20px;
@@ -118,12 +126,14 @@
 
 /* ── 7. Connected Services ── */
 .hp-connected {
-  padding: 90px 100px;
+  padding: 90px 0;
 }
 
 .hp-connected__inner {
-  max-width: var(--content-max-width);
-  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 59px;

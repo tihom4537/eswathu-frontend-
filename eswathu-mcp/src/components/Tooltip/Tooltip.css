@@ -32,7 +32,7 @@
   font-family: var(--font-family);
   font-size: 16px;
   font-weight: 400;
-  line-height: 22px;
+  line-height: 1.5;
   color: var(--text-dark);
   text-decoration: none;
   white-space: normal;
@@ -56,29 +56,27 @@
 
 /* ── Left: icon + label text ──────────────────────────── */
 .tooltip-card__label {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
   display: flex;
   align-items: flex-start;
-  gap: 15px;
+  gap: 8px;
 }
 
 .tooltip-card__label-icon {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1;
   color: var(--text-dark);
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  overflow: hidden;
-  margin-top: 3px;
+  margin-top: 2px;
+  width: 20px;
 }
 
 .tooltip-card__label-text {
   font-family: var(--font-family);
   font-weight: 500;
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.1px;
   color: var(--text-dark);
   margin: 0;
@@ -120,16 +118,14 @@
   line-height: 1;
   color: var(--neutral-600);
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  overflow: hidden;
+  width: 18px;
 }
 
 .tooltip-card__caption-text {
   font-family: var(--font-family);
   font-weight: 400;
   font-size: 16px;
-  line-height: 20px;
+  line-height: 1.5;
   letter-spacing: 0.25px;
   color: var(--neutral-600);
   margin: 0;

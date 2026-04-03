@@ -1,6 +1,7 @@
 ﻿import { useState, useRef, useEffect } from 'react';
 import Button from '../Button/Button';
 import { useLanguage } from '../../context/LanguageContext';
+import { useFontSize } from '../../context/FontSizeContext';
 import { useTranslation } from '../../i18n';
 import './NavigationBar.css';
 
@@ -8,16 +9,26 @@ import karnatakaLogo from '/images/Karnataka.png';
 import eswathuLogo from '/images/eSwathuLogoEnglish.jpg.jpeg';
 import nicLogo from '/images/MyGov.png';
 
-const DEFAULT_CITIZEN_SERVICES = [
-  { label: 'New Application', path: '/new-application' },
-  { label: 'Track Application', path: '/track-application' },
-  { label: 'Download Certificate', path: '/download-certificate' },
+/* Canonical citizen services — consistent across all pages */
+const CITIZEN_SERVICES = [
+  { key: 'newEkhata',           labelEn: 'New e-Khata',                                            labelKn: 'ಹೊಸ ಇ-ಖಾತಾ' },
+  { key: 'pidEkhata',           labelEn: 'e-Khata for Properties with a PID',                      labelKn: 'ಪಿಐಡಿ ಸಂಖ್ಯೆ ಹೊಂದಿರುವ ಆಸ್ತಿಗಳಿಗೆ ಇ-ಖಾತಾ' },
+  { key: 'newLayouts',          labelEn: 'e-Khata for New Layouts',                                 labelKn: 'ಹೊಸ ವಿನ್ಯಾಸ ನಕ್ಷೆ ನಿವೇಶನಗಳಿಗೆ ಇ-ಖಾತಾ' },
+  { key: 'newApartments',       labelEn: 'e-Khata for New Apartments',                              labelKn: 'ಹೊಸ ಅಪಾರ್ಟ್‌ಮೆಂಟ್‌ಗಳಿಗೆ ಇ-ಖಾತಾ' },
+  { key: 'reportObjection',     labelEn: 'Report an Objection',                                     labelKn: 'ಆಕ್ಷೇಪಣೆ ಸಲ್ಲಿಸಿ' },
+  { key: 'conv11ATo11B',        labelEn: 'Form 11A to Form 11B',                                    labelKn: 'ನಮೂನೆ ೧೧ಎ ನಿಂದ ನಮೂನೆ ೧೧ಬಿ ಗೆ' },
+  { key: 'convApartments',      labelEn: 'Form 11A/11B to Apartment/Flats',                        labelKn: 'ನಮೂನೆ ೧೧ಎ / ೧೧ಬಿ ನಿಂದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ / ಫ್ಲ್ಯಾಟ್‌ಗಳಿಗೆ' },
+  { key: 'conv11BTransactable', labelEn: 'Form 11B from Non-Transactable to Transactable',         labelKn: 'ನಮೂನೆ ೧೧ಬಿ – ವ್ಯವಹಾರಯೋಗ್ಯವಲ್ಲದ ಸ್ಥಿತಿಯಿಂದ ವ್ಯವಹಾರಯೋಗ್ಯ ಸ್ಥಿತಿಗೆ' },
+  { key: 'mutation',            labelEn: 'Mutation and Transfer',                                   labelKn: 'ಮ್ಯುಟೇಷನ್ ಮತ್ತು ವರ್ಗಾವಣೆ' },
 ];
 
 const DEFAULT_USEFUL_LINKS = [
-  { label: 'e-Khata', path: '/e-khata' },
-  { label: 'Bhoomi', path: '/bhoomi' },
-  { label: 'Kaveri', path: '/kaveri' },
+  { label: 'Bhoomi', url: 'https://landrecords.karnataka.gov.in' },
+  { label: 'Kaveri', url: 'https://kaverionline.karnataka.gov.in' },
+  { label: 'Grama One', url: 'https://gramaone.karnataka.gov.in' },
+  { label: 'Dishank', url: 'https://dishank.karnataka.gov.in' },
+  { label: 'Property Tax (BSK)', url: 'https://bbmppropertytax.in' },
+  { label: 'KSRSAC', url: 'https://ksrsac.karnataka.gov.in' },
 ];
 
 const NavigationBar = ({
@@ -27,12 +38,12 @@ const NavigationBar = ({
   onCitizenLogin,
   onDeptLogin,
   onNavigate,
-  citizenServicesItems = DEFAULT_CITIZEN_SERVICES,
   usefulLinksItems = DEFAULT_USEFUL_LINKS,
 }) => {
   const isHomepage = variant === 'homepage';
   const [openDropdown, setOpenDropdown] = useState(null);
   const { lang, setLang } = useLanguage();
+  const { level, setLevel } = useFontSize();
   const { t } = useTranslation('common');
   const dropdownRef = useRef(null);
 
@@ -61,9 +72,27 @@ const NavigationBar = ({
       <div className="navbar__topbar">
         <div className="navbar__topbar-inner">
           <div className="navbar__accessibility">
-            <button className="navbar__font-btn" type="button" aria-label="Decrease font size">A<sup>-</sup></button>
-            <button className="navbar__font-btn navbar__font-btn--active" type="button" aria-label="Default font size">A</button>
-            <button className="navbar__font-btn" type="button" aria-label="Increase font size">A<sup>+</sup></button>
+            <button
+              className={`navbar__font-btn${level === 'sm' ? ' navbar__font-btn--active' : ''}`}
+              type="button"
+              aria-label="Decrease font size"
+              aria-pressed={level === 'sm'}
+              onClick={() => setLevel('sm')}
+            >A<sup>-</sup></button>
+            <button
+              className={`navbar__font-btn${level === 'md' ? ' navbar__font-btn--active' : ''}`}
+              type="button"
+              aria-label="Default font size"
+              aria-pressed={level === 'md'}
+              onClick={() => setLevel('md')}
+            >A</button>
+            <button
+              className={`navbar__font-btn${level === 'lg' ? ' navbar__font-btn--active' : ''}`}
+              type="button"
+              aria-label="Increase font size"
+              aria-pressed={level === 'lg'}
+              onClick={() => setLevel('lg')}
+            >A<sup>+</sup></button>
           </div>
           <div className="navbar__lang">
             <button
@@ -118,14 +147,17 @@ const NavigationBar = ({
                   </button>
                   {openDropdown === 'citizen' && (
                     <div className="navbar__dropdown-menu">
-                      {citizenServicesItems.map((item) => (
+                      {CITIZEN_SERVICES.map((item) => (
                         <button
-                          key={item.path}
+                          key={item.key}
                           type="button"
                           className="navbar__dropdown-item"
-                          onClick={() => handleLinkClick(item.path)}
+                          onClick={() => {
+                            setOpenDropdown(null);
+                            onNavigate?.('service:' + item.key);
+                          }}
                         >
-                          {item.label}
+                          {lang === 'kn' ? item.labelKn : item.labelEn}
                         </button>
                       ))}
                     </div>
@@ -147,10 +179,17 @@ const NavigationBar = ({
                     <div className="navbar__dropdown-menu">
                       {usefulLinksItems.map((item) => (
                         <button
-                          key={item.path}
+                          key={item.label}
                           type="button"
                           className="navbar__dropdown-item"
-                          onClick={() => handleLinkClick(item.path)}
+                          onClick={() => {
+                            setOpenDropdown(null);
+                            if (item.url) {
+                              window.open(item.url, '_blank', 'noopener');
+                            } else {
+                              handleLinkClick(item.path);
+                            }
+                          }}
                         >
                           {item.label}
                         </button>
@@ -169,8 +208,8 @@ const NavigationBar = ({
           ) : (
             <>
               <nav className="navbar__breadcrumb">
-                <span className="material-icons-outlined navbar__home-icon" style={{ cursor: 'pointer' }} onClick={() => handleLinkClick('citizen-home')}>home</span>
-                <button type="button" className="navbar__crumb" onClick={() => handleLinkClick('citizen-home')}>{t('navHome')}</button>
+                <span className="material-icons-outlined navbar__home-icon" style={{ cursor: 'pointer' }} onClick={() => handleLinkClick('home')}>home</span>
+                <button type="button" className="navbar__crumb" onClick={() => handleLinkClick('home')}>{t('navHome')}</button>
 
                 {/* Citizen Services dropdown in breadcrumb */}
                 <div className="navbar__dropdown-wrapper">
@@ -185,19 +224,24 @@ const NavigationBar = ({
                   </button>
                   {openDropdown === 'citizen' && (
                     <div className="navbar__dropdown-menu">
-                      {citizenServicesItems.map((item) => (
+                      {CITIZEN_SERVICES.map((item) => (
                         <button
-                          key={item.path}
+                          key={item.key}
                           type="button"
                           className="navbar__dropdown-item"
-                          onClick={() => handleLinkClick(item.path)}
+                          onClick={() => {
+                            setOpenDropdown(null);
+                            onNavigate?.('service:' + item.key);
+                          }}
                         >
-                          {item.label}
+                          {lang === 'kn' ? item.labelKn : item.labelEn}
                         </button>
                       ))}
                     </div>
                   )}
                 </div>
+
+                <button type="button" className="navbar__crumb" onClick={() => handleLinkClick('glossary')}>{t('navGlossary')}</button>
               </nav>
               <div className="navbar__user">
                 <span className="navbar__username">{t('navUsername')}: {username}</span>
