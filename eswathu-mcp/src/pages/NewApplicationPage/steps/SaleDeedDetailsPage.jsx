@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
 import StepHeader from '../../../components/StepHeader/StepHeader';
+import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import RadioButton from '../../../components/RadioButton/RadioButton';
 import Input from '../../../components/Input/Input';
@@ -409,6 +410,8 @@ const SaleDeedDetailsPage = ({
         onNavigate={onNavigate}
         onLogout={() => onNavigate && onNavigate('login')}
       />
+
+      <Stepper steps={bcStepNames} activeStep={currentBCStep} completedBCSteps={completedBCSteps} onStepClick={onBCStepClick} />
 
       <StepHeader
         step={t('step_label')}
@@ -839,7 +842,7 @@ const SaleDeedDetailsPage = ({
           <div className="sd-page__proceed">
             <Button
               variant="primary"
-              disabled={true}
+              disabled={isPageComplete}
               onClick={() => { setIsPageComplete(true); onNext?.(); }}
             >
               {t('btn_save_proceed')}

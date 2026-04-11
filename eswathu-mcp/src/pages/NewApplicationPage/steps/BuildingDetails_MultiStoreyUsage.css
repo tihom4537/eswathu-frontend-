@@ -12,19 +12,11 @@
   align-items: flex-start;
 }
 
-.bd-multi__input--single {
-  width: 347px;
-  flex-shrink: 0;
-}
-
-.bd-multi__input--carpet {
-  width: 460px;
-  flex-shrink: 0;
-}
-
-.bd-multi__input--add {
-  width: 347px;
-  flex-shrink: 0;
+.bd-multi__row--3col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+  align-items: end;
 }
 
 .bd-multi__input--block,
@@ -65,7 +57,7 @@
 }
 
 .bd-multi__floor-input {
-  width: 144px;
+  width: 220px;
   flex-shrink: 0;
 }
 
@@ -74,6 +66,11 @@
   color: var(--text-dark);
   margin-bottom: 10px;
   flex-shrink: 0;
+}
+
+.bd-multi__required {
+  color: var(--danger, #b7131a);
+  margin-left: 2px;
 }
 
 .bd-multi__actions {

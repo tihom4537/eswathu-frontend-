@@ -49,16 +49,22 @@
 
 /* ── Column widths ───────────────────────────────────────── */
 
+/* Force fixed layout so column widths are respected identically across both tables */
+.pd-rd__table-wrap--location .data-table,
+.pd-rd__table-wrap--area .data-table {
+  table-layout: fixed;
+}
+
 /* Location table: Photo column fixed 328px */
 .pd-rd__table-wrap--location .data-table__th:nth-child(3),
 .pd-rd__table-wrap--location .data-table__td:nth-child(3) {
   width: 328px;
 }
 
-/* Area table: Irregular site column (3rd) slightly narrower */
+/* Area table: 3rd column matches location table's 3rd column exactly */
 .pd-rd__table-wrap--area .data-table__th:nth-child(3),
 .pd-rd__table-wrap--area .data-table__td:nth-child(3) {
-  width: 260px;
+  width: 328px;
 }
 
 /* Checkbandi table: South column fixed 180px */

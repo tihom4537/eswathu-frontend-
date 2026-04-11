@@ -129,6 +129,12 @@
   color: var(--neutral-500, #808080);
 }
 
+/* Read-only — non-interactive, normal appearance (no grey) */
+.dropdown--readonly .dropdown__trigger {
+  cursor: default;
+  pointer-events: none;
+}
+
 /* Frozen with edit */
 .dropdown--frozen .dropdown__trigger {
   background: #f2f2f2;
@@ -163,4 +169,10 @@
 
 .dropdown--disabled .dropdown__chevron {
   color: var(--neutral-400, #b3b3b3);
+}
+
+/* Pressed — draws attention to the next dropdown requiring action */
+.dropdown--pressed .dropdown__trigger {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(2, 76, 151, 0.25);
 }

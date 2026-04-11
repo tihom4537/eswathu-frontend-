@@ -12,7 +12,7 @@
 .pd-cb__heading {
   font-family: var(--font-family);
   font-weight: 500;
-  font-size: 18px;
+  font-size: 22px;
   line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
@@ -21,8 +21,8 @@
 /* Sub-heading */
 .pd-cb__subheading {
   font-family: var(--font-family);
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 400;
+  font-size: 20px;
   line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
@@ -45,5 +45,6 @@
 .pd-cb__actions {
   display: flex;
   align-items: center;
+  gap: 12px;
   margin-top: 8px;
 }

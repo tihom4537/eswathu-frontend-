@@ -12,13 +12,23 @@
 .pd-ad__heading {
   font-family: var(--font-family);
   font-weight: 500;
-  font-size: 18px;
+  font-size: 22px;
   line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
 }
 
-/* Sub-heading ("Your Final Property Area…") */
+/* Section heading for final area block ("Your Final Property Area (in Sq.Mt)") */
+.pd-ad__final-heading {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: normal;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Sub-heading ("Please enter the new area dimensions") */
 .pd-ad__subheading {
   font-family: var(--font-family);
   font-weight: 500;
@@ -31,8 +41,8 @@
 /* Field label ("Please choose a unit", question text) */
 .pd-ad__label {
   font-family: var(--font-family);
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 400;
+  font-size: 20px;
   line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
@@ -47,7 +57,14 @@
 .pd-ad__unit-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
+}
+
+/* NoKaveri: wraps unit-row + success caption so caption stays tight to input */
+.pd-ad__input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 /* Horizontal row: [Total Area frozen Input + Edit] | [radio buttons] */
@@ -111,7 +128,7 @@
 .pd-ad__group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 /* ── Reject section ──────────────────────────────────── */
@@ -165,5 +182,10 @@
 }
 
 .pd-ad__pill--blue {
-  background: #e6f2ff;
+  background: var(--primary-50);
+}
+
+/* Total Area pill sits in the unit row — no extra padding wrapper needed */
+.pd-ad__total-area-pill {
+  flex-shrink: 0;
 }

@@ -24,55 +24,31 @@
   width: 360px;
 }
 
-/* ── Storeys row: dropdown or frozen-input + X ────────────── */
+/* ── Storeys row: input + Confirm button or frozen-input ──── */
 .bd-gf__storeys-row {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 12px;
 }
 
-.bd-gf__storeys-dropdown {
+/* Input wrapper constrains width */
+.bd-gf__storeys-input-wrap {
   width: 360px;
 }
 
-/* Frozen storeys: grey input aligned with red X button */
+/* Confirm button aligned to input box (past the label) */
+.bd-gf__storeys-confirm-btn {
+  margin-top: 24px;
+}
+
+/* Frozen storeys: constrain width to match dropdown */
 .bd-gf__frozen-storeys {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.bd-gf__frozen-input-wrap {
   width: 360px;
 }
 
-.bd-gf__storeys-reset {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-md, 8px);
-  background: var(--danger, #b7131a);
-  border: none;
-  cursor: pointer;
-  flex-shrink: 0;
-  margin-bottom: 2px;
-  transition: background 0.15s;
-}
-
-.bd-gf__storeys-reset:hover:not(:disabled) {
-  background: #8e0e14;
-}
-
-.bd-gf__storeys-reset:disabled {
-  background: var(--neutral-400, #b0b0b0);
-  cursor: not-allowed;
-}
-
-.bd-gf__storeys-reset .material-icons-outlined {
-  font-size: 18px;
-  color: #fff;
+/* Close icon inside frozen storeys input — danger colour */
+.bd-gf__storeys-close-icon {
+  color: var(--danger) !important;
 }
 
 /* ── Collapse header ─────────────────────────────────────── */
@@ -81,6 +57,11 @@
   flex-direction: column;
   gap: 0;
   width: 100%;
+  background: white;
+  border: 1px solid #ced4da;
+  border-radius: var(--radius-md, 8px);
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .bd-gf__collapse-header {
@@ -125,7 +106,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 20px 0 0;
+  padding: 16px 0 0;
 }
 
 /* ── Individual floor grey box (edit mode) ───────────────── */

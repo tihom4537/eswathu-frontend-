@@ -1,4 +1,5 @@
 import Table from '../../../components/Table/Table';
+import { useTranslation } from '../../../i18n';
 import './PropertyDetails_ReviewDetails.css';
 
 const PropertyDetails_ReviewDetails = ({
@@ -8,16 +9,18 @@ const PropertyDetails_ReviewDetails = ({
   siteDimSummary,
   checkbandiData,
 }) => {
+  const { t } = useTranslation('step3');
+
   /* ── Derived display values ─────────────────────────── */
   const areaDisplay = acceptedAreaSqmt > 0
-    ? `${parseFloat(acceptedAreaSqmt).toFixed(2)} Sq.Mts`
+    ? `${parseFloat(acceptedAreaSqmt).toFixed(2)} ${t('rd_sqmts_suffix')}`
     : '—';
 
   const dimsDisplay = siteDimSummary
     ? siteDimSummary.type === 'odd'
-      ? `Odd (${siteDimSummary.sides} sides)`
+      ? t('rd_odd_tpl').replace('{n}', siteDimSummary.sides)
       : `${siteDimSummary.ns} ft × ${siteDimSummary.ew} ft`
-    : 'N/A';
+    : t('rd_na');
 
   const addr = addressData
     ? [
@@ -33,7 +36,7 @@ const PropertyDetails_ReviewDetails = ({
   const photoCell = imageFile ? (
     <img src={imageFile.url} alt="Property" className="pd-rd__photo" />
   ) : (
-    <span className="pd-rd__no-photo">No photo</span>
+    <span className="pd-rd__no-photo">{t('rd_no_photo')}</span>
   );
 
   return (
@@ -42,7 +45,7 @@ const PropertyDetails_ReviewDetails = ({
       {/* ── Table 1: Location ──────────────────────────── */}
       <div className="pd-rd__table-wrap pd-rd__table-wrap--location">
         <Table
-          columns={['Property Address', 'Latitude and Longitude', 'Property Photo']}
+          columns={[t('rd_prop_address'), t('rd_lat_lng'), t('rd_prop_photo')]}
           rows={[[
             addr,
             addressData?.latLng || '—',
@@ -54,15 +57,21 @@ const PropertyDetails_ReviewDetails = ({
       {/* ── Table 2: Area details ──────────────────────── */}
       <div className="pd-rd__table-wrap pd-rd__table-wrap--area">
         <Table
-          columns={['Total Area Details (Sq.Mts)', 'Property Dimensions (Mts)', 'Irregular site/ site with odd dimensions']}
-          rows={[[areaDisplay, dimsDisplay, siteDimSummary ? (siteDimSummary.type === 'odd' ? 'Yes' : 'No') : 'N/A']]}
+          columns={[t('rd_total_area_col'), t('rd_prop_dims_col'), t('rd_irregular_site')]}
+          rows={[[
+            areaDisplay,
+            dimsDisplay,
+            siteDimSummary
+              ? (siteDimSummary.type === 'odd' ? t('rd_yes') : t('rd_no_val'))
+              : t('rd_na'),
+          ]]}
         />
       </div>
 
       {/* ── Table 3: Checkbandi ────────────────────────── */}
       <div className="pd-rd__table-wrap pd-rd__table-wrap--checkbandi">
         <Table
-          columns={['Checkbandi East', 'Checkbandi West', 'Checkbandi North', 'Checkbandi South']}
+          columns={[t('cb_east'), t('cb_west'), t('cb_north'), t('cb_south')]}
           rows={[[
             checkbandiData?.east  || '—',
             checkbandiData?.west  || '—',
@@ -76,7 +85,7 @@ const PropertyDetails_ReviewDetails = ({
       <div className="pd-rd__caption">
         <span className="material-icons-outlined pd-rd__caption-icon">check_circle</span>
         <span className="pd-rd__caption-text">
-          Property details have been entered successfully. Please proceed to the next step.
+          {t('rd_success_caption')}
         </span>
       </div>
 

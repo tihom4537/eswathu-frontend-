@@ -28,15 +28,13 @@ const ErrorMessageCard = ({ message, subMessage, onOk, actions, className = '' }
       {actions ? (
         <div className="error-card__actions">
           {actions.map((a, i) => (
-            <Button key={i} variant={a.variant} onClick={a.onClick}>
+            <Button key={i} variant="modal" onClick={a.onClick}>
               {a.label}
             </Button>
           ))}
         </div>
       ) : (
-        <button type="button" className="error-card__ok" onClick={onOk}>
-          OK
-        </button>
+        <Button variant="modal" onClick={onOk}>OK</Button>
       )}
     </div>
   );

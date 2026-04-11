@@ -11,6 +11,10 @@ const TYPE_CONFIG = {
     blockPattern: /[^0-9]/,
     blurError: null,
   },
+  decimal: {
+    blockPattern: /[^0-9.]/,
+    blurError: null,
+  },
   alpha: {
     blockPattern: /[^a-zA-Z\s]/,
     blurError: (val) =>

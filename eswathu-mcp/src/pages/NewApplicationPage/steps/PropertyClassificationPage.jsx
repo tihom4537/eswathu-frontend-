@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from '../../../i18n';
 import BuildingDetails_GeneralFlow from './BuildingDetails_GeneralFlow';
 import BuildingDetails_AreaDetails from './BuildingDetails_AreaDetails';
 import BuildingDetails_MultiStoreyUsage from './BuildingDetails_MultiStoreyUsage';
@@ -8,6 +9,7 @@ import BuildingDetails_ESCOMDetails from './BuildingDetails_ESCOMDetails';
 import BuildingDetails_TenantDetails from './BuildingDetails_TenantDetails';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
 import StepHeader from '../../../components/StepHeader/StepHeader';
+import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import InfoBox from '../../../components/InfoBox/InfoBox';
 import Dropdown from '../../../components/Dropdown/Dropdown';
@@ -25,30 +27,36 @@ import ProgressCircle from '../../../components/ProgressCircle/ProgressCircle';
 import FileUpload from '../../../components/FileUpload/FileUpload';
 import { nodes, DOCS } from '../../HomePage/classifierData';
 import { CLASSIFICATION_DATA } from '../../../data/classificationData';
+import {
+  REBATE_PROPERTY_TYPE_OPTIONS,
+  REBATE_CATEGORY_BY_TYPE,
+  REBATE_DOCS_BY_DETAIL,
+  REBATE_EXEMPTION_BY_DETAIL,
+} from '../../../data/rebatesData';
 import './PropertyClassificationPage.css';
 
 /* ── Classification options ─────────────────────────────── */
 const CLASSIFICATION_OPTIONS = [
-  { value: '11A-1',  label: '11A Grama Thana' },
-  { value: '11A-2',  label: '11A Property sanctioned under the Government Housing Corporation scheme*' },
-  { value: '11A-3',  label: '11A Design Approved Property of Urban Development Authority in Local Planning Area and Outside Local Planning Area/ Local Planning Authority' },
-  { value: '11A-4',  label: '11A Design approved property of Group/Mandal Panchayat on outskirts of the Local Planning Area before Date: 11.11.2014*' },
-  { value: '11A-5',  label: '11A Property in the Local Planning Area approved by the Group/Mandal Panchayat before 16-11-1992*' },
-  { value: '11A-6',  label: '11A Property managed by Notified Area Committee/Notified Property prior the term of Mandal Panchayat*' },
-  { value: '11A-7',  label: '11A KIADB/KSSIDC Industrial Design Approved Property*' },
-  { value: '11A-8',  label: '11A From 16.11.1992 to 14-06-2013 Gram Panchayat permission letter/approved building plan, building constructed land converted property' },
-  { value: '11A-9',  label: '11A Property sanctioned under Section 94C/94CC/94D of the Karnataka Land Revenue Act, 1964' },
-  { value: '11A-10', label: '11A Rehabilitation Scheme Property*' },
-  { value: '11A-11', label: '11A Podi as registered in partnership deed/Individual Family Property with Hissa Number (for Dakshina Kannada and Udupi District)*' },
-  { value: '11A-12', label: '11A Approved Property Panchayat design outside the local planning area from 11.11.2014 to with Gram 10.01.2025.' },
-  { value: '11A-13', label: '11A Central Government/State Government/Local Bodies Site/Building' },
-  { value: '11A-14', label: '11A Property sanctioned under Section 3. 38(a) of the Karnataka Land Reforms Act, 1961' },
-  { value: '11A-15', label: '11A Corporation/Board/Limited/Authority Site/Building*' },
-  { value: '11B-1', label: '11B Violating the provisions of the Model Building Bye-laws & Constructing Buildings on agricultural land or on converted land' },
-  { value: '11B-2', label: '11B Sites on converted/non-converted or agricultural land.' },
-  { value: '11B-3', label: '11B Buildings acquired in violation of the provisions of the Model Building Bye-laws or without obtaining occupancy or completion certificate in a layout approved by the competent authority.' },
-  { value: '11B-4', label: '11B Sites on revenue land/converted land without layout design approval, but with provision of basic amenities, parks, civic amenities, roads transferred free of cost to the Gram Panchayat under Section 17 of the Karnataka Town and Country Planning Act, 1961 through a surrender deed/transferred' },
-  { value: '11B-5', label: '11B Converted Land/Assumed Converted land(Single Site)' },
+  { value: '11A-1',  label: '11A Grama Thana',                                                                                                                                                                                                                                                                                            labelKn: '11A ಗ್ರಾಮ ಠಾಣಾ' },
+  { value: '11A-2',  label: '11A Property sanctioned under the Government Housing Corporation scheme*',                                                                                                                                                                                                                                    labelKn: '11A ಸರ್ಕಾರದ ವಸತಿ ನಿಗಮದ ಯೋಜನೆಯ ಮಂಜೂರಾದ ಆಸ್ತಿ' },
+  { value: '11A-3',  label: '11A Design Approved Property of Urban Development Authority in Local Planning Area and Outside Local Planning Area/ Local Planning Authority',                                                                                                                                                                 labelKn: '11A ಸ್ಥಳೀಯ ಯೋಜನಾ ಪ್ರದೇಶದಲ್ಲಿನ ನಗರಾಭಿವೃದ್ಧಿ ಪ್ರಾಧಿಕಾರ ಹಾಗೂ ಸ್ಥಳೀಯ ಯೋಜನಾ ಪ್ರದೇಶದ ಹೊರ ಭಾಗದಲ್ಲಿ/ಸ್ಥಳೀಯ ಯೋಜನಾ ಪ್ರಾಧಿಕಾರದ ವಿನ್ಯಾಸ ಅನುಮೋದಿತ ಆಸ್ತಿ' },
+  { value: '11A-4',  label: '11A Design approved property of Group/Mandal Panchayat on outskirts of the Local Planning Area before Date: 11.11.2014*',                                                                                                                                                                                     labelKn: '11A ದಿನಾಂಕ:11.11.2014 ರ ಪೂರ್ವದಲ್ಲಿ ಸ್ಥಳೀಯ ಯೋಜನಾ ಪ್ರದೇಶದ ಹೊರ ಭಾಗದಲ್ಲಿ ಗ್ರೂಪ್/ಮಂಡಲ ಪಂಚಾಯತಿಯ ವಿನ್ಯಾಸ ಅನುಮೋದಿತ ಆಸ್ತಿ*' },
+  { value: '11A-5',  label: '11A Property in the Local Planning Area approved by the Group/Mandal Panchayat before 16-11-1992*',                                                                                                                                                                                                           labelKn: '11A ಸ್ಥಳೀಯ ಯೋಜನಾ ಪ್ರದೇಶದಲ್ಲಿ ದಿನಾಂಕ:16-11-1992ರ ಪೂರ್ವದಲ್ಲಿ ಗ್ರೂಪ್/ಮಂಡಲ ಪಂಚಾಯಿತಿಯಿಂದ ಅನುಮೋದನೆಯಾಗಿರುವ ಆಸ್ತಿ*' },
+  { value: '11A-6',  label: '11A Property managed by Notified Area Committee/Notified Property prior the term of Mandal Panchayat*',                                                                                                                                                                                                       labelKn: '11A ಮಂಡಲ ಪಂಚಾಯತಿ ಅವಧಿಯ ಪೂರ್ವದಲ್ಲಿ ನೋಟಿ ಪೈಡ್ ಏರಿಯಾ ಸಮಿತಿಯಲ್ಲಿ ನಿರ್ವಹಿಸಲಾದ ಆಸ್ತಿ/ಅಧಿಸೂಚಿತ ಪ್ರದೇಶದ ಆಸ್ತಿ*' },
+  { value: '11A-7',  label: '11A KIADB/KSSIDC Industrial Design Approved Property*',                                                                                                                                                                                                                                                      labelKn: '11A ಕೆಐಎಡಿಬಿ/ಕೆಎಎಸ್‌ಐಡಿಸಿ ಕೈಗಾರಿಕಾ ವಿನ್ಯಾಸ ಅನುಮೋದಿತ ಆಸ್ತಿ*' },
+  { value: '11A-8',  label: '11A From 16.11.1992 to 14-06-2013 Gram Panchayat permission letter/approved building plan, building constructed land converted property',                                                                                                                                                                     labelKn: '11A ದಿನಾಂಕ:16.11.1992 ರಿಂದ ದಿನಾಂಕ:14-06-2013 ರವರೆಗೆ ಗ್ರಾಮ ಪಂಚಾಯಿತಿ ಅನುಮತಿ ಪತ್ರ/ಅನುಮೋದಿತ ಕಟ್ಟಡ ನಕ್ಷೆಯ ಕಟ್ಟಡ ನಿರ್ಮಿತ ಭೂ ಪರಿವರ್ತಿತ ಆಸ್ತಿ' },
+  { value: '11A-9',  label: '11A Property sanctioned under Section 94C/94CC/94D of the Karnataka Land Revenue Act, 1964',                                                                                                                                                                                                                  labelKn: '11A ಕರ್ನಾಟಕ ಭೂ ಕಂದಾಯ ಕಾಯಿದೆ 1964ರ ಸೆಕ್ಷನ್ 94/94ರಡಿಯಲ್ಲಿ ಮಂಜೂರಾದ ಆಸ್ತಿ' },
+  { value: '11A-10', label: '11A Rehabilitation Scheme Property*',                                                                                                                                                                                                                                                                        labelKn: '11A ಪುನರ್ವಸತಿ ಯೋಜನೆಯ ಆಸ್ತಿ*' },
+  { value: '11A-11', label: '11A Podi as registered in partnership deed/Individual Family Property with Hissa Number (for Dakshina Kannada and Udupi District)*',                                                                                                                                                                         labelKn: '11A ಪಾಲುದಾರಿಕೆ ನೋಂದಾಯಿತ ಪತ್ರದಂತೆ ಪೋಡಿ/ಹಿಸ್ಸಾ ನಂಬರ್ ಪಡೆದ ವೈಯಕ್ತಿಕ ಕುಟುಂಬದ ಆಸ್ತಿ (ದಕ್ಷಿಣ ಕನ್ನಡ ಮತ್ತು ಉಡುಪಿ ಜಿಲ್ಲೆ)*' },
+  { value: '11A-12', label: '11A Approved Property Panchayat design outside the local planning area from 11.11.2014 to with Gram 10.01.2025.',                                                                                                                                                                                            labelKn: '11A ದಿನಾಂಕ: 11.11.2014 ರಿಂದ ದಿನಾಂಕ:10.01.2025ರವರೆಗೆ ಸ್ಥಳೀಯ ಯೋಜನಾ ಪ್ರದೇಶದ ಹೊರ ಭಾಗದಲ್ಲಿ ಗ್ರಾಮ ಪಂಚಾಯಿತಿ ಅನುಮೋದಿತ ಆಸ್ತಿ ವಿನ್ಯಾಸ*' },
+  { value: '11A-13', label: '11A Central Government/State Government/Local Bodies Site/Building',                                                                                                                                                                                                                                          labelKn: '11A ಕೇಂದ್ರ ಸರ್ಕಾರ/ರಾಜ್ಯಸರ್ಕಾರ/ಸ್ಥಳೀಯ ಸಂಸ್ಥೆಗಳ ನಿವೇಶನ/ಕಟ್ಟಡ' },
+  { value: '11A-14', label: '11A Property sanctioned under Section 3. 38(a) of the Karnataka Land Reforms Act, 1961',                                                                                                                                                                                                                     labelKn: '11A ಕರ್ನಾಟಕ ಭೂ-ಸುಧಾರಣಾ ಅಧಿನಿಯಮ 1961 ರ ಪ್ರಕರಣ 38ಎ ರಡಿಯಲ್ಲಿ ಮಂಜೂರಾದ ಆಸ್ತಿ' },
+  { value: '11A-15', label: '11A Corporation/Board/Limited/Authority Site/Building*',                                                                                                                                                                                                                                                     labelKn: '11A ನಿಗಮ/ಮಂಡಳಿ/ನಿಯಮಿತ/ಪ್ರಾಧಿಕಾರ ದ ನಿವೇಶನ/ಕಟ್ಟಡ*' },
+  { value: '11B-1',  label: '11B Violating the provisions of the Model Building Bye-laws & Constructing Buildings on agricultural land or on converted land',                                                                                                                                                                              labelKn: '11B ಮಾದರಿ ಕಟ್ಟಡ ಉಪವಿಧಿಗಳ ಉಪಬಂಧಗಳನ್ನು ಉಲ್ಲಂಘಿಸಿ ಕೃಷಿ ಜಮೀನಿನಲ್ಲಿನ ಅಥವಾ ಭೂ-ಪರಿವರ್ತಿತ ಜಮೀನಿನಲ್ಲಿನ ಕಟ್ಟಡಗಳು' },
+  { value: '11B-2',  label: '11B Sites on converted/non-converted or agricultural land.',                                                                                                                                                                                                                                                 labelKn: '11B ಪರಿವರ್ತಿತ/ಪರಿವರ್ತನೆಯಿಲ್ಲದ ಅಥವಾ ಕೃಷಿ ಭೂಮಿಯಲ್ಲಿನ ನಿವೇಶನಗಳು.' },
+  { value: '11B-3',  label: '11B Buildings acquired in violation of the provisions of the Model Building Bye-laws or without obtaining occupancy or completion certificate in a layout approved by the competent authority.',                                                                                                               labelKn: '11B ಸಕ್ಷಮ ಪ್ರಾಧಿಕಾರದಿಂದ ವಿನ್ಯಾಸ ಅನುಮೋದಿತ ಬಡಾವಣೆಯಲ್ಲಿ ಮಾದರಿ ಕಟ್ಟಡ ಉಪವಿಧಿಗಳ ಉಪಬಂಧಗಳನ್ನು ಉಲ್ಲಂಘಿಸಿ ಅಥವಾ ಅಧಿಬೋಗ ಅಥವಾ ಪೂರ್ಣಗೊಳಿಸಿದ ಪ್ರಮಾಣ ಪತ್ರವನ್ನು ಪಡೆಯದೆ ಸ್ವಾಧೀನಪಡಿಸಿಕೊಂಡ ಕಟ್ಟಡಗಳು.' },
+  { value: '11B-4',  label: '11B Sites on revenue land/converted land without layout design approval, but with provision of basic amenities, parks, civic amenities, roads transferred free of cost to the Gram Panchayat under Section 17 of the Karnataka Town and Country Planning Act, 1961 through a surrender deed/transferred',  labelKn: '11B ಬಡಾವಣೆ ವಿನ್ಯಾಸ ಅನುಮೋದನೆಯಿಲ್ಲದ, ಆದರೆ ಮೂಲಭೂತ ಸೌಕರ್ಯಗಳನ್ನು ಒದಗಿಸಿ, ಕರ್ನಾಟಕ ನಗರ ಮತ್ತು ಗ್ರಾಮಾಂತರ ಯೋಜನಾ ಅಧಿನಿಯಮ, 1961 ರ ಪ್ರಕರಣ 17 ರನ್ವಯ ಗ್ರಾಮ ಪಂಚಾಯಿತಿಗೆ ವರ್ಗಾಯಿಸಿರುವ ಕಂದಾಯ ಭೂಮಿ/ಭೂ-ಪರಿವರ್ತಿತ ಜಮೀನಿನಲ್ಲಿನ ನಿವೇಶನಗಳು' },
+  { value: '11B-5',  label: '11B Converted Land/Assumed Converted land(Single Site)',                                                                                                                                                                                                                                                     labelKn: '11B ಭೂ-ಪರಿವರ್ತಿತ / ಭಾವಿತ ಭೂ-ಪರಿವರ್ತಿತ ಜಮೀನುಗಳು (ಏಕ ನಿವೇಶನ)' },
 ];
 
 /* ── Survey section mock data ───────────────────────────── */
@@ -59,69 +67,47 @@ const MOCK_RTC_OWNERS = [
 
 /* ── Section 4.2 dropdown options ──────────────────────── */
 const TYPE_OPTIONS = [
-  { value: 'site',      label: 'Site' },
-  { value: 'building',  label: 'Building' },
-  { value: 'converted', label: 'Land to be Converted' },
+  { value: 'site',      label: 'Site',                  labelKn: 'ನಿವೇಶನ' },
+  { value: 'building',  label: 'Building',              labelKn: 'ಕಟ್ಟಡ' },
+  { value: 'converted', label: 'Land to be Converted',  labelKn: 'ಪರಿವರ್ತನೆ ಮಾಡಬೇಕಾದ ಜಮೀನು' },
 ];
 
 const CATEGORY_OPTIONS = [
-  { value: 'residential',            label: 'Residential' },
-  { value: 'commercial',             label: 'Commercial' },
-  { value: 'parks',                  label: 'Parks' },
-  { value: 'roads',                  label: 'Roads' },
-  { value: 'civil-facilities',       label: 'Civil Facilities Area (CA Sites)' },
-  { value: 'industry',               label: 'Industry' },
-  { value: 'multi-ownership',        label: 'Multi-Ownership Building' },
-  { value: 'non-residential',        label: 'Non-residential' },
-  { value: 'agro-manufacturing',     label: 'An agro-based manufacturing unit' },
-  { value: 'res-commercial',         label: 'Residential and Commercial' },
-  { value: 'res-non-residential',    label: 'Residential and Non-Residential' },
-  { value: 'comm-non-residential',   label: 'Commercial and Non-Residential' },
-  { value: 'res-comm-non-res',       label: 'Residential, commercial and non-residential' },
-  { value: 'res-industrial',         label: 'Residential and Industrial' },
-  { value: 'comm-industry',          label: 'Commercial and Industry' },
-  { value: 'res-comm-industrial',    label: 'Residential, Commercial and Industrial' },
-  { value: 'apartment',              label: 'Apartment/ flat' },
-  { value: 'villament',              label: 'Villament' },
-  { value: 'tenement',               label: 'Tenement' },
-  { value: 'row-house',              label: 'Row House' },
-  { value: 'multi-storied',          label: 'Multi-storied building' },
-  { value: 'service-apartment',      label: 'Service apartment/ flat' },
-  { value: 'mall-multiplex',         label: 'Mall/Multiplex' },
-  { value: 'villa',                  label: 'Villa' },
-  { value: 'govt-property',          label: 'Central Government/State Government/Local Body Property' },
+  { value: 'residential',            label: 'Residential',                                            labelKn: 'ವಸತಿ' },
+  { value: 'commercial',             label: 'Commercial',                                             labelKn: 'ವಾಣಿಜ್ಯ' },
+  { value: 'parks',                  label: 'Parks',                                                  labelKn: 'ಉದ್ಯಾನವನ' },
+  { value: 'roads',                  label: 'Roads',                                                  labelKn: 'ರಸ್ತೆಗಳು' },
+  { value: 'civil-facilities',       label: 'Civil Facilities Area (CA Sites)',                       labelKn: 'ನಾಗರಿಕ ಸೌಕರ್ಯ ಪ್ರದೇಶ (CA ನಿವೇಶನಗಳು)' },
+  { value: 'industry',               label: 'Industry',                                               labelKn: 'ಕೈಗಾರಿಕೆ' },
+  { value: 'multi-ownership',        label: 'Multi-Ownership Building',                               labelKn: 'ಬಹು-ಮಾಲೀಕತ್ವ ಕಟ್ಟಡ' },
+  { value: 'non-residential',        label: 'Non-residential',                                        labelKn: 'ವಾಣಿಜ್ಯೇತರ' },
+  { value: 'agro-manufacturing',     label: 'An agro-based manufacturing unit',                       labelKn: 'ಕೃಷಿ ಆಧಾರಿತ ಉತ್ಪಾದನಾ ಘಟಕ' },
+  { value: 'res-commercial',         label: 'Residential and Commercial',                             labelKn: 'ವಸತಿ ಮತ್ತು ವಾಣಿಜ್ಯ' },
+  { value: 'res-non-residential',    label: 'Residential and Non-Residential',                        labelKn: 'ವಸತಿ ಮತ್ತು ವಾಣಿಜ್ಯೇತರ' },
+  { value: 'comm-non-residential',   label: 'Commercial and Non-Residential',                         labelKn: 'ವಾಣಿಜ್ಯ ಮತ್ತು ವಾಣಿಜ್ಯೇತರ' },
+  { value: 'res-comm-non-res',       label: 'Residential, commercial and non-residential',            labelKn: 'ವಸತಿ, ವಾಣಿಜ್ಯ ಮತ್ತು ವಾಣಿಜ್ಯೇತರ' },
+  { value: 'res-industrial',         label: 'Residential and Industrial',                             labelKn: 'ವಸತಿ ಮತ್ತು ಕೈಗಾರಿಕಾ' },
+  { value: 'comm-industry',          label: 'Commercial and Industry',                                labelKn: 'ವಾಣಿಜ್ಯ ಮತ್ತು ಕೈಗಾರಿಕಾ' },
+  { value: 'res-comm-industrial',    label: 'Residential, Commercial and Industrial',                 labelKn: 'ವಸತಿ, ವಾಣಿಜ್ಯ ಮತ್ತು ಕೈಗಾರಿಕಾ' },
+  { value: 'apartment',              label: 'Apartment/ flat',                                        labelKn: 'ಅಪಾರ್ಟ್‌ಮೆಂಟ್/ಫ್ಲ್ಯಾಟ್' },
+  { value: 'villament',              label: 'Villament',                                              labelKn: 'ವಿಲ್ಲಾಮೆಂಟ್' },
+  { value: 'tenement',               label: 'Tenement',                                               labelKn: 'ಟೆನಮೆಂಟ್' },
+  { value: 'row-house',              label: 'Row House',                                              labelKn: 'ರೋ ಹೌಸ್' },
+  { value: 'multi-storied',          label: 'Multi-storied building',                                 labelKn: 'ಬಹು ಮಹಡಿ ಕಟ್ಟಡ' },
+  { value: 'service-apartment',      label: 'Service apartment/ flat',                                labelKn: 'ಸರ್ವಿಸ್ ಅಪಾರ್ಟ್‌ಮೆಂಟ್/ಫ್ಲ್ಯಾಟ್' },
+  { value: 'mall-multiplex',         label: 'Mall/Multiplex',                                         labelKn: 'ಮಾಲ್/ಮಲ್ಟಿಪ್ಲೆಕ್ಸ್' },
+  { value: 'villa',                  label: 'Villa',                                                  labelKn: 'ವಿಲ್ಲಾ' },
+  { value: 'govt-property',          label: 'Central Government/State Government/Local Body Property', labelKn: 'ಕೇಂದ್ರ ಸರ್ಕಾರ/ರಾಜ್ಯ ಸರ್ಕಾರ/ಸ್ಥಳೀಯ ಸಂಸ್ಥೆ ಆಸ್ತಿ' },
 ];
 
 const CORNER_SITE_OPTIONS = [
-  { value: 'yes', label: 'Yes' },
-  { value: 'no',  label: 'No' },
+  { value: 'yes', label: 'Yes', labelKn: 'ಹೌದು' },
+  { value: 'no',  label: 'No',  labelKn: 'ಇಲ್ಲ' },
 ];
 
-/* ── Section 4.3 — Rebate dropdown options ──────────────── */
-// Property type → rebate category mapping.
-// Full option lists to be filled in once user provides the mapping table.
-const REBATE_PROPERTY_OPTIONS = [
-  { value: 'commercial-industrial', label: 'Commercial or industrial' },
-  // TODO: add remaining options from mapping table
-];
-
-const REBATE_CATEGORY_MAP = {
-  'commercial-industrial': [
-    { value: 'agro-industries', label: 'Agro- based industries' },
-    // TODO: add remaining categories for this type
-  ],
-  // TODO: add remaining property type → categories
-};
-
-// Documents required per rebate combination.
-// Key: `${rebatePropertyType}:${rebateCategory}`
-const REBATE_DOCS_MAP = {
-  'commercial-industrial:agro-industries': [
-    { name: 'Death certificate', required: 'COMPULSORY' },
-    { name: 'Will',              required: 'OPTIONAL'   },
-  ],
-  // TODO: fill in from user's mapping table
-};
+/* ── Section 4.3 — Rebate dropdown options (from rebatesData.js) ─── */
+// REBATE_PROPERTY_TYPE_OPTIONS, REBATE_CATEGORY_BY_TYPE, REBATE_DOCS_BY_DETAIL
+// are imported above from rebatesData.js
 
 /* General building categories — use the Building Area Details + storeys flow */
 const GENERAL_BUILDING_CATEGORIES = new Set([
@@ -154,8 +140,20 @@ const PropertyClassificationPage = ({
   completionResetKey = 0,
   step1Village = '',
   step0Classification = '',
+  onResetDownstream,
 }) => {
   const [isPageComplete, setIsPageComplete] = useState(false);
+
+  const { t, lang } = useTranslation('step4');
+
+  /* Lang-aware option arrays */
+  const classificationOptions = CLASSIFICATION_OPTIONS.map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
+  const typeOptions     = TYPE_OPTIONS.map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
+  const categoryOptions = CATEGORY_OPTIONS.map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
+  const cornerOptions   = CORNER_SITE_OPTIONS.map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
+  const rebateTypeOptions = REBATE_PROPERTY_TYPE_OPTIONS.map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
+  const rebateCategoryOptions = (type) =>
+    (REBATE_CATEGORY_BY_TYPE[type] || []).map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
 
   /* ── 4.1 — Survey section state (hoisted before useEffects) ─ */
   const [villageVal, setVillageVal]         = useState('');
@@ -164,6 +162,7 @@ const PropertyClassificationPage = ({
   const [surnocHissa, setSurnocHissa]       = useState('');
   const [surnocOptions, setSurnocOptions]   = useState([]);
   const [surnocLoading, setSurnocLoading]   = useState(false);
+  const [manualHissa, setManualHissa]       = useState('');
 
   useEffect(() => {
     if (completionResetKey > 0) setIsPageComplete(false);
@@ -181,11 +180,11 @@ const PropertyClassificationPage = ({
     setSurnocHissa('');
     const timer = setTimeout(() => {
       setSurnocOptions([
-        { value: '1/A', label: '1/A' },
-        { value: '1/B', label: '1/B' },
-        { value: '2',   label: '2'   },
-        { value: '2/A', label: '2/A' },
-        { value: '3',   label: '3'   },
+        { value: '/A',  label: '/A'  },
+        { value: '/B',  label: '/B'  },
+        { value: '/2',  label: '/2'  },
+        { value: '/4',  label: '/4'  },
+        { value: '/5',  label: '/5'  },
       ]);
       setSurnocLoading(false);
     }, 1200);
@@ -205,6 +204,7 @@ const PropertyClassificationPage = ({
   /* ── 4.1 — Doc uploads ──────────────────────────────────── */
   const [docUploads, setDocUploads] = useState({});
   const [viewFileDocIdx, setViewFileDocIdx] = useState(null);
+  const [extraOtherDocs, setExtraOtherDocs] = useState([]);
 
   /* ── 4.1 — Survey section state (continued) ─────────────── */
   const [selectedOwners, setSelectedOwners] = useState(new Set());
@@ -257,6 +257,16 @@ const PropertyClassificationPage = ({
   /* ── Section 4.1 edit warning ────────────────────────────── */
   const [showWarn41, setShowWarn41] = useState(false);
 
+  /* ── Classification dropdown change warning ──────────────── */
+  const [showClassWarn, setShowClassWarn]               = useState(false);
+  const [pendingClassification, setPendingClassification] = useState('');
+
+  /* ── Property Type / Category change warnings ────────────── */
+  const [showTypeWarn, setShowTypeWarn]       = useState(false);
+  const [pendingType, setPendingType]         = useState('');
+  const [showCategoryWarn, setShowCategoryWarn] = useState(false);
+  const [pendingCategory, setPendingCategory] = useState('');
+
   /* ── Derived ─────────────────────────────────────────────── */
   const node           = nodes[currentId];
   const isResult       = node?.type === 'result';
@@ -269,6 +279,19 @@ const PropertyClassificationPage = ({
     ? Object.values(CLASSIFICATION_DATA).flat().find(c => c.id === classification)
     : null;
   const currentDocs = classificationEntry ? classificationEntry.documents : [];
+
+  /* True when the current classification has an "Other Documents" row */
+  const hasOtherDocs = currentDocs.some(d => d.name.includes('Other Documents'));
+
+  /* Add-row button enabled only when there are no extra rows yet, or the last extra row is fully filled */
+  const lastExtraRow = extraOtherDocs[extraOtherDocs.length - 1];
+  const canAddExtraRow = !lastExtraRow || (
+    !!lastExtraRow.name.trim() &&
+    !!lastExtraRow.date &&
+    !!lastExtraRow.docNo.trim() &&
+    lastExtraRow.uploadStatus === 'success'
+  );
+
   const allMandatoryUploaded =
     !!classification &&
     (currentDocs.length === 0 ||
@@ -279,14 +302,25 @@ const PropertyClassificationPage = ({
   /* Grama Thana (11A-1) skips survey entirely */
   const isGramaThana = classification === '11A-1';
 
+  /* Survey 99 → Bhoomi not fetched, manual entry */
+  const isNoRTCFetch = surveySearched && surveyVal.trim() === '99';
+
   /* survey section visible only once docs complete AND not Grama Thana */
   const surveyVisible = allMandatoryUploaded && !isGramaThana;
 
   /* ── Classification change ───────────────────────────────── */
   const handleClassificationChange = (e) => {
-    setClassification(e.target.value);
-    setDocUploads({});
-    resetSurvey();
+    const newVal = e.target.value;
+    const hasData = Object.keys(docUploads).length > 0 || surveySearched || s41FinalDone;
+    if (hasData) {
+      setPendingClassification(newVal);
+      setShowClassWarn(true);
+    } else {
+      setClassification(newVal);
+      setDocUploads({});
+      setExtraOtherDocs([]);
+      resetSurvey();
+    }
   };
 
   const resetSurvey = () => {
@@ -328,26 +362,59 @@ const PropertyClassificationPage = ({
     });
   };
 
+  /* ── Extra "Other Documents" row handlers ────────────────── */
+  const handleExtraOtherDocChange = (idx, field, value) => {
+    setExtraOtherDocs(prev => prev.map((d, i) => i === idx ? { ...d, [field]: value } : d));
+  };
+
+  const handleExtraOtherDocUpload = (idx) => {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = '.pdf';
+    input.onchange = (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const status = file.size > 5 * 1024 * 1024 ? 'error' : 'success';
+      setExtraOtherDocs(prev => prev.map((d, i) => i === idx ? { ...d, fileName: file.name, uploadStatus: status } : d));
+    };
+    input.click();
+  };
+
+  const handleExtraOtherDocRemoveFile = (idx) => {
+    setExtraOtherDocs(prev => prev.map((d, i) => i === idx ? { ...d, fileName: null, uploadStatus: null } : d));
+  };
+
   /* ── 4.3 rebate doc upload handlers ─────────────────────── */
   const handleRebateDocUpload = (docIdx, file) => {
-    if (file.size > 5 * 1024 * 1024) {
-      setRebateDocs((prev) => ({ ...prev, [docIdx]: { fileName: file.name, uploadStatus: 'error' } }));
-    } else {
-      setRebateDocs((prev) => ({ ...prev, [docIdx]: { fileName: file.name, uploadStatus: 'success' } }));
-    }
+    const status = file.size > 5 * 1024 * 1024 ? 'error' : 'success';
+    setRebateDocs((prev) => ({ ...prev, [docIdx]: { ...prev[docIdx], fileName: file.name, uploadStatus: status } }));
   };
 
   const handleRebateDocRemove = (docIdx) => {
-    setRebateDocs((prev) => {
-      const next = { ...prev };
-      if (next[docIdx]) next[docIdx] = { fileName: null, uploadStatus: null };
-      return next;
-    });
+    setRebateDocs((prev) => ({
+      ...prev,
+      [docIdx]: { ...prev[docIdx], fileName: null, uploadStatus: null },
+    }));
+  };
+
+  const handleRebateDocFieldChange = (docIdx, field, value) => {
+    setRebateDocs((prev) => ({ ...prev, [docIdx]: { ...prev[docIdx], [field]: value } }));
   };
 
   /* ── Survey handlers ─────────────────────────────────────── */
   const handleSurveySearch = () => {
     if (villageVal && surveyVal) setSurveySearched(true);
+  };
+
+  const handleClearSurvey = () => {
+    setSurveySearched(false);
+    setSurnocHissa('');
+    setSurnocOptions([]);
+    setSurnocLoading(false);
+    setRtcFetchLocked(false);
+    setRtcTableVisible(false);
+    setRtcOwnersAnswer(null);
+    setSelectedOwners(new Set());
+    setManualHissa('');
   };
 
   const handleFetchRTC = () => {
@@ -362,6 +429,7 @@ const PropertyClassificationPage = ({
     setS41FinalDone(false);
     setSurnocHissa('');
     setSelectedOwners(new Set());
+    setManualHissa('');
   };
 
   const handleS41FinalSave = () => {
@@ -405,15 +473,14 @@ const PropertyClassificationPage = ({
   const s42Done = tenantSaved || generalBuildingSaved || s42SavedNonApt;
 
   /* ── 4.3 derived state ───────────────────────────────────── */
-  const currentRebateDocs =
-    rebatePropertyType && rebateCategory
-      ? (REBATE_DOCS_MAP[`${rebatePropertyType}:${rebateCategory}`] || [])
-      : [];
+  const currentRebateDocs = rebateCategory ? (REBATE_DOCS_BY_DETAIL[rebateCategory] || []) : [];
   const allRebateMandatoryUploaded =
     currentRebateDocs.length === 0 ||
-    currentRebateDocs.every((doc, i) =>
-      doc.required === 'OPTIONAL' || rebateDocs[i]?.uploadStatus === 'success'
-    );
+    currentRebateDocs.every((doc, i) => {
+      if (doc.required === 'OPTIONAL') return true;
+      const d = rebateDocs[i];
+      return d?.uploadStatus === 'success' && !!d?.docNo?.trim() && !!d?.issuedDate;
+    });
   const s43Done =
     availing === 'no' ||
     (availing === 'yes' && !!rebatePropertyType && !!rebateCategory && allRebateMandatoryUploaded);
@@ -486,9 +553,11 @@ const PropertyClassificationPage = ({
     <div className="pc-page">
       <NavigationBar variant="postLogin" username={username} onNavigate={onNavigate} onLogout={() => onNavigate?.('login')} />
 
+      <Stepper steps={bcStepNames} activeStep={currentBCStep} completedBCSteps={completedBCSteps} onStepClick={onBCStepClick} />
+
       <StepHeader
-        step="Step 4"
-        title="Property Classification"
+        step={t('step4_step_label')}
+        title={t('step4_title')}
         onBack={onBack}
         onNext={onNext}
         isBackEnabled={isBackEnabled}
@@ -498,32 +567,32 @@ const PropertyClassificationPage = ({
       <div className="pc-page__sections">
 
         {/* ═══ SECTION 4.1 ═══════════════════════════════════════ */}
-        <SectionBox number="4.1" title="Property Classification & Documents Upload" open className="pc-s41-box">
+        <SectionBox number="4.1" title={t('s41_title')} open className="pc-s41-box">
           <div className="pc-s41">
 
             {/* Find My Classification */}
             <div className="pc-s41__find-group">
               <InfoBox variant="outline">
-                If you are not sure, please use 'Find My Classification' to confirm your Property Classification
+                {t('s41_infobox1')}
               </InfoBox>
               <div className="pc-s41__find-btn-wrap">
-                <Button variant="primary" onClick={openModal}>Find My Classification</Button>
+                <Button variant="primary" onClick={openModal}>{t('s41_find_btn')}</Button>
               </div>
             </div>
 
             <InfoBox variant="outline">
-              If you are aware of your Property Classification, please proceed and choose it
+              {t('s41_infobox2')}
             </InfoBox>
 
             {/* Classification dropdown */}
             <div className="pc-s41__dropdown-section">
               <p className="pc-s41__dropdown-label">
-                Property Classification<span className="pc-s41__required"> *</span>
+                {t('s41_classification_label')}<span className="pc-s41__required"> *</span>
               </p>
               <div className="pc-s41__dropdown-wrap">
                 <Dropdown
-                  placeholder="Choose Property Classification"
-                  options={CLASSIFICATION_OPTIONS}
+                  placeholder={t('s41_classification_ph')}
+                  options={classificationOptions}
                   value={classification}
                   onChange={handleClassificationChange}
                 />
@@ -534,7 +603,7 @@ const PropertyClassificationPage = ({
             {classification && (
               <>
                 <p className="pc-s41__doc-instruction">
-                  Please upload the documents mentioned below according to your classification
+                  {t('s41_doc_instruction')}
                 </p>
 
                 {currentDocs.length > 0 ? (
@@ -542,12 +611,12 @@ const PropertyClassificationPage = ({
                     <table className="pc-doc-table">
                       <thead>
                         <tr className="pc-doc-table__header">
-                          <th className="pc-doc-table__th pc-doc-table__th--sl">Sl No.</th>
-                          <th className="pc-doc-table__th pc-doc-table__th--type">Document Type</th>
-                          <th className="pc-doc-table__th pc-doc-table__th--date">Document Registration Date</th>
-                          <th className="pc-doc-table__th pc-doc-table__th--no">Document No.</th>
-                          <th className="pc-doc-table__th pc-doc-table__th--upload">Upload Document</th>
-                          <th className="pc-doc-table__th pc-doc-table__th--view">View file</th>
+                          <th className="pc-doc-table__th pc-doc-table__th--sl">{t('s41_table_sl')}</th>
+                          <th className="pc-doc-table__th pc-doc-table__th--type">{t('s41_table_doc_type')}</th>
+                          <th className="pc-doc-table__th pc-doc-table__th--date">{t('s41_table_reg_date')}</th>
+                          <th className="pc-doc-table__th pc-doc-table__th--no">{t('s41_table_doc_no')}</th>
+                          <th className="pc-doc-table__th pc-doc-table__th--upload">{t('s41_table_upload')}</th>
+                          <th className="pc-doc-table__th pc-doc-table__th--view">{t('s41_table_view')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -557,7 +626,7 @@ const PropertyClassificationPage = ({
                             <tr key={i}>
                               <td className="pc-doc-table__td pc-doc-table__td--sl">{i + 1}</td>
                               <td className="pc-doc-table__td pc-doc-table__td--type">
-                                {doc.name}{doc.required === 'COMPULSORY' && <span className="pc-doc__required"> *</span>}
+                                {lang === 'kn' ? doc.nameKn : doc.name}{doc.required === 'COMPULSORY' && <span className="pc-doc__required"> *</span>}
                               </td>
                               <td className="pc-doc-table__td pc-doc-table__td--date">
                                 <DatePicker
@@ -567,7 +636,7 @@ const PropertyClassificationPage = ({
                               </td>
                               <td className="pc-doc-table__td pc-doc-table__td--no">
                                 <Input
-                                  placeholder="Enter doc no."
+                                  placeholder={t('s41_doc_no_ph')}
                                   value={d.docNo || ''}
                                   onChange={(e) => handleDocFieldChange(i, 'docNo', e.target.value)}
                                   inputType="alphanumeric-code"
@@ -583,16 +652,16 @@ const PropertyClassificationPage = ({
                                       </button>
                                     </div>
                                     {d.uploadStatus === 'success'
-                                      ? <CaptionMessage variant="success">Document uploaded successfully</CaptionMessage>
-                                      : <CaptionMessage variant="error">Document exceeds 5MB</CaptionMessage>
+                                      ? <CaptionMessage variant="success">{t('s41_upload_success')}</CaptionMessage>
+                                      : <CaptionMessage variant="error">{t('s41_upload_size_error')}</CaptionMessage>
                                     }
                                   </div>
                                 ) : (
                                   <div className="pc-doc__upload-cell">
                                     <Button variant="white" icon="upload_file" onClick={() => handleDocFileUpload(i)}>
-                                      Upload File
+                                      {t('s41_upload_file_btn')}
                                     </Button>
-                                    <CaptionMessage variant="info">Only PDF size up-to 5MB allowed</CaptionMessage>
+                                    <CaptionMessage variant="info">{t('s41_upload_info')}</CaptionMessage>
                                   </div>
                                 )}
                               </td>
@@ -609,11 +678,94 @@ const PropertyClassificationPage = ({
                             </tr>
                           );
                         })}
+
+                        {/* ── Extra "Other Documents" rows (editable name) ── */}
+                        {hasOtherDocs && extraOtherDocs.map((extra, i) => {
+                          const slNo = currentDocs.length + i + 1;
+                          return (
+                            <tr key={`extra-${i}`}>
+                              <td className="pc-doc-table__td pc-doc-table__td--sl">{slNo}</td>
+                              <td className="pc-doc-table__td pc-doc-table__td--type">
+                                <Input
+                                  placeholder={t('s41_doc_name_ph')}
+                                  value={extra.name}
+                                  onChange={(e) => handleExtraOtherDocChange(i, 'name', e.target.value)}
+                                  inputType="text"
+                                  disabled={s41FinalDone}
+                                />
+                              </td>
+                              <td className="pc-doc-table__td pc-doc-table__td--date">
+                                <DatePicker
+                                  value={extra.date || ''}
+                                  onChange={(e) => handleExtraOtherDocChange(i, 'date', e.target.value)}
+                                />
+                              </td>
+                              <td className="pc-doc-table__td pc-doc-table__td--no">
+                                <Input
+                                  placeholder={t('s41_doc_no_ph')}
+                                  value={extra.docNo}
+                                  onChange={(e) => handleExtraOtherDocChange(i, 'docNo', e.target.value)}
+                                  inputType="alphanumeric-code"
+                                  disabled={s41FinalDone}
+                                />
+                              </td>
+                              <td className="pc-doc-table__td pc-doc-table__td--upload">
+                                {extra.fileName ? (
+                                  <div className="pc-doc__upload-cell">
+                                    <div className="pc-doc__file-chip">
+                                      <span className="pc-doc__file-name">{extra.fileName}</span>
+                                      <button type="button" className="pc-doc__file-remove" onClick={() => handleExtraOtherDocRemoveFile(i)}>
+                                        <span className="material-icons-outlined">close</span>
+                                      </button>
+                                    </div>
+                                    {extra.uploadStatus === 'success'
+                                      ? <CaptionMessage variant="success">{t('s41_upload_success')}</CaptionMessage>
+                                      : <CaptionMessage variant="error">{t('s41_upload_size_error')}</CaptionMessage>
+                                    }
+                                  </div>
+                                ) : (
+                                  <div className="pc-doc__upload-cell">
+                                    <Button variant="white" icon="upload_file" onClick={() => handleExtraOtherDocUpload(i)}>
+                                      {t('s41_upload_file_btn')}
+                                    </Button>
+                                    <CaptionMessage variant="info">{t('s41_upload_info')}</CaptionMessage>
+                                  </div>
+                                )}
+                              </td>
+                              <td className="pc-doc-table__td pc-doc-table__td--view">
+                                <button
+                                  type="button"
+                                  className={`pc-view-icon ${extra.uploadStatus === 'success' ? 'pc-view-icon--active' : 'pc-view-icon--inactive'}`}
+                                  disabled={extra.uploadStatus !== 'success'}
+                                >
+                                  <span className="material-icons-outlined">visibility</span>
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
+
+                    {/* ── Add row button — only for classifications with "Other Documents" ── */}
+                    {hasOtherDocs && !s41FinalDone && (
+                      <div className="pc-doc-table__action">
+                        <button
+                          type="button"
+                          className="pc-doc__add-icon-btn"
+                          disabled={!canAddExtraRow}
+                          onClick={() => setExtraOtherDocs(prev => [
+                            ...prev,
+                            { name: '', date: '', docNo: '', fileName: null, uploadStatus: null },
+                          ])}
+                        >
+                          <span className="material-icons-outlined">add</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  <p className="pc-s41__no-docs">No additional documents required for this classification.</p>
+                  <p className="pc-s41__no-docs">{t('s41_no_docs')}</p>
                 )}
               </>
             )}
@@ -626,14 +778,14 @@ const PropertyClassificationPage = ({
                   disabled={s41FinalDone}
                   onClick={handleS41FinalSave}
                 >
-                  Save and Next
+                  {t('btn_save_next')}
                 </Button>
                 <Button
                   variant="error"
                   disabled={!s41FinalDone}
                   onClick={handleS41EditClick}
                 >
-                  Edit
+                  {t('btn_edit')}
                 </Button>
               </div>
             )}
@@ -642,13 +794,13 @@ const PropertyClassificationPage = ({
             {surveyVisible && (
               <div className="pc-s41__survey-section">
                 <div className="pc-s41__survey-divider" />
-                <p className="pc-s41__survey-heading">Survey Number Details</p>
+                <p className="pc-s41__survey-heading">{t('s41_survey_heading')}</p>
 
                 {/* Stage 1: Village + Survey + Search + Tooltip */}
                 <div className="pc-s42__village-and-search">
                   <div className="pc-s42__village-input">
                     <Input
-                      label="Village Name"
+                      label={t('s41_village_label')}
                       value={villageVal}
                       frozen
                     />
@@ -658,12 +810,15 @@ const PropertyClassificationPage = ({
                     <div className="pc-s42__survey-group">
                       <div className="pc-s42__survey-input-wrap">
                         <Input
-                          label="Survey Number"
+                          label={t('s41_survey_label')}
                           value={surveyVal}
                           onChange={(e) => setSurveyVal(e.target.value)}
-                          placeholder="Enter survey number"
+                          placeholder={t('s41_survey_ph')}
                           inputType="alphanumeric-code"
                           disabled={surveySearched}
+                          trailingIcon={surveySearched ? 'close' : undefined}
+                          onTrailingIconClick={surveySearched ? handleClearSurvey : undefined}
+                          trailingIconClassName="pd-s31__close-icon"
                         />
                       </div>
                       <Button
@@ -671,19 +826,19 @@ const PropertyClassificationPage = ({
                         disabled={surveySearched || !villageVal || !surveyVal}
                         onClick={handleSurveySearch}
                       >
-                        Search
+                        {t('btn_search')}
                       </Button>
                     </div>
                     <Tooltip
-                      label="Survey number can be found on your RTC / Pahani extract or the property registration document."
-                      caption="Click to view sample"
+                      label={t('s41_survey_tooltip')}
+                      caption={t('bd_tooltip_click')}
                       className="pc-s42__tooltip"
                     />
                   </div>
                 </div>
 
-                {/* Stage 2: Surnoc / Hissa + Fetch RTC Details */}
-                {surveySearched && (
+                {/* Stage 2a: Normal flow — Surnoc/Hissa dropdown + Fetch */}
+                {surveySearched && !isNoRTCFetch && (
                   <div className="pc-s42__surnoc-section">
                     <div className="pc-s42__surnoc-row">
                       <div className="pc-s42__surnoc-input-wrap">
@@ -691,19 +846,19 @@ const PropertyClassificationPage = ({
                           <ProgressCircle size="small" />
                         ) : (
                           <Dropdown
-                            label="Surnoc and Hissa No."
+                            label={t('s41_surnoc_label')}
                             required
                             options={surnocOptions}
                             value={surnocHissa}
                             onChange={(e) => setSurnocHissa(e.target.value)}
-                            placeholder="Select Surnoc and Hissa No."
+                            placeholder={t('s41_surnoc_ph')}
                             disabled={rtcFetchLocked}
                           />
                         )}
                       </div>
                       <Tooltip
-                        label="Surnoc and Hissa number can be found on your RTC / Pahani extract or property registration document."
-                        caption="Click to view sample"
+                        label={t('s41_surnoc_tooltip')}
+                        caption={t('bd_tooltip_click')}
                         className="pc-s42__surnoc-tooltip"
                       />
                     </div>
@@ -714,11 +869,42 @@ const PropertyClassificationPage = ({
                         disabled={rtcFetchLocked || !surnocHissa}
                         onClick={handleFetchRTC}
                       >
-                        Fetch RTC owner details
+                        {t('s41_fetch_rtc_btn')}
                       </Button>
                       <Button variant="error" disabled={!rtcFetchLocked} onClick={handleRTCEdit}>
-                        Edit
+                        {t('btn_edit')}
                       </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Stage 2b: No-fetch flow (survey 99) — InfoBox + manual Surnoc/Hissa */}
+                {isNoRTCFetch && (
+                  <div className="pc-s42__surnoc-section">
+                    <InfoBox variant="error">
+                      {t('s41_no_fetch_infobox')}
+                    </InfoBox>
+                    <div className="pc-s42__no-fetch-row">
+                      <div className="pc-s42__no-fetch-inputs">
+                        <div className="pc-s42__frozen-field">
+                          <Input label={t('s41_surnoc_no_label')} value="/" frozen />
+                        </div>
+                        <div className="pc-s42__hissa-input-wrap">
+                          <Input
+                            label={t('s41_hissa_no_label')}
+                            value={manualHissa}
+                            onChange={(e) => setManualHissa(e.target.value)}
+                            placeholder={t('s41_hissa_ph')}
+                            required
+                            disabled={s41FinalDone}
+                          />
+                        </div>
+                      </div>
+                      <Tooltip
+                        label={t('s41_manual_surnoc_tooltip')}
+                        caption={t('bd_tooltip_click')}
+                        className="pc-s42__surnoc-tooltip"
+                      />
                     </div>
                   </div>
                 )}
@@ -728,10 +914,13 @@ const PropertyClassificationPage = ({
                   <>
                     <div className="pc-s42__frozen-row">
                       <div className="pc-s42__frozen-field">
-                        <Input label="Survey No." value={surveyVal} frozen />
+                        <Input label={t('s41_survey_no_frozen_label')} value={surveyVal} frozen />
                       </div>
                       <div className="pc-s42__frozen-field">
-                        <Input label="Hissa No." value={surnocHissa} frozen />
+                        <Input label={t('s41_surnoc_no_label')} value="/" frozen />
+                      </div>
+                      <div className="pc-s42__frozen-field">
+                        <Input label={t('s41_hissa_no_label')} value={surnocHissa.replace('/', '')} frozen />
                       </div>
                     </div>
 
@@ -739,15 +928,15 @@ const PropertyClassificationPage = ({
                       <table className="pc-rtc-table">
                         <thead>
                           <tr className="pc-rtc-table__header">
-                            <th className="pc-rtc-table__th pc-rtc-table__th--cb">Select</th>
-                            <th className="pc-rtc-table__th pc-rtc-table__th--ownerNo">Owner No.</th>
-                            <th className="pc-rtc-table__th pc-rtc-table__th--mainOwnerNo">Main Owner No.</th>
-                            <th className="pc-rtc-table__th pc-rtc-table__th--ownerName">Owner Name</th>
-                            <th className="pc-rtc-table__th pc-rtc-table__th--fatherName">Father Name</th>
-                            <th className="pc-rtc-table__th pc-rtc-table__th--landCode">Land code</th>
-                            <th className="pc-rtc-table__th pc-rtc-table__th--acre">ext Acre</th>
-                            <th className="pc-rtc-table__th pc-rtc-table__th--gunta">ext Gunta</th>
-                            <th className="pc-rtc-table__th pc-rtc-table__th--fgunta">ext_fgunta</th>
+                            <th className="pc-rtc-table__th pc-rtc-table__th--cb">{t('s41_rtc_select')}</th>
+                            <th className="pc-rtc-table__th pc-rtc-table__th--ownerNo">{t('s41_rtc_owner_no')}</th>
+                            <th className="pc-rtc-table__th pc-rtc-table__th--mainOwnerNo">{t('s41_rtc_main_owner_no')}</th>
+                            <th className="pc-rtc-table__th pc-rtc-table__th--ownerName">{t('s41_rtc_owner_name')}</th>
+                            <th className="pc-rtc-table__th pc-rtc-table__th--fatherName">{t('s41_rtc_father_name')}</th>
+                            <th className="pc-rtc-table__th pc-rtc-table__th--landCode">{t('s41_rtc_land_code')}</th>
+                            <th className="pc-rtc-table__th pc-rtc-table__th--acre">{t('s41_rtc_acre')}</th>
+                            <th className="pc-rtc-table__th pc-rtc-table__th--gunta">{t('s41_rtc_gunta')}</th>
+                            <th className="pc-rtc-table__th pc-rtc-table__th--fgunta">{t('s41_rtc_fgunta')}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -782,11 +971,11 @@ const PropertyClassificationPage = ({
 
                     <div className="pc-s42__radio-group">
                       <p className="pc-s42__radio-question">
-                        Does the RTC owner fetched from Bhoomi match the property owner?
+                        {t('s41_rtc_question')}
                       </p>
                       <div className="pc-s42__radio-row">
                         <RadioButton
-                          label="Yes"
+                          label={t('btn_yes')}
                           name="rtc-owners"
                           value="yes"
                           checked={rtcOwnersAnswer === 'yes'}
@@ -794,7 +983,7 @@ const PropertyClassificationPage = ({
                           disabled={s41FinalDone}
                         />
                         <RadioButton
-                          label="No"
+                          label={t('btn_no')}
                           name="rtc-owners"
                           value="no"
                           checked={rtcOwnersAnswer === 'no'}
@@ -806,22 +995,42 @@ const PropertyClassificationPage = ({
                   </>
                 )}
 
-                {/* ── Single Save and Next for all of 4.1 ── */}
-                {rtcTableVisible && (
+                {/* ── Save and Next: normal RTC flow ── */}
+                {rtcTableVisible && !isNoRTCFetch && (
                   <div className="pc-s42__actions">
                     <Button
                       variant="primary"
                       disabled={s41FinalDone || !rtcOwnersAnswer}
                       onClick={handleS41FinalSave}
                     >
-                      Save and Next
+                      {t('btn_save_next')}
                     </Button>
                     <Button
                       variant="error"
                       disabled={!s41FinalDone}
                       onClick={handleS41EditClick}
                     >
-                      Edit
+                      {t('btn_edit')}
+                    </Button>
+                  </div>
+                )}
+
+                {/* ── Save and Next: no-fetch flow ── */}
+                {isNoRTCFetch && manualHissa.trim() !== '' && (
+                  <div className="pc-s42__actions">
+                    <Button
+                      variant="primary"
+                      disabled={s41FinalDone}
+                      onClick={handleS41FinalSave}
+                    >
+                      {t('btn_save_next')}
+                    </Button>
+                    <Button
+                      variant="error"
+                      disabled={!s41FinalDone}
+                      onClick={handleS41EditClick}
+                    >
+                      {t('btn_edit')}
                     </Button>
                   </div>
                 )}
@@ -832,7 +1041,7 @@ const PropertyClassificationPage = ({
         </SectionBox>
 
         {/* ═══ SECTION 4.2 ═══════════════════════════════════════ */}
-        <SectionBox number="4.2" title="Property Type and Category Details" open={s41FinalDone} className="pc-s42-box">
+        <SectionBox number="4.2" title={t('s42_title')} open={s41FinalDone} className="pc-s42-box">
           {s41FinalDone && (
             <div className="pc-s42__body">
 
@@ -840,41 +1049,57 @@ const PropertyClassificationPage = ({
               <div className="pc-s42__dropdowns-row">
                 <div className="pc-s42__dropdown-item">
                   <Dropdown
-                    label="Property Type"
-                    placeholder="Select"
-                    options={TYPE_OPTIONS}
+                    label={t('s42_prop_type_label')}
+                    placeholder={t('s42_prop_type_ph')}
+                    options={typeOptions}
                     value={propertyType}
                     onChange={(e) => {
-                      setPropertyType(e.target.value);
-                      setAreaSaved(false); setMultiStoreySaved(false); setParkingSaved(false);
-                      setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
-                      setS42SavedNonApt(false); setGeneralBuildingSaved(false);
-                      setAvailing(null); setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
+                      const newVal = e.target.value;
+                      const hasS42Data = areaSaved || multiStoreySaved || parkingSaved || undividedSaved
+                        || escomSaved || tenantSaved || s42SavedNonApt || generalBuildingSaved;
+                      if (hasS42Data) {
+                        setPendingType(newVal);
+                        setShowTypeWarn(true);
+                      } else {
+                        setPropertyType(newVal);
+                        setAreaSaved(false); setMultiStoreySaved(false); setParkingSaved(false);
+                        setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
+                        setS42SavedNonApt(false); setGeneralBuildingSaved(false);
+                        setAvailing(null); setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
+                      }
                     }}
                     required
                   />
                 </div>
                 <div className="pc-s42__dropdown-item">
                   <Dropdown
-                    label="Property Category"
-                    placeholder="Select"
-                    options={CATEGORY_OPTIONS}
+                    label={t('s42_prop_cat_label')}
+                    placeholder={t('s42_prop_cat_ph')}
+                    options={categoryOptions}
                     value={propertyCategory}
                     onChange={(e) => {
-                      setPropertyCategory(e.target.value);
-                      setAreaSaved(false); setMultiStoreySaved(false); setParkingSaved(false);
-                      setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
-                      setS42SavedNonApt(false); setGeneralBuildingSaved(false);
-                      setAvailing(null); setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
+                      const newVal = e.target.value;
+                      const hasS42Data = areaSaved || multiStoreySaved || parkingSaved || undividedSaved
+                        || escomSaved || tenantSaved || s42SavedNonApt || generalBuildingSaved;
+                      if (hasS42Data) {
+                        setPendingCategory(newVal);
+                        setShowCategoryWarn(true);
+                      } else {
+                        setPropertyCategory(newVal);
+                        setAreaSaved(false); setMultiStoreySaved(false); setParkingSaved(false);
+                        setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
+                        setS42SavedNonApt(false); setGeneralBuildingSaved(false);
+                        setAvailing(null); setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
+                      }
                     }}
                     required
                   />
                 </div>
                 <div className="pc-s42__dropdown-item">
                   <Dropdown
-                    label="Is it a corner site"
-                    placeholder="Choose Yes/No"
-                    options={CORNER_SITE_OPTIONS}
+                    label={t('s42_corner_label')}
+                    placeholder={t('s42_corner_ph')}
+                    options={cornerOptions}
                     value={isCornerSite}
                     onChange={(e) => {
                       setIsCornerSite(e.target.value);
@@ -890,7 +1115,7 @@ const PropertyClassificationPage = ({
               {isGeneralBuildingFlow && (
                 <>
                   <InfoBox variant="blue">
-                    Please keep sale deed document ready for entering the correct Building Details.
+                    {t('s42_sale_deed_infobox')}
                   </InfoBox>
                   <BuildingDetails_GeneralFlow
                     onSave={() => setGeneralBuildingSaved(true)}
@@ -903,12 +1128,12 @@ const PropertyClassificationPage = ({
               {showBuildingApartmentFlow && (
                 <>
                   <InfoBox variant="blue">
-                    Please keep sale deed document ready for entering the correct Building Details.
+                    {t('s42_sale_deed_infobox')}
                   </InfoBox>
 
                   {/* Building Area Details */}
                   <div ref={areaRef} className="pc-s42__section">
-                    <p className="pc-s42__section-title">Building Area Details</p>
+                    <p className="pc-s42__section-title">{t('s42_building_area_title')}</p>
                     <BuildingDetails_AreaDetails
                       onSave={(data) => { setAreaData(data); setAreaSaved(true); }}
                       onEdit={handleAreaEdit}
@@ -919,9 +1144,8 @@ const PropertyClassificationPage = ({
                   <div className="pc-s42__divider" />
                   {areaSaved ? (
                     <div ref={multiRef} className="pc-s42__section">
-                      <p className="pc-s42__section-title">Details of Usage of Multi-Storey Flat</p>
+                      <p className="pc-s42__section-title">{t('s42_multi_storey_title')}</p>
                       <BuildingDetails_MultiStoreyUsage
-                        superBuiltArea={areaData?.plinthArea ?? ''}
                         onChange={(filled) => {
                           setMultiStoreySaved(filled);
                           if (!filled) { setParkingSaved(false); setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false); }
@@ -929,14 +1153,14 @@ const PropertyClassificationPage = ({
                       />
                     </div>
                   ) : (
-                    <p className="pc-s42__placeholder-heading">Details of Usage of Multi-Storey Flat</p>
+                    <p className="pc-s42__placeholder-heading">{t('s42_multi_storey_title')}</p>
                   )}
 
                   {/* Parking Details */}
                   <div className="pc-s42__divider" />
                   {multiStoreySaved ? (
                     <div ref={parkingRef} className="pc-s42__section">
-                      <p className="pc-s42__section-title">Parking Details</p>
+                      <p className="pc-s42__section-title">{t('s42_parking_title')}</p>
                       <BuildingDetails_ParkingDetails
                         onChange={(filled) => {
                           setParkingSaved(filled);
@@ -945,14 +1169,14 @@ const PropertyClassificationPage = ({
                       />
                     </div>
                   ) : (
-                    <p className="pc-s42__placeholder-heading">Parking Details</p>
+                    <p className="pc-s42__placeholder-heading">{t('s42_parking_title')}</p>
                   )}
 
                   {/* Undivided Land Details */}
                   <div className="pc-s42__divider" />
                   {parkingSaved ? (
                     <div ref={undividedRef} className="pc-s42__section">
-                      <p className="pc-s42__section-title">Undivided Land Details</p>
+                      <p className="pc-s42__section-title">{t('s42_undivided_title')}</p>
                       <BuildingDetails_UndividedLand
                         onChange={(filled) => {
                           setUndividedSaved(filled);
@@ -961,14 +1185,14 @@ const PropertyClassificationPage = ({
                       />
                     </div>
                   ) : (
-                    <p className="pc-s42__placeholder-heading">Undivided Land Details</p>
+                    <p className="pc-s42__placeholder-heading">{t('s42_undivided_title')}</p>
                   )}
 
                   {/* ESCOM Details */}
                   <div className="pc-s42__divider" />
                   {undividedSaved ? (
                     <div ref={escomRef} className="pc-s42__section">
-                      <p className="pc-s42__section-title">ESCOM Details</p>
+                      <p className="pc-s42__section-title">{t('s42_escom_title')}</p>
                       <BuildingDetails_ESCOMDetails
                         aboveComplete={true}
                         onSave={() => setEscomSaved(true)}
@@ -976,21 +1200,21 @@ const PropertyClassificationPage = ({
                       />
                     </div>
                   ) : (
-                    <p className="pc-s42__placeholder-heading">ESCOM Details</p>
+                    <p className="pc-s42__placeholder-heading">{t('s42_escom_title')}</p>
                   )}
 
                   {/* Tenant Details */}
                   <div className="pc-s42__divider" />
                   {escomSaved ? (
                     <div ref={tenantRef} className="pc-s42__section">
-                      <p className="pc-s42__section-title">Tenant Details</p>
+                      <p className="pc-s42__section-title">{t('s42_tenant_title')}</p>
                       <BuildingDetails_TenantDetails
                         onSave={() => setTenantSaved(true)}
                         onEdit={handleTenantEdit}
                       />
                     </div>
                   ) : (
-                    <p className="pc-s42__placeholder-heading">Tenant Details</p>
+                    <p className="pc-s42__placeholder-heading">{t('s42_tenant_title')}</p>
                   )}
                 </>
               )}
@@ -1003,7 +1227,7 @@ const PropertyClassificationPage = ({
                     disabled={s42SavedNonApt}
                     onClick={() => setS42SavedNonApt(true)}
                   >
-                    Save and Next
+                    {t('btn_save_next')}
                   </Button>
                   <Button
                     variant="error"
@@ -1014,7 +1238,7 @@ const PropertyClassificationPage = ({
                       setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
                     }}
                   >
-                    Edit
+                    {t('btn_edit')}
                   </Button>
                 </div>
               )}
@@ -1025,7 +1249,7 @@ const PropertyClassificationPage = ({
 
         {/* ═══ SECTION 4.3 — Avail Rebates ═══════════════════════ */}
         <div ref={s43Ref}>
-          <SectionBox number="4.3" title="Avail Rebates" open={s42Done}>
+          <SectionBox number="4.3" title={t('s43_title')} open={s42Done}>
             {s42Done && (
               <div className="pc-s43__body">
 
@@ -1033,19 +1257,19 @@ const PropertyClassificationPage = ({
                 <div className="pc-s43__info-box">
                   <span className="material-icons-outlined pc-s43__info-icon">info</span>
                   <p className="pc-s43__info-text">
-                    Click <span className="pc-s43__info-link">here</span> to know more about Rebates
+                    {t('s43_click_here')}
                   </p>
                 </div>
 
                 {/* Yes / No question */}
                 <div className="pc-s43__question-wrap">
                   <p className="pc-s43__question">
-                    Will you be availing any rebates for your property?<span className="pc-s43__required">*</span>
+                    {t('s43_question')}<span className="pc-s43__required">*</span>
                   </p>
                   <div className="pc-s43__radio-group">
                     <RadioButton
                       name="availing"
-                      label="Yes"
+                      label={t('btn_yes')}
                       value="yes"
                       checked={availing === 'yes'}
                       onChange={() => {
@@ -1055,7 +1279,7 @@ const PropertyClassificationPage = ({
                     />
                     <RadioButton
                       name="availing"
-                      label="No"
+                      label={t('btn_no')}
                       value="no"
                       checked={availing === 'no'}
                       onChange={() => {
@@ -1073,10 +1297,10 @@ const PropertyClassificationPage = ({
                     <div className="pc-s43__dropdowns-row">
                       <div className="pc-s43__dropdown-item">
                         <Dropdown
-                          label="Property type for availing rebates"
+                          label={t('rebates_category_label')}
                           required
-                          placeholder="Select"
-                          options={REBATE_PROPERTY_OPTIONS}
+                          placeholder={t('s43_cat_ph')}
+                          options={rebateTypeOptions}
                           value={rebatePropertyType}
                           onChange={(e) => {
                             setRebatePropertyType(e.target.value);
@@ -1087,16 +1311,16 @@ const PropertyClassificationPage = ({
                       </div>
                       <div className="pc-s43__dropdown-item">
                         <Dropdown
-                          label="Rebate Category"
+                          label={t('s43_cat_details_label')}
                           required
-                          placeholder="Select"
-                          options={rebatePropertyType ? (REBATE_CATEGORY_MAP[rebatePropertyType] || []) : []}
+                          placeholder={t('s43_cat_ph')}
+                          options={rebateCategoryOptions(rebatePropertyType)}
                           value={rebateCategory}
                           onChange={(e) => {
                             setRebateCategory(e.target.value);
                             setRebateDocs({});
                           }}
-                          disabled={!rebatePropertyType}
+                          readOnly={!rebatePropertyType}
                         />
                       </div>
                     </div>
@@ -1107,10 +1331,12 @@ const PropertyClassificationPage = ({
                         <table className="pc-doc-table pc-s43__table">
                           <thead>
                             <tr className="pc-doc-table__header">
-                              <th className="pc-doc-table__th pc-doc-table__th--sl">Sl No.</th>
-                              <th className="pc-doc-table__th pc-doc-table__th--type">Document Type</th>
-                              <th className="pc-doc-table__th pc-doc-table__th--upload">Upload Document</th>
-                              <th className="pc-doc-table__th pc-doc-table__th--view">View file</th>
+                              <th className="pc-doc-table__th pc-doc-table__th--sl">{t('s41_table_sl')}</th>
+                              <th className="pc-doc-table__th pc-doc-table__th--type">{t('s41_table_doc_type')}</th>
+                              <th className="pc-doc-table__th pc-doc-table__th--no">{t('s41_table_doc_no')}</th>
+                              <th className="pc-doc-table__th pc-doc-table__th--date">{t('s43_table_issued_date')}</th>
+                              <th className="pc-doc-table__th pc-doc-table__th--upload">{t('s41_table_upload')}</th>
+                              <th className="pc-doc-table__th pc-doc-table__th--view">{t('s41_table_view')}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1120,8 +1346,22 @@ const PropertyClassificationPage = ({
                                 <tr key={i}>
                                   <td className="pc-doc-table__td pc-doc-table__td--sl">{i + 1}</td>
                                   <td className="pc-doc-table__td pc-doc-table__td--type">
-                                    {doc.name}
+                                    {lang === 'kn' ? doc.nameKn : doc.name}
                                     {doc.required === 'COMPULSORY' && <span className="pc-doc__required"> *</span>}
+                                  </td>
+                                  <td className="pc-doc-table__td pc-doc-table__td--no">
+                                    <Input
+                                      placeholder={t('s41_doc_no_ph')}
+                                      value={d.docNo || ''}
+                                      onChange={(e) => handleRebateDocFieldChange(i, 'docNo', e.target.value)}
+                                      inputType="alphanumeric-code"
+                                    />
+                                  </td>
+                                  <td className="pc-doc-table__td pc-doc-table__td--date">
+                                    <DatePicker
+                                      value={d.issuedDate || ''}
+                                      onChange={(e) => handleRebateDocFieldChange(i, 'issuedDate', e.target.value)}
+                                    />
                                   </td>
                                   <td className="pc-doc-table__td pc-doc-table__td--upload">
                                     <FileUpload
@@ -1129,10 +1369,10 @@ const PropertyClassificationPage = ({
                                       uploadStatus={d.uploadStatus}
                                       caption={
                                         d.uploadStatus === 'success'
-                                          ? 'Document uploaded successfully'
+                                          ? t('s41_upload_success')
                                           : d.uploadStatus === 'error'
-                                          ? 'Document exceeds 5MB'
-                                          : 'Only PDF size up-to 5MB allowed'
+                                          ? t('s41_upload_size_error')
+                                          : t('s41_upload_info')
                                       }
                                       captionVariant={
                                         d.uploadStatus === 'success' ? 'success'
@@ -1158,6 +1398,17 @@ const PropertyClassificationPage = ({
                             })}
                           </tbody>
                         </table>
+
+                        {/* Eligibility caption — shown once all mandatory docs uploaded */}
+                        {allRebateMandatoryUploaded && REBATE_EXEMPTION_BY_DETAIL[rebateCategory] && (
+                          <div className="pc-s43__eligibility-caption">
+                            <CaptionMessage variant="success">
+                              {t('rebates_caption')
+                            .replace('{subCategory}', rebateCategoryOptions(rebatePropertyType).find(o => o.value === rebateCategory)?.label ?? rebateCategory)
+                            .replace('{amount}', REBATE_EXEMPTION_BY_DETAIL[rebateCategory])}
+                            </CaptionMessage>
+                          </div>
+                        )}
                       </div>
                     )}
                   </>
@@ -1176,7 +1427,7 @@ const PropertyClassificationPage = ({
               disabled={!allSaved}
               onClick={handleS42FinalSave}
             >
-              Save and Proceed
+              {t('btn_save_proceed')}
             </Button>
           </div>
         )}
@@ -1188,7 +1439,7 @@ const PropertyClassificationPage = ({
         <div className="pc-modal__backdrop" onClick={closeModal}>
           <div className="pc-modal" onClick={(e) => e.stopPropagation()}>
             <div className="pc-modal__header">
-              <p className="pc-modal__title">Find My Classification</p>
+              <p className="pc-modal__title">{t('modal_title')}</p>
               <div
                 role="button" tabIndex={0}
                 className="pc-modal__close"
@@ -1220,9 +1471,9 @@ const PropertyClassificationPage = ({
                   </div>
                   <div className="pc-modal__footer">
                     {history.length > 0 && (
-                      <Button variant="white" icon="arrow_back" onClick={handleBack}>Back</Button>
+                      <Button variant="white" icon="arrow_back" onClick={handleBack}>{t('btn_back')}</Button>
                     )}
-                    <Button variant="primary" disabled={selectedOption === null} onClick={handleNext}>Next</Button>
+                    <Button variant="primary" disabled={selectedOption === null} onClick={handleNext}>{t('btn_next')}</Button>
                   </div>
                 </>
               ) : (
@@ -1235,12 +1486,12 @@ const PropertyClassificationPage = ({
                     noDoc={node.noDoc}
                   />
                   <div className="pc-modal__result-nav">
-                    <Button variant="white" icon="arrow_back" onClick={handleBack}>Back</Button>
-                    <Button variant="white" icon="refresh" onClick={handleRestart}>Start Over</Button>
+                    <Button variant="white" icon="arrow_back" onClick={handleBack}>{t('btn_back')}</Button>
+                    <Button variant="white" icon="refresh" onClick={handleRestart}>{t('btn_start_over')}</Button>
                   </div>
                   <div className="pc-modal__confirm-row">
-                    <Button variant="primary" onClick={handleConfirmClassification}>Confirm my Classification</Button>
-                    <CaptionMessage variant="info">This will be used in your application</CaptionMessage>
+                    <Button variant="primary" onClick={handleConfirmClassification}>{t('modal_confirm')}</Button>
+                    <CaptionMessage variant="info">{t('modal_confirm_caption')}</CaptionMessage>
                   </div>
                 </>
               )}
@@ -1254,11 +1505,103 @@ const PropertyClassificationPage = ({
         <div className="pc-modal__backdrop" onClick={handleWarn41Cancel}>
           <div onClick={(e) => e.stopPropagation()}>
             <ErrorMessageCard
-              message="Editing the Property Classification will cause you to lose progress in the Property Classification and Documents Upload section. Are you sure you want to proceed?"
-              subMessage="Your previously entered data will remain, but you will need to re-save."
+              message={`${t('warn41_message')}${completedBCSteps.includes(4) ? t('warn41_ec_suffix') : ''}.`}
+              subMessage={t('warn41_submessage')}
               actions={[
-                { label: 'Yes, Edit', variant: 'primary', onClick: handleWarn41Confirm },
-                { label: 'Cancel',    variant: 'error',   onClick: handleWarn41Cancel  },
+                { label: t('warn_yes_edit'), onClick: () => { onResetDownstream?.(); handleWarn41Confirm(); } },
+                { label: t('btn_cancel'),    onClick: handleWarn41Cancel },
+              ]}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ════ CLASSIFICATION DROPDOWN CHANGE WARNING ════════════ */}
+      {showClassWarn && (
+        <div className="pc-modal__backdrop" onClick={() => { setShowClassWarn(false); setPendingClassification(''); }}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <ErrorMessageCard
+              message={`${t('warn_class_message')}${completedBCSteps.includes(4) ? t('warn_class_ec_suffix') : ''}.`}
+              subMessage={t('warn_class_submessage')}
+              actions={[
+                {
+                  label: t('warn_yes_change'),
+                  onClick: () => {
+                    onResetDownstream?.();
+                    setClassification(pendingClassification);
+                    setDocUploads({});
+                    setExtraOtherDocs([]);
+                    resetSurvey();
+                    setShowClassWarn(false);
+                    setPendingClassification('');
+                  },
+                },
+                {
+                  label: t('btn_cancel'),
+                  onClick: () => { setShowClassWarn(false); setPendingClassification(''); },
+                },
+              ]}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ════ PROPERTY TYPE CHANGE WARNING ══════════════════════ */}
+      {showTypeWarn && (
+        <div className="pc-modal__backdrop" onClick={() => { setShowTypeWarn(false); setPendingType(''); }}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <ErrorMessageCard
+              message={`${t('warn_type_message')}${completedBCSteps.includes(4) ? t('warn_type_ec_suffix') : ''}.`}
+              subMessage={t('warn_type_submessage')}
+              actions={[
+                {
+                  label: t('warn_yes_change'),
+                  onClick: () => {
+                    onResetDownstream?.();
+                    setPropertyType(pendingType);
+                    setAreaSaved(false); setMultiStoreySaved(false); setParkingSaved(false);
+                    setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
+                    setS42SavedNonApt(false); setGeneralBuildingSaved(false);
+                    setAvailing(null); setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
+                    setShowTypeWarn(false);
+                    setPendingType('');
+                  },
+                },
+                {
+                  label: t('btn_cancel'),
+                  onClick: () => { setShowTypeWarn(false); setPendingType(''); },
+                },
+              ]}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ════ PROPERTY CATEGORY CHANGE WARNING ══════════════════ */}
+      {showCategoryWarn && (
+        <div className="pc-modal__backdrop" onClick={() => { setShowCategoryWarn(false); setPendingCategory(''); }}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <ErrorMessageCard
+              message={`${t('warn_type_message')}${completedBCSteps.includes(4) ? t('warn_type_ec_suffix') : ''}.`}
+              subMessage={t('warn_type_submessage')}
+              actions={[
+                {
+                  label: t('warn_yes_change'),
+                  onClick: () => {
+                    onResetDownstream?.();
+                    setPropertyCategory(pendingCategory);
+                    setAreaSaved(false); setMultiStoreySaved(false); setParkingSaved(false);
+                    setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
+                    setS42SavedNonApt(false); setGeneralBuildingSaved(false);
+                    setAvailing(null); setRebatePropertyType(''); setRebateCategory(''); setRebateDocs({});
+                    setShowCategoryWarn(false);
+                    setPendingCategory('');
+                  },
+                },
+                {
+                  label: t('btn_cancel'),
+                  onClick: () => { setShowCategoryWarn(false); setPendingCategory(''); },
+                },
               ]}
             />
           </div>
@@ -1270,7 +1613,7 @@ const PropertyClassificationPage = ({
         <div className="pc-popup__overlay" onClick={() => setViewFileDocIdx(null)}>
           <div className="pc-viewfile-popup" onClick={(e) => e.stopPropagation()}>
             <div className="pc-popup__header">
-              <h2 className="pc-popup__title">View Document</h2>
+              <h2 className="pc-popup__title">{t('view_doc_title')}</h2>
               <button type="button" className="pc-popup__close" onClick={() => setViewFileDocIdx(null)}>
                 <span className="material-icons-outlined">close</span>
               </button>
@@ -1281,7 +1624,7 @@ const PropertyClassificationPage = ({
               </p>
               <div className="pc-viewfile-popup__preview">
                 <span className="material-icons-outlined pc-viewfile-popup__icon">picture_as_pdf</span>
-                <p>PDF preview not available in prototype</p>
+                <p>{t('view_doc_preview')}</p>
               </div>
             </div>
           </div>

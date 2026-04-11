@@ -10,6 +10,7 @@
   --primary:        #024C97;   /* brand blue — buttons, borders, active states */
   --primary-50:     #E6F2FF;   /* open section header background */
   --primary-100:    #CDE5FE;   /* table add-row button background */
+  --primary-200:    #B3D7FE;   /* hover state for primary-100 backgrounds */
   --primary-300:    #68B2FD;   /* focus ring glow */
 
   --text-dark:      #212121;   /* primary body text */

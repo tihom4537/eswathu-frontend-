@@ -13,6 +13,8 @@ Styles: CSS Modules per component + global tokens in `src/styles/tokens.css`
 
 ---
 
+DO NOT USE FIGMA MCP UNLESS A LINK TO FIGMA IS PROVIDED IN THE PROMPT.
+
 ## Component Substitution Rules
 When building any page or component from Figma designs, ALWAYS use these mappings.
 Never generate raw divs/inputs/buttons when the equivalent component exists.
@@ -45,7 +47,7 @@ Never generate raw divs/inputs/buttons when the equivalent component exists.
 | Inline definition (underlined term + hover)   | `<Tooltip variant="definition" />`                      |
 | Step page grey banner (step + title)          | `<StepHeader />`                                        |
 | Date picker field                             | `<DatePicker />` — ask user if not in src/components/  |
-| File upload / view file                       | `<ViewFile />` — ask user if not in src/components/    |
+| File upload / view file                       | `<FileUpload />` in `src/components/FileUpload/`       |
 
 ---
 
@@ -167,6 +169,7 @@ Exception: `align-items: flex-end` is acceptable when the field is `frozen` (cap
 - Heights should hug content by default — never set fixed `height` unless the design explicitly requires it
 - Buttons inside cards that need to stay at the bottom: use `margin-top: auto` on the button and `flex: 1` on the preceding content area
 - Translate Figma "Fill container" → `width: 100%`, "Hug contents" → no fixed dimension
+- `<FileUpload />` always fills its container (`width: 100%` on the wrapper and both button states). The uploaded state uses `justify-content: space-between` so the × button is always right-aligned and the filename truncates with ellipsis. Never constrain `FileUpload` with a fixed pixel width — let the parent column control the size.
 
 ---
 
@@ -186,6 +189,45 @@ These apply to EVERY page and component built. Never skip these.
 - Always use `<NavigationBar variant="homepage" />` on the HomePage and `<NavigationBar variant="post-login" />` on all post-login pages
 - Always use the appropriate `<Footer />` variant to match the navigation bar
 - Use `<Stepper />` consistently across all multi-step pages — keep the active state in sync with the current step
+
+### Stepper — Mandatory Placement Rule (NEVER skip)
+The `<Stepper />` component MUST appear on every step page (Steps 1–5) of the New Application flow. It sits between `<NavigationBar>` and `<StepHeader>` — always in this exact vertical order:
+
+```
+<NavigationBar ... />
+<Stepper activeStep={currentBCStep} completedBCSteps={completedBCSteps} />
+<StepHeader ... />
+```
+
+**Props — always pass both:**
+- `activeStep={currentBCStep}` — the bcIdx (0–4) of the page currently being viewed
+- `completedBCSteps={completedBCSteps}` — array of bcIdx values the user has already saved and proceeded from
+
+**Circle variant rules (automatically applied by the component):**
+- `upcoming` → white bg, 1px `--neutral-300` border, number `--neutral-600` (grey), label `--text-dark` fw=500
+- `active` → white bg, 2px transparent border (no visible outline), number `--text-dark` fw=500, label `--text-dark` fw=500 — distinguished from upcoming only by dark number colour
+- `completed` → solid `--success` (green) fill, no border, white ✓ check icon, label `--text-dark` fw=500
+
+**Connector line rules:**
+- `height: 1px`
+- Filled (green `--success`) when the step to its left is in `completedBCSteps`
+- Otherwise grey `--neutral-400` (#C6C6C6)
+
+**Label rules (Figma exact):**
+- `font-size: 22px`, `font-weight: 500`, `line-height: 28px`
+- Color: always `--text-dark` — same for all three states
+- Labels are NOT bold on the active step — only the circle appearance differentiates states
+
+**Layout rules:**
+- Each step renders as `[circle 32×32] [8px gap] [label]` in a horizontal row
+- Connector lines use `flex: 1` to fill available space between steps
+- Stepper outer padding: `30px 0` (top/bottom), inner constrained to `max-width: 1200px`
+
+**When adding a new step page, checklist:**
+1. Import: `import Stepper from '../../../components/Stepper/Stepper';`
+2. Ensure the page receives `currentBCStep` and `completedBCSteps` as props (passed via `navProps()` in App.jsx)
+3. Render `<Stepper activeStep={currentBCStep} completedBCSteps={completedBCSteps} />` immediately after `<NavigationBar>`
+4. Never omit or move the Stepper on any step page
 
 ### Stepper Navigation Arrows
 - Add back (←) and forward (→) arrow buttons between the pages listed in the stepper
@@ -339,6 +381,26 @@ When displaying read-only key-value data from Kaveri (or similar API responses),
 Every step page in the New Application flow must include the 
 PageNavigation component (src/components/PageNavigation/PageNavigation.jsx)
 
+### Two Navigation Methods — Both Must Work Identically
+Users can move between steps in two ways. Both must behave the same — same guards, same state preservation:
+1. **Arrow buttons** (back ← / forward →) in the StepHeader
+2. **Stepper step click** — clicking a completed or active step label/circle in the Stepper bar
+
+**Stepper click implementation:**
+- `<Stepper>` accepts an `onStepClick` prop; every step page must pass `onBCStepClick` to it:
+  ```jsx
+  <Stepper activeStep={currentBCStep} completedBCSteps={completedBCSteps} onStepClick={onBCStepClick} />
+  ```
+- Inside Stepper, clicking is only enabled for **completed** steps (`completedSet.has(i)` is true). Active and upcoming steps are not clickable.
+- `onBCStepClick(bcIdx)` is defined in App.jsx and calls `handleNavigate` with the route key for that BC step.
+
+### Which Steps Are Reachable
+| Step state | Arrow navigation | Stepper click |
+|---|---|---|
+| Completed (green ✓) | Always reachable via back arrow | Clickable |
+| Active / current | You are here | Not clickable (already here) |
+| Upcoming (not yet reached) | Reachable only once previous steps are done | NOT clickable |
+
 ### Back Arrow
 - Always enabled on all steps except Step 1
 - Navigates to previous step
@@ -360,9 +422,43 @@ PageNavigation component (src/components/PageNavigation/PageNavigation.jsx)
 - While editing, forward arrow disables
 - Back arrow always remains enabled
 
-### State Preservation
-- Never reset useState values on back/forward navigation
-- Pages always show exactly as the user left them
+### State Preservation — NEVER Break This
+- Never reset useState values when the user navigates between steps (back, forward, or stepper click)
+- Pages always show exactly as the user left them — all inputs, locks, and section states intact
+- The keep-alive mount pattern in App.jsx (display:none on inactive steps) is what makes this work — do not remove it
+
+### Warn Before Navigating When Edits Would Cause Data Loss
+Some edits in a step invalidate data in downstream steps. Whenever the user triggers one of these edits — **regardless of whether they used an arrow or the stepper** — show an `ErrorMessageCard` modal (with dark backdrop) before proceeding.
+
+**Complete warning trigger list — ALL of these must show a modal:**
+
+| # | Page / File | Trigger | Data lost | Message |
+|---|---|---|---|---|
+| 1 | SaleDeedDetailsPage — S1.1 Edit | Edit button in Section 1.1 (Location Details), after Kaveri fetch succeeded | Steps 2–5 completion flags reset | "Editing this field will reset your progress on Steps 2–5." |
+| 2 | OwnerEKYCPage — S2.1 Edit | Edit button in Section 2.1 (Owner Details) | ALL eKYC verifications, mismatch resolutions, and uploaded documents | "Editing Owner Details will erase all completed eKYC verifications. You will need to redo the KYC process for all owners." |
+| 3 | PropertyDetailsPage — S3.1 Edit | Edit button in Section 3.1 (Location Details) | All of Section 3.2 (area, site dims, checkbandi) and 3.3 review | "Editing Location Details will reset all your property boundary data — area, dimensions, and checkbandi." |
+| 4 | PropertyClassificationPage — Classification dropdown | Changing the classification dropdown when docs/survey data already exists | All uploaded documents, survey details, property type/category (all of 4.1 and 4.2) | "Changing the Property Classification will reset all uploaded documents and survey details, including property type information." |
+| 5 | PropertyClassificationPage — S4.1 Edit button | Edit button in Section 4.1 after survey/RTC is done | All of 4.1 (survey, RTC) and all of 4.2 and 4.3 | "Editing the Property Classification will cause you to lose progress in the Property Classification and Documents Upload section." |
+| 6 | PropertyClassificationPage — Property Type dropdown | Changing Property Type when Section 4.2 subsections have been saved | All saved 4.2 subsections (area, multi-storey, parking, ESCOM, tenant) + 4.3 rebates | "Changing the Property Type will reset all the building details you have filled in." |
+| 7 | PropertyClassificationPage — Property Category dropdown | Changing Property Category when Section 4.2 subsections have been saved | Same as above | "Changing the Property Category will reset all the building details you have filled in." |
+| 8 | ECStep — FINAL SAVE button | Clicking FINAL SAVE in Section 5.4 | Irreversible — no further edits possible | "Are you sure you want to FINAL SAVE? You cannot make any changes to the application once you final save." |
+
+**Implementation rule for each trigger:**
+- Only show the warning when there is actual data to lose (check the relevant state flags before opening the modal)
+- On "Cancel": close modal, restore dropdown/state to its previous value, nothing changes
+- On "Yes, [Action]": apply the change and reset the affected state variables
+- Always use `pc-modal__backdrop` (in PropertyClassificationPage) or the page's existing overlay class for the backdrop
+
+**Popup behaviour (all warning cases):**
+- "Yes, [Action]" → execute the action, reset affected completion flags, navigate
+- "Cancel" → close popup, stay exactly where the user was, nothing changes
+- Use `<ErrorMessageCard>` as a modal centered over a semi-transparent dark backdrop (`rgba(0,0,0,0.55)`)
+- The page behind must NOT shift or scroll when the modal opens or closes
+
+**When NO warning is needed:**
+- Navigating to a completed step to review it (no edits, just browsing)
+- Going back a step without clicking any Edit button
+- All other edits in Steps 2, 3 and non-critical sections of Step 4
 
 
 ## Input Field Validation Rules
@@ -406,6 +502,15 @@ When user edits from the Preview of Khata (Section 5.3):
 - "Yes, Edit" → navigate and reset relevant flags
 - "Cancel" → close popup, stay on preview, nothing changes
 - Use ErrorMessageCard as modal with backdrop
+
+## Within-Section Edit Cascade Rule
+When a user edits an earlier part within a section, all parts that come after it are silently cleared (no warning).
+
+- **No warning needed** — warnings are only for entire section removal or page navigation that would discard a later step's progress
+- Silently reset the state of every sub-part that follows the edited part
+- This applies to all flows: General Building (floor-wise → ESCOM → water → tenants), Apartment (area → multi-storey → parking → undivided → ESCOM → tenants), and any future flows
+- Implementation: the Edit handler for a sub-part must call the reset functions for every state variable belonging to all subsequent sub-parts
+- The unmount-on-conditional pattern (`{flag ? <Component/> : <placeholder/>}`) achieves this automatically for downstream components; for components that stay mounted (e.g. everything inside `{floorDetailsSaved && (...)}` in GeneralFlow), explicitly reset state in the edit handler
 
 ## Sequential Section Opening Rule
 This applies to EVERY page and EVERY step across the entire application.

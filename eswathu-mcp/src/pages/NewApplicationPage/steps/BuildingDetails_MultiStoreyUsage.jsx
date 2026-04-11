@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Input from '../../../components/Input/Input';
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import RadioButton from '../../../components/RadioButton/RadioButton';
+import { useTranslation } from '../../../i18n';
 import './BuildingDetails_MultiStoreyUsage.css';
 
 const YEAR_OPTIONS = Array.from({ length: 2026 - 1920 + 1 }, (_, i) => {
@@ -9,65 +10,60 @@ const YEAR_OPTIONS = Array.from({ length: 2026 - 1920 + 1 }, (_, i) => {
   return { value: String(year), label: String(year) };
 });
 
-const BuildingDetails_MultiStoreyUsage = ({ superBuiltArea = '', onChange }) => {
-  const [additionalArea, setAdditionalArea] = useState('');
-  const [blockName, setBlockName] = useState('');
-  const [flatNumber, setFlatNumber] = useState('');
-  const [year, setYear] = useState('');
-  const [flatType, setFlatType] = useState('');
-  const [basement, setBasement] = useState('');
-  const [floors, setFloors] = useState('');
-  const [floorNo, setFloorNo] = useState('');
+const BuildingDetails_MultiStoreyUsage = ({ onChange }) => {
+  const { t } = useTranslation('step4');
 
-  // Carpet area is auto-calculated as 70% of super built (= plinth) area
-  const carpetArea = superBuiltArea && !isNaN(parseFloat(superBuiltArea))
-    ? String(Math.round(parseFloat(superBuiltArea) * 0.7))
-    : '';
+  const [superBuiltArea, setSuperBuiltArea] = useState('');
+  const [carpetArea,      setCarpetArea]      = useState('');
+  const [additionalArea,  setAdditionalArea]  = useState('');
+  const [blockName,       setBlockName]       = useState('');
+  const [flatNumber,      setFlatNumber]      = useState('');
+  const [year,            setYear]            = useState('');
+  const [flatType,        setFlatType]        = useState('');
+  const [basement,        setBasement]        = useState('');
+  const [floors,          setFloors]          = useState('');
+  const [floorNo,         setFloorNo]         = useState('');
+
 
   useEffect(() => {
-    const base = !!(additionalArea.trim() && blockName.trim() && flatNumber.trim() && year && flatType);
+    const base = !!(superBuiltArea.trim() && blockName.trim() && flatNumber.trim() && year && flatType);
     const floorsDone =
       (flatType === 'single-floor' && !!floorNo.trim()) ||
       (flatType === 'multi-floor' && !!(basement.trim() && floors.trim()));
     onChange?.(base && floorsDone);
-  }, [additionalArea, blockName, flatNumber, year, flatType, floorNo, basement, floors]); // eslint-disable-line
+  }, [superBuiltArea, carpetArea, additionalArea, blockName, flatNumber, year, flatType, floorNo, basement, floors]); // eslint-disable-line
 
   return (
     <div className="bd-multi">
-      {/* Row 1: Super Built Area (frozen, pre-filled from Building Area Details) */}
-      <div className="bd-multi__row">
+      {/* Row 1: Super Built Area + Carpet Area + Additional Area */}
+      <div className="bd-multi__row bd-multi__row--3col">
         <Input
-          label="Super Built Area (in sq. metres)"
+          label={t('bd_super_built_area')}
           value={superBuiltArea}
-          frozen
-          className="bd-multi__input--single"
+          onChange={(e) => setSuperBuiltArea(e.target.value)}
+          placeholder="e.g. 1200"
+          inputType="numeric"
         />
-      </div>
-
-      {/* Row 2: Carpet Area (frozen, auto-calculated) + Additional Area */}
-      <div className="bd-multi__row">
         <Input
-          label="Carpet Area (Roughly 70 % of built-up area) (in sq. metres)"
-          required
+          label={t('bd_carpet_area')}
           value={carpetArea}
-          frozen
-          className="bd-multi__input--carpet"
+          onChange={(e) => setCarpetArea(e.target.value)}
+          placeholder="e.g. 840"
+          inputType="numeric"
         />
         <Input
-          label="Additional Area (in sq. metres)"
-          required
+          label={t('bd_additional_area')}
           value={additionalArea}
           onChange={(e) => setAdditionalArea(e.target.value)}
-          placeholder="e.g. 2450"
+          placeholder="e.g. 200"
           inputType="numeric"
-          className="bd-multi__input--add"
         />
       </div>
 
       {/* Row 3: Block Name + Flat Number + Year of Construction */}
       <div className="bd-multi__row">
         <Input
-          label="Block Name"
+          label={t('bd_block_name')}
           required
           value={blockName}
           onChange={(e) => setBlockName(e.target.value)}
@@ -75,39 +71,41 @@ const BuildingDetails_MultiStoreyUsage = ({ superBuiltArea = '', onChange }) => 
           className="bd-multi__input--block"
         />
         <Input
-          label="Flat Number"
+          label={t('bd_flat_number')}
           required
           value={flatNumber}
           onChange={(e) => setFlatNumber(e.target.value)}
           placeholder="e.g. 313"
-          inputType="numeric"
           className="bd-multi__input--flat"
         />
         <Dropdown
-          label="Year of Construction/ Usage Started"
+          label={t('bd_year_construction')}
           required
           options={YEAR_OPTIONS}
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          placeholder="Choose Year of Construction/ Usage Started"
+          placeholder="Select year"
           className="bd-multi__dropdown--year"
         />
       </div>
 
-      {/* Radio: Type of Flat */}
+      {/* Radio: Single floor or multi-floors */}
       <div className="bd-multi__flat-type">
-        <p className="bd-multi__flat-type-label">Choose the Type of Flat</p>
+        <p className="bd-multi__flat-type-label">
+          {t('bd_flat_floor_q')}
+          <span className="bd-multi__required"> *</span>
+        </p>
         <div className="bd-multi__flat-type-options">
           <RadioButton
             name="flatType"
-            label="Single Floor Flat"
+            label={t('bd_single_floor_flat')}
             value="single-floor"
             checked={flatType === 'single-floor'}
             onChange={() => { setFlatType('single-floor'); setBasement(''); setFloors(''); }}
           />
           <RadioButton
             name="flatType"
-            label="Single Flat on Multi-Floors"
+            label={t('bd_single_flat_multi_floors')}
             value="multi-floor"
             checked={flatType === 'multi-floor'}
             onChange={() => { setFlatType('multi-floor'); setFloorNo(''); }}
@@ -134,7 +132,7 @@ const BuildingDetails_MultiStoreyUsage = ({ superBuiltArea = '', onChange }) => 
       {flatType === 'multi-floor' && (
         <div className="bd-multi__floor-row">
           <Input
-            label="Basement"
+            label={t('bd_basement')}
             required
             value={basement}
             onChange={(e) => setBasement(e.target.value)}
@@ -144,14 +142,14 @@ const BuildingDetails_MultiStoreyUsage = ({ superBuiltArea = '', onChange }) => 
           />
           <span className="material-icons-outlined bd-multi__floor-icon">add</span>
           <Input
-            label="Ground"
+            label={t('bd_ground')}
             value="0"
             frozen
             className="bd-multi__floor-input"
           />
           <span className="material-icons-outlined bd-multi__floor-icon">add</span>
           <Input
-            label="Floors"
+            label={t('bd_floors')}
             required
             value={floors}
             onChange={(e) => setFloors(e.target.value)}

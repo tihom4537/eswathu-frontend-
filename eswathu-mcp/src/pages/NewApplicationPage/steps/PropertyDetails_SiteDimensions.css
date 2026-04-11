@@ -12,7 +12,7 @@
 .pd-sd__heading {
   font-family: var(--font-family);
   font-weight: 500;
-  font-size: 18px;
+  font-size: 22px;
   line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
@@ -30,8 +30,8 @@
 
 .pd-sd__label {
   font-family: var(--font-family);
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 400;
+  font-size: 20px;
   line-height: 1.5;
   color: var(--text-dark);
   margin: 0;
@@ -46,7 +46,7 @@
 .pd-sd__group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .pd-sd__radio-row {
@@ -60,7 +60,7 @@
 /* Outer row: fields (left, flex-1) + Tooltip (right, fixed) */
 .pd-sd__dims-section {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 100px;
 }
 
@@ -138,6 +138,11 @@
 .pd-sd__data-row .input-field {
   width: 100%;
   min-width: 0;
+}
+
+/* Input fields inside blue cards must have white backgrounds */
+.pd-sd__area-card--blue .input-field__box {
+  background: #ffffff;
 }
 
 /* ── Comparison result ────────────────────────────────── */

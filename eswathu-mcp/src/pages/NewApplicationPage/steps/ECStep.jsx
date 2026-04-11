@@ -1,24 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
 import StepHeader from '../../../components/StepHeader/StepHeader';
+import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import InfoBox from '../../../components/InfoBox/InfoBox';
-import Dropdown from '../../../components/Dropdown/Dropdown';
 import Input from '../../../components/Input/Input';
 import Button from '../../../components/Button/Button';
 import ProgressCircle from '../../../components/ProgressCircle/ProgressCircle';
 import Checkbox from '../../../components/Checkbox/Checkbox';
 import CaptionMessage from '../../../components/CaptionMessage/CaptionMessage';
+import ErrorMessageCard from '../../../components/ErrorMessageCard/ErrorMessageCard';
 import Tooltip from '../../../components/Tooltip/Tooltip';
 import Table from '../../../components/Table/Table';
+import { useTranslation } from '../../../i18n';
 import './ECStep.css';
 
 /* ── Mock data ─────────────────────────────────────────────── */
-const DEED_OPTIONS = [
-  { value: 'deed1', label: 'KA-BLR-2024-12345 — Sale Deed (15/08/2024)' },
-  { value: 'deed2', label: 'KA-BLR-2022-67890 — Sale Deed (03/05/2022)' },
-];
-
 const MOCK_EC = {
   ecNumber:             'EC-2024-98765',
   fromDate:             '14-08-2024',
@@ -65,9 +62,13 @@ const ECStep = ({
   onBCStepClick,
   bcStepNames = [],
   completionResetKey = 0,
+  hasKaveri = true,
+  registrationDeedNo = '',
 }) => {
+  const { t } = useTranslation('step5');
+
   /* ── Section 5.1 state ────────────────────────────────────── */
-  const [selectedDeed, setSelectedDeed] = useState('');
+  const [localDeedNo, setLocalDeedNo]   = useState('');
   const [ecNumber, setEcNumber]         = useState('');
   // 'idle' | 'loading' | 'success'
   const [fetchStatus, setFetchStatus]   = useState('idle');
@@ -84,8 +85,13 @@ const ECStep = ({
   /* ── Page completion (enables forward arrow) ──────────────── */
   const [isPageComplete, setIsPageComplete] = useState(false);
 
+  /* ── Final save state (section 5.4) ──────────────────────── */
+  const [finalSaved, setFinalSaved] = useState(false);
+  const [showFinalConfirm, setShowFinalConfirm] = useState(false);
+
   /* ── Scroll refs ──────────────────────────────────────────── */
   const s52Ref = useRef(null);
+  const s53Ref = useRef(null);
 
   useEffect(() => {
     if (s52Visible && s52Ref.current) {
@@ -93,9 +99,13 @@ const ECStep = ({
     }
   }, [s52Visible]);
 
-  /* Scroll to top whenever the view switches */
+  /* On view switch: scroll to 5.3 start for preview, top otherwise */
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (ecView === 'preview' && s53Ref.current) {
+      s53Ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (ecView !== 'preview') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, [ecView]);
 
   useEffect(() => {
@@ -103,7 +113,8 @@ const ECStep = ({
   }, [completionResetKey]);
 
   /* ── Derived ──────────────────────────────────────────────── */
-  const canFetch    = selectedDeed && ecNumber.trim() && fetchStatus !== 'success';
+  const effectiveDeedNo = hasKaveri ? registrationDeedNo : localDeedNo;
+  const canFetch    = !!effectiveDeedNo && ecNumber.trim() && fetchStatus !== 'success';
   const canValidate = fetchStatus === 'success' && !s51Saved;
   const canProceed  = checked1 && checked2;
 
@@ -115,13 +126,14 @@ const ECStep = ({
 
   const handleEditFetch = () => {
     setFetchStatus('idle');
-    setSelectedDeed('');
+    setLocalDeedNo('');
     setEcNumber('');
     setS51Saved(false);
     setS52Visible(false);
     setChecked1(false);
     setChecked2(false);
     setIsPageComplete(false);
+    setFinalSaved(false);
   };
 
   const handleValidate = () => {
@@ -150,7 +162,7 @@ const ECStep = ({
   /* ── Back arrow: respects ecView ──────────────────────────── */
   const handleBackNav = () => {
     if (ecView === 'preview') { setEcView('main'); return; }
-    if (ecView === 'final')   { setEcView('preview'); return; }
+    if (ecView === 'final')   { setFinalSaved(false); setEcView('preview'); return; }
     onBack?.();
   };
 
@@ -164,13 +176,15 @@ const ECStep = ({
         onLogout={() => onNavigate?.('login')}
       />
 
+      <Stepper steps={bcStepNames} activeStep={currentBCStep} completedBCSteps={completedBCSteps} onStepClick={onBCStepClick} />
+
       {/* ── Step header ─────────────────────────────────────── */}
       <StepHeader
-        step="Step 5"
-        title="Upload EC"
+        step={t('step_label')}
+        title={t('step_title')}
         onBack={handleBackNav}
         onNext={onNext}
-        isBackEnabled={ecView !== 'main' ? true : isBackEnabled}
+        isBackEnabled={finalSaved ? false : (ecView !== 'main' ? true : isBackEnabled)}
         isNextEnabled={isPageComplete}
         hideNext
       />
@@ -180,9 +194,9 @@ const ECStep = ({
         {/* ── Page-level notice (above SectionBox) ────────── */}
         <div className="ec-page__notice">
           <InfoBox variant="warning">
-            If you do not have your Encumbrance Certificate (Form 15),{' '}
-            <a href="#" className="ec-page__notice-link">please click here</a>{' '}
-            to issue the document and then complete this last step.
+            {t('page_notice_pre')}{' '}
+            <a href="#" className="ec-page__notice-link">{t('page_notice_link')}</a>{' '}
+            {t('page_notice_post')}
           </InfoBox>
         </div>
 
@@ -193,7 +207,7 @@ const ECStep = ({
         <>
 
         {/* ═══ SECTION 5.1 — Upload EC ════════════════════════ */}
-        <SectionBox number="5.1" title="Upload EC" open className="ec-s51-box">
+        <SectionBox number="5.1" title={t('s51_title')} open className="ec-s51-box">
           <div className="ec-s51">
 
             {/* EC requirements information block — red outline */}
@@ -203,34 +217,29 @@ const ECStep = ({
               </div>
               <div className="ec-s51__info-text">
                 <p>
-                  Encumbrance Certificate (Form 15) from at least one day before date of
-                  registration until issued at least in the last 15 days are accepted.{' '}
-                  <a href="#" className="ec-s51__info-link">To know more click here</a>
+                  {t('s51_info_main')}{' '}
+                  <a href="#" className="ec-s51__info-link">{t('s51_info_link')}</a>
                 </p>
                 <p>
-                  <strong>Note:</strong> If your registered deed is before 01.04.2004, then
-                  you will have to give two ECs.
+                  <strong>{t('s51_info_note_label')}</strong> {t('s51_info_note')}
                 </p>
-                <p>i. EC from 01.04.2004 until issued at least in the last 15 days are accepted.</p>
-                <p>ii. EC from at least one date before your registration date until 31.03.2004.</p>
-                <p>
-                  (For example, if your Regd Deed is registered on 17-08-1998, then obtain the
-                  EC from 16-08-1998. Note: if your Regd Deed is not in the submitted EC, then
-                  the application won't be processed.)
-                </p>
+                <p>{t('s51_info_list1')}</p>
+                <p>{t('s51_info_list2')}</p>
+                <p>{t('s51_info_example')}</p>
               </div>
             </div>
 
-            {/* Please select Registration Deed */}
+            {/* Registration Deed Number */}
             <div className="ec-s51__deed-wrap">
-              <Dropdown
-                label="Please select Registration Deed"
-                required
-                options={DEED_OPTIONS}
-                value={selectedDeed}
-                onChange={(e) => setSelectedDeed(e.target.value)}
-                placeholder="Choose Registration Deed"
-                disabled={s51Saved}
+              <Input
+                label={t('s51_deed_label')}
+                required={!hasKaveri}
+                value={hasKaveri ? registrationDeedNo : localDeedNo}
+                onChange={hasKaveri ? undefined : (e) => setLocalDeedNo(e.target.value)}
+                frozen={hasKaveri}
+                disabled={!hasKaveri && s51Saved}
+                placeholder={hasKaveri ? '' : t('s51_deed_placeholder')}
+                inputType="alphanumeric-code"
               />
             </div>
 
@@ -239,8 +248,8 @@ const ECStep = ({
               <div className="ec-s51__fetch-left">
                 <div className="ec-s51__input-wrap">
                   <Input
-                    label="Enter EC No."
-                    placeholder="Enter your EC Number"
+                    label={t('s51_ec_label')}
+                    placeholder={t('s51_ec_placeholder')}
                     value={ecNumber}
                     onChange={(e) => setEcNumber(e.target.value)}
                     disabled={fetchStatus === 'loading' || s51Saved}
@@ -254,22 +263,22 @@ const ECStep = ({
                     disabled={!canFetch || fetchStatus === 'loading'}
                     onClick={handleFetch}
                   >
-                    Fetch EC Details
+                    {t('s51_fetch_btn')}
                   </Button>
                   <Button
                     variant="error"
                     disabled={fetchStatus === 'idle'}
                     onClick={handleEditFetch}
                   >
-                    Edit
+                    {t('s51_edit_btn')}
                   </Button>
                 </div>
               </div>
               <Tooltip
-                label="Where to find your EC number"
+                label={t('s51_tooltip_label')}
                 imageSrc="/images/sample-ec.png"
                 imageAlt="Sample EC document"
-                caption="Click to view sample"
+                caption={t('s51_tooltip_caption')}
                 className="ec-s51__tooltip"
               />
             </div>
@@ -277,11 +286,18 @@ const ECStep = ({
             {/* Fetched EC data */}
             {fetchStatus === 'success' && (
               <>
-                <h3 className="ec-s51__table-title">Kaveri EC Document Data</h3>
+                <h3 className="ec-s51__table-title">{t('s51_kaveri_title')}</h3>
 
                 {/* EC Summary table */}
                 <Table
-                  columns={['EC Number', 'From Date', 'To Date', 'Total Deeds', 'Registration Number', 'Is Registration Latest']}
+                  columns={[
+                    t('s51_col_ec_number'),
+                    t('s51_col_from_date'),
+                    t('s51_col_to_date'),
+                    t('s51_col_total_deeds'),
+                    t('s51_col_reg_number'),
+                    t('s51_col_is_latest'),
+                  ]}
                   rows={[[
                     MOCK_EC.ecNumber,
                     MOCK_EC.fromDate,
@@ -296,27 +312,27 @@ const ECStep = ({
                 <div className="kaveri-table ec-s51__kaveri-table">
                   <div className="kaveri-table__registration">
                     <div className="kaveri-table__row">
-                      <div className="kaveri-table__label">Location Measurement</div>
+                      <div className="kaveri-table__label">{t('s51_kv_location')}</div>
                       <div className="kaveri-table__value kaveri-table__value--last">
                         {MOCK_EC.locationMeasurement}
                       </div>
                     </div>
                     <div className="kaveri-table__row kaveri-table__row--mid">
-                      <div className="kaveri-table__label">Article Name</div>
+                      <div className="kaveri-table__label">{t('s51_kv_article')}</div>
                       <div className="kaveri-table__value">{MOCK_EC.articleName}</div>
-                      <div className="kaveri-table__label">Registration Date and Time</div>
+                      <div className="kaveri-table__label">{t('s51_kv_reg_datetime')}</div>
                       <div className="kaveri-table__value kaveri-table__value--last">
                         {MOCK_EC.registrationDateTime}
                       </div>
                     </div>
                     <div className="kaveri-table__row kaveri-table__row--mid">
-                      <div className="kaveri-table__label">Executant Name</div>
+                      <div className="kaveri-table__label">{t('s51_kv_executant')}</div>
                       <div className="kaveri-table__value kaveri-table__value--last">
                         {MOCK_EC.executantName}
                       </div>
                     </div>
                     <div className="kaveri-table__row kaveri-table__row--mid">
-                      <div className="kaveri-table__label">Claimant Name</div>
+                      <div className="kaveri-table__label">{t('s51_kv_claimant')}</div>
                       <div className="kaveri-table__value kaveri-table__value--last">
                         {MOCK_EC.claimantName}
                       </div>
@@ -327,15 +343,15 @@ const ECStep = ({
 
                   <div className="kaveri-table__registration">
                     <div className="kaveri-table__row">
-                      <div className="kaveri-table__label">Total Registrations</div>
+                      <div className="kaveri-table__label">{t('s51_kv_total_regs')}</div>
                       <div className="kaveri-table__value">{MOCK_EC.totalRegistrations}</div>
-                      <div className="kaveri-table__label">Is this Latest Registration:</div>
+                      <div className="kaveri-table__label">{t('s51_kv_is_latest_reg')}</div>
                       <div className="kaveri-table__value kaveri-table__value--last">
                         {MOCK_EC.isLatestRegistration}
                       </div>
                     </div>
                     <div className="kaveri-table__row kaveri-table__row--mid">
-                      <div className="kaveri-table__label">Latest Registration No.</div>
+                      <div className="kaveri-table__label">{t('s51_kv_latest_reg_no')}</div>
                       <div className="kaveri-table__value kaveri-table__value--last">
                         {MOCK_EC.latestRegistrationNo}
                       </div>
@@ -350,7 +366,7 @@ const ECStep = ({
                     disabled={!canValidate}
                     onClick={handleValidate}
                   >
-                    Validate and Save EC
+                    {t('s51_validate_btn')}
                   </Button>
                 </div>
               </>
@@ -361,32 +377,20 @@ const ECStep = ({
 
         {/* ═══ SECTION 5.2 — Declaration ══════════════════════ */}
         <div ref={s52Ref}>
-          <SectionBox number="5.2" title="Declaration" open={s52Visible} className="ec-s52-box">
+          <SectionBox number="5.2" title={t('s52_title')} open={s52Visible} className="ec-s52-box">
             {s52Visible && (
               <div className="ec-s52">
 
                 {/* Declaration text */}
                 <div className="ec-s52__text">
                   <p className="ec-s52__text-intro">
-                    Please read the following carefully:
+                    {t('s52_intro')}
                   </p>
                   <ol className="ec-s52__list">
-                    <li>
-                      'A' &amp; 'B' Khatha is being issued as per existing Panchatantra
-                      Records &amp; subject to final verification as per my submitted documents.
-                    </li>
-                    <li>
-                      In case of any discrepancy between existing Panchatantra records &amp;
-                      my submitted information or missing information, my case will be referred
-                      to the jurisdictional PDO for decision or merit.
-                    </li>
-                    <li>
-                      Any eKhatha on government or government organization land is liable to
-                      be rejected or cancelled.
-                    </li>
-                    <li>
-                      Any wrongful or incorrect eKhatha issued is liable to be cancelled.
-                    </li>
+                    <li>{t('s52_item1')}</li>
+                    <li>{t('s52_item2')}</li>
+                    <li>{t('s52_item3')}</li>
+                    <li>{t('s52_item4')}</li>
                   </ol>
                 </div>
 
@@ -395,13 +399,13 @@ const ECStep = ({
                 {/* Checkboxes */}
                 <div className="ec-s52__checkboxes">
                   <Checkbox
-                    label="I understand and accept all of the above"
+                    label={t('s52_check1')}
                     checked={checked1}
                     onChange={(e) => setChecked1(e.target.checked)}
                     color="blue"
                   />
                   <Checkbox
-                    label="I certify that information submitted is true &amp; correct to the best of my knowledge &amp; belief and any false or wrong information makes eKhatha liable to be cancelled &amp; make me liable for criminal/suitable action as per law."
+                    label={t('s52_check2')}
                     checked={checked2}
                     onChange={(e) => setChecked2(e.target.checked)}
                     color="blue"
@@ -414,8 +418,8 @@ const ECStep = ({
         </div>
 
         {/* ── Closed stubs for future sections ─────────────── */}
-        <SectionBox number="5.3" title="Preview of Khata" open={false} />
-        <SectionBox number="5.4" title="Draft Khata" open={false} />
+        <SectionBox number="5.3" title={t('s53_title')} open={false} />
+        <SectionBox number="5.4" title={t('s54_title')} open={false} />
 
         {/* ── Verify Your Data CTA (after 5.2 complete) ────── */}
         {s52Visible && (
@@ -425,7 +429,7 @@ const ECStep = ({
               disabled={!canProceed}
               onClick={handleVerify}
             >
-              Verify Your Data
+              {t('btn_verify')}
             </Button>
           </div>
         )}
@@ -437,27 +441,46 @@ const ECStep = ({
             PREVIEW VIEW — Section 5.3 only
         ══════════════════════════════════════════════════════ */}
         {ecView === 'preview' && (
-          <div>
-            <SectionBox number="5.3" title="Preview of Khata" open className="ec-s53-box">
+          <div ref={s53Ref}>
+            <SectionBox number="5.3" title={t('s53_title')} open className="ec-s53-box">
 
               <div className="ec-s53">
 
                 {/* Blue info banner */}
                 <InfoBox variant="blue">
-                  Please Preview Details of all the sections. You can click Edit to go back
-                  to the particular section or scroll to the bottom to proceed.
+                  {t('s53_infobox')}
                 </InfoBox>
 
                 {/* ── 1. Sale Deed Details ─────────────────────── */}
                 <div className="ec-s53__preview-block">
-                  <h3 className="ec-s53__block-heading">Deed Details</h3>
-                  <Table
-                    columns={['Gram Panchayat', 'Village', 'Registration number', 'Asset number']}
-                    rows={[['Bengaluru Urban', 'Doddahasala', 'e.g. XXX-X-XXXXX-2004-05', '6']]}
-                    className="ec-s53__table"
-                  />
+                  <h3 className="ec-s53__block-heading">{t('s53_block_deed')}</h3>
+                  {hasKaveri ? (
+                    <Table
+                      columns={[
+                        t('s53_col_gp'),
+                        t('s53_col_village'),
+                        t('s53_col_reg_no'),
+                        t('s53_col_asset_no'),
+                      ]}
+                      rows={[['Bengaluru Urban', 'Doddahasala', 'e.g. XXX-X-XXXXX-2004-05', '6']]}
+                      className="ec-s53__table"
+                    />
+                  ) : (
+                    <Table
+                      columns={[
+                        t('s53_col_gp'),
+                        t('s53_col_village'),
+                        t('s53_col_doc_type'),
+                        t('s53_col_doc_no'),
+                        t('s53_col_doc_date'),
+                        t('s53_col_asset_no'),
+                      ]}
+                      rows={[['Bengaluru Urban', 'Doddahasala', 'Sale Deed', 'XXX-X-XXXXX-2004-05', '01-01-2020', '6']]}
+                      className="ec-s53__table"
+                    />
+                  )}
                   <Button variant="error" className="ec-s53__edit-btn" onClick={() => onNavigate?.('new-application-step1')}>
-                    Edit
+                    {t('s53_edit_btn')}
                   </Button>
                 </div>
 
@@ -465,16 +488,20 @@ const ECStep = ({
 
                 {/* ── 2. Owner KYC ─────────────────────────────── */}
                 <div className="ec-s53__preview-block">
-                  <h3 className="ec-s53__block-heading">Owner KYC</h3>
+                  <h3 className="ec-s53__block-heading">{t('s53_block_owner')}</h3>
                   <div className="ec-s53__table-wrap">
                     <table className="data-table ec-s53__table">
                       <thead>
                         <tr className="data-table__header">
-                          <th className="data-table__th ec-s53__th--photo">Owner photograph</th>
-                          <th className="data-table__th">Owner Name</th>
-                          <th className="data-table__th">Father/Mother/<br />Guardian/Spouse/<br />Name</th>
-                          <th className="data-table__th">Owner's Identification Document No.</th>
-                          <th className="data-table__th">Owner's Address</th>
+                          <th className="data-table__th ec-s53__th--photo">{t('s53_col_owner_photo')}</th>
+                          <th className="data-table__th">{t('s53_col_owner_name')}</th>
+                          <th className="data-table__th">{t('s53_col_owner_relation').split('/').join('/<br />')
+                            .split('/<br />')
+                            .map((seg, i, arr) => (
+                              <span key={i}>{seg}{i < arr.length - 1 ? <br /> : null}</span>
+                            ))}</th>
+                          <th className="data-table__th">{t('s53_col_owner_id')}</th>
+                          <th className="data-table__th">{t('s53_col_owner_address')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -493,7 +520,7 @@ const ECStep = ({
                     </table>
                   </div>
                   <Button variant="error" className="ec-s53__edit-btn" onClick={() => onNavigate?.('new-application-step2')}>
-                    Edit
+                    {t('s53_edit_btn')}
                   </Button>
                 </div>
 
@@ -501,16 +528,16 @@ const ECStep = ({
 
                 {/* ── 3. Property Details ───────────────────────── */}
                 <div className="ec-s53__preview-block">
-                  <h3 className="ec-s53__block-heading">Property Details</h3>
+                  <h3 className="ec-s53__block-heading">{t('s53_block_property')}</h3>
 
                   {/* Location */}
                   <div className="ec-s53__table-wrap">
                     <table className="data-table ec-s53__table">
                       <thead>
                         <tr className="data-table__header">
-                          <th className="data-table__th">Property Address</th>
-                          <th className="data-table__th">Latitude and Longitude</th>
-                          <th className="data-table__th ec-s53__th--photo-lg">Property Photo</th>
+                          <th className="data-table__th">{t('s53_col_prop_address')}</th>
+                          <th className="data-table__th">{t('s53_col_lat_lng')}</th>
+                          <th className="data-table__th ec-s53__th--photo-lg">{t('s53_col_prop_photo')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -530,9 +557,9 @@ const ECStep = ({
                     <table className="data-table ec-s53__table">
                       <thead>
                         <tr className="data-table__header">
-                          <th className="data-table__th">Total Area Details (Sq.Mts)</th>
-                          <th className="data-table__th">Irregular Site Yes/No</th>
-                          <th className="data-table__th">Property Dimensions (Mts) North South, East West</th>
+                          <th className="data-table__th">{t('s53_col_total_area')}</th>
+                          <th className="data-table__th">{t('s53_col_irregular')}</th>
+                          <th className="data-table__th">{t('s53_col_dimensions')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -550,10 +577,10 @@ const ECStep = ({
                     <table className="data-table ec-s53__table">
                       <thead>
                         <tr className="data-table__header">
-                          <th className="data-table__th">Checkbandi East</th>
-                          <th className="data-table__th">Checkbandi West</th>
-                          <th className="data-table__th">Checkbandi North</th>
-                          <th className="data-table__th">Checkbandi South</th>
+                          <th className="data-table__th">{t('s53_col_cb_east')}</th>
+                          <th className="data-table__th">{t('s53_col_cb_west')}</th>
+                          <th className="data-table__th">{t('s53_col_cb_north')}</th>
+                          <th className="data-table__th">{t('s53_col_cb_south')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -568,7 +595,7 @@ const ECStep = ({
                   </div>
 
                   <Button variant="error" className="ec-s53__edit-btn" onClick={() => onNavigate?.('new-application-step3')}>
-                    Edit
+                    {t('s53_edit_btn')}
                   </Button>
                 </div>
 
@@ -576,14 +603,14 @@ const ECStep = ({
 
                 {/* ── 4. Property Classification ────────────────── */}
                 <div className="ec-s53__preview-block">
-                  <h3 className="ec-s53__block-heading">Property Classification</h3>
+                  <h3 className="ec-s53__block-heading">{t('s53_block_classification')}</h3>
 
-                  {/* Classification + Survey/Category/Type table */}
+                  {/* Classification label row */}
                   <div className="ec-s53__table-wrap">
                     <table className="data-table ec-s53__table">
                       <tbody>
                         <tr className="data-table__row ec-s53__row--header-like">
-                          <td className="data-table__td ec-s53__td--label-header">Property Classification</td>
+                          <td className="data-table__td ec-s53__td--label-header">{t('s53_col_classification')}</td>
                           <td className="data-table__td" colSpan="3">11A</td>
                         </tr>
                       </tbody>
@@ -593,10 +620,10 @@ const ECStep = ({
                     <table className="data-table ec-s53__table">
                       <thead>
                         <tr className="data-table__header">
-                          <th className="data-table__th">Survey No.</th>
-                          <th className="data-table__th">Property Category</th>
-                          <th className="data-table__th">Property Type</th>
-                          <th className="data-table__th">Corner Site Yes/No</th>
+                          <th className="data-table__th">{t('s53_col_survey_no')}</th>
+                          <th className="data-table__th">{t('s53_col_prop_cat')}</th>
+                          <th className="data-table__th">{t('s53_col_prop_type')}</th>
+                          <th className="data-table__th">{t('s53_col_corner_site')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -615,10 +642,10 @@ const ECStep = ({
                     <table className="data-table ec-s53__table">
                       <thead>
                         <tr className="data-table__header">
-                          <th className="data-table__th">Plinth Area</th>
-                          <th className="data-table__th">Undivided Plot size / Total Land divided plot size</th>
-                          <th className="data-table__th">Floor No.</th>
-                          <th className="data-table__th">Year of construction / Usage</th>
+                          <th className="data-table__th">{t('s53_col_plinth_area')}</th>
+                          <th className="data-table__th">{t('s53_col_undivided_plot')}</th>
+                          <th className="data-table__th">{t('s53_col_floor_no')}</th>
+                          <th className="data-table__th">{t('s53_col_year_usage')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -633,7 +660,7 @@ const ECStep = ({
                   </div>
 
                   <Button variant="error" className="ec-s53__edit-btn" onClick={() => onNavigate?.('new-application-step4')}>
-                    Edit
+                    {t('s53_edit_btn')}
                   </Button>
                 </div>
 
@@ -641,9 +668,16 @@ const ECStep = ({
 
                 {/* ── 5. Upload EC ──────────────────────────────── */}
                 <div className="ec-s53__preview-block">
-                  <h3 className="ec-s53__block-heading">Upload EC</h3>
+                  <h3 className="ec-s53__block-heading">{t('s53_block_ec')}</h3>
                   <Table
-                    columns={['EC Number', 'From Date', 'To Date', 'Total Deeds', 'Registration Number', 'Is Registration Latest']}
+                    columns={[
+                      t('s51_col_ec_number'),
+                      t('s51_col_from_date'),
+                      t('s51_col_to_date'),
+                      t('s51_col_total_deeds'),
+                      t('s51_col_reg_number'),
+                      t('s51_col_is_latest'),
+                    ]}
                     rows={[[
                       MOCK_EC.ecNumber,
                       MOCK_EC.fromDate,
@@ -655,17 +689,20 @@ const ECStep = ({
                     className="ec-s53__table"
                   />
                   <Button variant="error" className="ec-s53__edit-btn" onClick={handleEditStepEC}>
-                    Edit
+                    {t('s53_edit_btn')}
                   </Button>
                 </div>
 
               </div>
             </SectionBox>
 
-            {/* ── Final Save CTA ────────────────────────────────── */}
+            {/* ── Closed stub for 5.4 ──────────────────────────── */}
+            <SectionBox number="5.4" title={t('s54_title')} open={false} />
+
+            {/* ── Save and Proceed CTA ─────────────────────────── */}
             <div className="ec-page__cta">
               <Button variant="primary" onClick={handleFinalSave}>
-                Final Save
+                {t('btn_save_proceed')}
               </Button>
             </div>
           </div>
@@ -674,7 +711,7 @@ const ECStep = ({
         {/* ═══ SECTION 5.4 — Draft Khata ══════════════════════ */}
         {ecView === 'final' && (
           <div>
-            <SectionBox number="5.4" title="Draft Khata" open className="ec-s54-box">
+            <SectionBox number="5.4" title={t('s54_title')} open className="ec-s54-box">
               <div className="ec-s54">
 
                 {/* Scrollable khata document viewer */}
@@ -696,25 +733,43 @@ const ECStep = ({
                   />
                 </div>
 
-                {/* Success message */}
-                <CaptionMessage variant="success">
-                  Your e-khata application has been saved. Please track your approval status in the{' '}
-                  <a href="#" className="ec-s54__success-link">pending applications</a> page.
-                </CaptionMessage>
-
-                {/* Action buttons */}
-                <div className="ec-s54__actions">
-                  <Button variant="error" onClick={handlePreviousAndEdit}>
-                    Previous and Edit
-                  </Button>
-                  <Button
-                    variant="primary"
-                    icon="download"
-                    onClick={() => {}}
-                  >
-                    Download
+                {/* Download button — centered below viewer */}
+                <div className="ec-s54__download-row">
+                  <Button variant="primary" icon="download" onClick={() => {}}>
+                    {t('s54_download_btn')}
                   </Button>
                 </div>
+
+                {/* Final Save + Previous and Edit — bigger buttons, centered */}
+                <div className="ec-s54__main-actions">
+                  <Button
+                    variant="primary"
+                    className="ec-s54__big-btn"
+                    disabled={finalSaved}
+                    onClick={() => setShowFinalConfirm(true)}
+                  >
+                    {t('s54_final_save_btn')}
+                  </Button>
+                  <Button
+                    variant="error"
+                    className="ec-s54__big-btn"
+                    disabled={finalSaved}
+                    onClick={handlePreviousAndEdit}
+                  >
+                    {t('s54_prev_edit_btn')}
+                  </Button>
+                </div>
+
+                {/* Success caption — shown only after Final Save clicked */}
+                {finalSaved && (
+                  <div className="ec-s54__caption-wrap">
+                    <CaptionMessage variant="success">
+                      {t('s54_success_pre')}{' '}
+                      <a href="#" className="ec-s54__success-link">{t('s54_success_link')}</a>{' '}
+                      {t('s54_success_post')}
+                    </CaptionMessage>
+                  </div>
+                )}
 
               </div>
             </SectionBox>
@@ -727,6 +782,30 @@ const ECStep = ({
       {fetchStatus === 'loading' && (
         <div className="ec-page__overlay">
           <ProgressCircle size={80} percentage={60} />
+        </div>
+      )}
+
+      {/* ── Final Save confirmation modal ─────────────────────── */}
+      {showFinalConfirm && (
+        <div className="ec-page__modal-backdrop">
+          <ErrorMessageCard
+            message={t('modal_message')}
+            subMessage={t('modal_submessage')}
+            actions={[
+              {
+                label: t('modal_yes'),
+                onClick: () => {
+                  setShowFinalConfirm(false);
+                  setFinalSaved(true);
+                  setIsPageComplete(true);
+                },
+              },
+              {
+                label: t('modal_cancel'),
+                onClick: () => setShowFinalConfirm(false),
+              },
+            ]}
+          />
         </div>
       )}
 

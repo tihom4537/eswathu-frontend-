@@ -5,6 +5,7 @@ import Button from '../../../components/Button/Button';
 import IconButton from '../../../components/IconButton/IconButton';
 import Tooltip from '../../../components/Tooltip/Tooltip';
 import ProgressCircle from '../../../components/ProgressCircle/ProgressCircle';
+import { useTranslation } from '../../../i18n';
 import './BuildingDetails_ESCOMDetails.css';
 
 const ESCOM_OPTIONS = [
@@ -25,14 +26,16 @@ const MOCK_ROWS = [
 ];
 
 const BuildingDetails_ESCOMDetails = ({ aboveComplete = false, onSave }) => {
-  const [escomType, setEscomType] = useState('');
-  const [accountId, setAccountId] = useState('');
-  const [rrNumber, setRrNumber] = useState('');
-  const [verifying, setVerifying] = useState(false);
-  const [verified, setVerified] = useState(false);
-  const [rows, setRows] = useState([]);
+  const { t } = useTranslation('step4');
 
-  const canVerify = !verifying && aboveComplete && escomType && accountId.trim();
+  const [escomType,  setEscomType]  = useState('');
+  const [accountId,  setAccountId]  = useState('');
+  const [rrNumber,   setRrNumber]   = useState('');
+  const [verifying,  setVerifying]  = useState(false);
+  const [verified,   setVerified]   = useState(false);
+  const [rows,       setRows]       = useState([]);
+
+  const canVerify = !verifying && aboveComplete && escomType && accountId.trim() && rrNumber.trim();
 
   const handleVerify = () => {
     setVerifying(true);
@@ -47,9 +50,7 @@ const BuildingDetails_ESCOMDetails = ({ aboveComplete = false, onSave }) => {
   const removeRow = (id) => {
     const next = rows.filter((r) => r.id !== id);
     setRows(next);
-    if (next.length === 0) {
-      setVerified(false);
-    }
+    if (next.length === 0) setVerified(false);
   };
 
   return (
@@ -59,7 +60,7 @@ const BuildingDetails_ESCOMDetails = ({ aboveComplete = false, onSave }) => {
           {/* ESCOM Type */}
           <div className="bd-escom__row">
             <Dropdown
-              label="ESCOM Type"
+              label={t('bd_escom_type')}
               required
               options={ESCOM_OPTIONS}
               value={escomType}
@@ -69,19 +70,20 @@ const BuildingDetails_ESCOMDetails = ({ aboveComplete = false, onSave }) => {
             />
           </div>
 
-          {/* Account ID + RR Number */}
+          {/* ESCOM ID + RR Number */}
           <div className="bd-escom__row">
             <Input
-              label="ESCOM 10-digit Account ID"
+              label={t('bd_escom_id')}
               required
               value={accountId}
               onChange={(e) => setAccountId(e.target.value)}
-              placeholder="XXXXXXXXXXXXXX"
+              placeholder="Enter ESCOM ID"
               inputType="numeric"
               className="bd-escom__input"
             />
             <Input
-              label="RR Number"
+              label={t('bd_rr_number')}
+              required
               value={rrNumber}
               onChange={(e) => setRrNumber(e.target.value)}
               placeholder="XXXXXXXX"
@@ -92,8 +94,8 @@ const BuildingDetails_ESCOMDetails = ({ aboveComplete = false, onSave }) => {
         </div>
 
         <Tooltip
-          label="Where to find your ESCOM Account ID and RR number"
-          caption="Click to view sample"
+          label={t('bd_escom_where_tooltip')}
+          caption={t('bd_tooltip_click')}
           className="bd-escom__tooltip"
         />
       </div>
@@ -102,26 +104,26 @@ const BuildingDetails_ESCOMDetails = ({ aboveComplete = false, onSave }) => {
       <div className="bd-escom__actions">
         {verifying && <ProgressCircle size="small" />}
         <Button variant="primary" disabled={!canVerify} onClick={handleVerify}>
-          Fetch ESCOM Details
+          {verifying ? t('bd_escom_fetching') : t('bd_fetch_escom_btn')}
         </Button>
       </div>
 
-      {/* Fetched ESCOM table – appears after successful verification */}
+      {/* Fetched ESCOM table */}
       {verified && rows.length > 0 && (
         <div className="bd-escom__fetched">
           <p className="bd-escom__fetched-label">
-            Please check the fetched ESCOM meter Details
+            {t('bd_escom_fetched_title')}
           </p>
           <div className="bd-escom__table-scroll">
             <div className="bd-escom__table-wrap">
               <table className="bd-escom__table">
                 <thead>
                   <tr>
-                    <th className="bd-escom__th bd-escom__th--no">No.</th>
-                    <th className="bd-escom__th bd-escom__th--owner">Owner Name</th>
-                    <th className="bd-escom__th bd-escom__th--acc">ESCOM Account ID</th>
-                    <th className="bd-escom__th bd-escom__th--addr">Address</th>
-                    <th className="bd-escom__th bd-escom__th--cancel">Cancel</th>
+                    <th className="bd-escom__th bd-escom__th--no">{t('bd_table_no')}</th>
+                    <th className="bd-escom__th bd-escom__th--owner">{t('bd_owner_name')}</th>
+                    <th className="bd-escom__th bd-escom__th--acc">{t('bd_escom_account_id')}</th>
+                    <th className="bd-escom__th bd-escom__th--addr">{t('bd_address')}</th>
+                    <th className="bd-escom__th bd-escom__th--cancel">{t('bd_cancel')}</th>
                   </tr>
                 </thead>
                 <tbody>

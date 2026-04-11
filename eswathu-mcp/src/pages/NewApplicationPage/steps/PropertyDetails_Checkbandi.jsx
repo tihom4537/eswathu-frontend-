@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Button from '../../../components/Button/Button';
 import Input from '../../../components/Input/Input';
+import { useTranslation } from '../../../i18n';
 import './PropertyDetails_Checkbandi.css';
 
 /* ── Mock Kaveri boundary data ─────────────────────────────
@@ -13,36 +14,28 @@ const MOCK_BOUNDS = {
   south: '',               /* example: Kaveri returned no value for this direction */
 };
 
-const DIRS = [
-  { key: 'east',  label: 'Checkbandi East'  },
-  { key: 'west',  label: 'Checkbandi West'  },
-  { key: 'north', label: 'Checkbandi North' },
-  { key: 'south', label: 'Checkbandi South' },
-];
-
-const PropertyDetails_Checkbandi = ({ onSaveAndProceed }) => {
-  /* values for the editable (unfrozen) fields */
+const PropertyDetails_Checkbandi = ({ onSaveAndProceed, saved = false, onEdit }) => {
+  const { t } = useTranslation('step3');
   const [values, setValues] = useState({ ...MOCK_BOUNDS });
-  /* set of direction keys the user has clicked X on */
-  const [unfrozen, setUnfrozen] = useState(new Set());
 
-  const handleUnfreeze = (key) => {
-    setUnfrozen((prev) => new Set([...prev, key]));
-    setValues((prev) => ({ ...prev, [key]: '' }));
-  };
+  const DIRS = [
+    { key: 'east',  label: t('cb_east')  },
+    { key: 'west',  label: t('cb_west')  },
+    { key: 'north', label: t('cb_north') },
+    { key: 'south', label: t('cb_south') },
+  ];
 
   const canProceed = DIRS.every(({ key }) => values[key]?.trim());
 
   return (
     <div className="pd-cb">
-      <p className="pd-cb__heading">Checkbandi Details</p>
-      <p className="pd-cb__subheading">Your checkbandi details as per Sale Deed</p>
+      <p className="pd-cb__heading">{t('cb_heading')}</p>
+      <p className="pd-cb__subheading">{t('cb_sub_kaveri')}</p>
 
       {/* ── Four boundary fields in a single row ──────────────── */}
       <div className="pd-cb__bounds-row">
         {DIRS.map(({ key, label }) => {
           const hasKaveriValue = !!MOCK_BOUNDS[key];
-          const isUnfrozen = unfrozen.has(key);
 
           if (hasKaveriValue) {
             /* Kaveri returned a value — permanently frozen, no edit */
@@ -58,22 +51,7 @@ const PropertyDetails_Checkbandi = ({ onSaveAndProceed }) => {
             );
           }
 
-          if (!isUnfrozen) {
-            /* Kaveri returned empty — frozen appearance + red X to unlock */
-            return (
-              <Input
-                key={key}
-                label={label}
-                value=""
-                frozenWithEdit
-                required
-                onUnfreeze={() => handleUnfreeze(key)}
-                className="pd-cb__bound-input"
-              />
-            );
-          }
-
-          /* User clicked X — now a regular editable field */
+          /* Kaveri returned empty — plain editable field */
           return (
             <Input
               key={key}
@@ -81,21 +59,27 @@ const PropertyDetails_Checkbandi = ({ onSaveAndProceed }) => {
               value={values[key]}
               onChange={(e) => setValues((prev) => ({ ...prev, [key]: e.target.value }))}
               required
-              placeholder={`Enter ${label}`}
               className="pd-cb__bound-input"
             />
           );
         })}
       </div>
 
-      {/* ── Save and Proceed ──────────────────────────────────── */}
+      {/* ── Save and Proceed + Edit ───────────────────────────── */}
       <div className="pd-cb__actions">
         <Button
           variant="primary"
-          disabled={!canProceed}
+          disabled={!canProceed || saved}
           onClick={() => onSaveAndProceed(values)}
         >
-          Save and Proceed
+          {t('cb_save_btn')}
+        </Button>
+        <Button
+          variant="error"
+          disabled={!saved}
+          onClick={onEdit}
+        >
+          {t('cb_edit_btn')}
         </Button>
       </div>
     </div>

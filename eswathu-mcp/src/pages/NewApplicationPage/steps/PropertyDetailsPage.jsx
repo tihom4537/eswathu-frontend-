@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
 import StepHeader from '../../../components/StepHeader/StepHeader';
+import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import InfoBox from '../../../components/InfoBox/InfoBox';
 import Input from '../../../components/Input/Input';
@@ -17,6 +18,7 @@ import PropertyDetails_AreaDetails_NoKaveri, { IS_GUNTA_FLOW_NK } from './Proper
 import PropertyDetails_SiteDimensions_NoKaveri from './PropertyDetails_SiteDimensions_NoKaveri';
 import PropertyDetails_Checkbandi_NoKaveri from './PropertyDetails_Checkbandi_NoKaveri';
 import PropertyDetails_ReviewDetails from './PropertyDetails_ReviewDetails';
+import { useTranslation } from '../../../i18n';
 import './PropertyDetailsPage.css';
 
 /* ── Mock fetched address data ─────────────────────────── */
@@ -28,20 +30,8 @@ const MOCK_ADDRESS = {
   pincode: '560001',
 };
 
-/* ── Road type options ─────────────────────────────────── */
-const ROAD_TYPE_OPTIONS = [
-  { value: 'corner', label: 'Corner Property' },
-  { value: 'two_side', label: 'Any Two side Roads Property' },
-  { value: 'nh_bypass', label: 'Abutting to NH, Bypass, Ringroad' },
-  { value: 'sh_commercial', label: 'Abutting to SH Commercial Purpose' },
-  { value: 'district_main', label: 'District Main Road / 80 ft. Main Road' },
-  { value: 'other', label: 'Other Roads' },
-];
-
 /*
  * DEV_MODE: skips section 3.1 search/address flow so you land directly in 3.2.
- * Section 3.2 subsections (Area Details → Site Dims → Checkbandi) still
- * reveal sequentially as the user interacts with them.
  */
 const DEV_MODE = false;
 
@@ -57,13 +47,27 @@ const PropertyDetailsPage = ({
   bcStepNames = [],
   completionResetKey = 0,
   hasKaveri = true,
+  onResetDownstream,
 }) => {
+  const { t } = useTranslation('step3');
+
+  /* ── Road type options (translated) ──────────────────── */
+  const ROAD_TYPE_OPTIONS = [
+    { value: 'corner',        label: t('road_corner') },
+    { value: 'two_side',      label: t('road_two_side') },
+    { value: 'nh_bypass',     label: t('road_nh_bypass') },
+    { value: 'sh_commercial', label: t('road_sh_commercial') },
+    { value: 'district_main', label: t('road_district_main') },
+    { value: 'other',         label: t('road_other') },
+  ];
+
   /* ── Page-level completion (enables forward arrow) ──────── */
   const [isPageComplete, setIsPageComplete] = useState(false);
 
   useEffect(() => {
     if (completionResetKey > 0) setIsPageComplete(false);
   }, [completionResetKey]);
+
   /* ── Section 3.1 State ──────────────────────────────── */
   const [searchQuery, setSearchQuery] = useState('');
   const [searchStatus, setSearchStatus] = useState(DEV_MODE ? 'found' : 'idle'); // idle | loading | error | found
@@ -92,6 +96,8 @@ const PropertyDetailsPage = ({
   const [wasRejected, setWasRejected] = useState(false);
   const [areaMatched, setAreaMatched] = useState(false);
   const [s32Saved, setS32Saved] = useState(false);
+  /* Increment to force-remount the AreaDetails component on Edit */
+  const [areaDetailsKey, setAreaDetailsKey] = useState(0);
 
   /* ── Section 3.3 State ──────────────────────────────── */
   const [s33Visible, setS33Visible] = useState(DEV_MODE ? true : false);
@@ -103,6 +109,9 @@ const PropertyDetailsPage = ({
       ? { north: 'Shree Ram Nagar Layout', south: 'BDA Main Road', east: 'Survey No. 112/A', west: 'Kaveri Nagar Road' }
       : null
   );
+
+  /* ── Section 3.1 edit warning ───────────────────────── */
+  const [showEdit31Warn, setShowEdit31Warn] = useState(false);
 
   /* ── Scroll refs for smooth reveal ─────────────────── */
   const addressFormRef = useRef(null);
@@ -123,6 +132,7 @@ const PropertyDetailsPage = ({
       s32Ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [s32Visible]);
+
   /* Derived: whether the selected unit skips Site Dimensions */
   const isGuntaFlow = hasKaveri ? IS_GUNTA_FLOW(acceptedUnit) : IS_GUNTA_FLOW_NK(acceptedUnit);
 
@@ -221,12 +231,15 @@ const PropertyDetailsPage = ({
 
   /* ── Handlers: Section 3.2 ──────────────────────────── */
   const handleAreaConfirm = (sqmt, rejected, unit) => {
+    /* Any new acceptance resets downstream sub-sections */
+    setAreaMatched(false);
+    setSiteDimSummary(null);
+    setCheckbandiData(null);
+    setS32Saved(false);
+
     if (!hasKaveri) {
-      /* No-Kaveri: reactive updates — only collapse subsections when unit changes */
       if (unit !== acceptedUnit) {
         setAreaAccepted(false);
-        setAreaMatched(false);
-        setSiteDimSummary(null);
       }
       if (sqmt > 0) setAreaAccepted(true);
     } else {
@@ -248,9 +261,17 @@ const PropertyDetailsPage = ({
     setS33Visible(true);
   };
 
-  const handleEdit33 = () => {
+  const handleEdit32 = () => {
     setS33Visible(false);
     setS32Saved(false);
+    setAreaAccepted(false);
+    setAreaMatched(false);
+    setSiteDimSummary(null);
+    setCheckbandiData(null);
+    setAcceptedAreaSqmt(0);
+    setAcceptedUnit('');
+    setWasRejected(false);
+    setAreaDetailsKey((k) => k + 1);
   };
 
   /* ── Derived: can save? ─────────────────────────────── */
@@ -272,10 +293,12 @@ const PropertyDetailsPage = ({
         onLogout={() => onNavigate?.('login')}
       />
 
+      <Stepper steps={bcStepNames} activeStep={currentBCStep} completedBCSteps={completedBCSteps} onStepClick={onBCStepClick} />
+
       {/* ── Step Header ───────────────────────────────── */}
       <StepHeader
-        step="Step 3"
-        title="Property details"
+        step={t('page_step_label')}
+        title={t('page_title')}
         onBack={onBack}
         onNext={onNext}
         isBackEnabled={isBackEnabled}
@@ -287,18 +310,18 @@ const PropertyDetailsPage = ({
         {/* ═══ SECTION 3.1 — Location Details ═══════════ */}
         <SectionBox
           number="3.1"
-          title="Location Details"
+          title={t('s31_title')}
           open
           className="pd-s31-box"
         >
           <div className="pd-s31">
 
             {/* Sub-heading */}
-            <p className="pd-s31__sub-heading">Location search</p>
+            <p className="pd-s31__sub-heading">{t('s31_sub_location_search')}</p>
 
             {/* Info box */}
             <InfoBox variant="outline">
-              Enter a landmark near your property and then drag the red pin to select your specific property. In case, you cannot find your property, proceed with the nearest landmark
+              {t('s31_infobox')}
             </InfoBox>
 
             {/* Search row + Map area */}
@@ -307,7 +330,7 @@ const PropertyDetailsPage = ({
               {/* Search + button */}
               <div className="pd-s31__search-row">
                 <Input
-                  placeholder="Search for a landmark near your property"
+                  placeholder={t('s31_search_placeholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   disabled={s31Saved || searchStatus === 'loading'}
@@ -319,13 +342,12 @@ const PropertyDetailsPage = ({
                   disabled={!searchQuery.trim() || searchStatus === 'loading' || s31Saved}
                   onClick={handleSearch}
                 >
-                  Search
+                  {t('s31_search_btn')}
                 </Button>
               </div>
 
               {/* Map placeholder */}
               <div className="pd-s31__map-frame">
-                {/* TODO: Replace with Google Maps embed with draggable pin */}
                 <div className="pd-s31__map-placeholder">
                   <img
                     src="/images/google-maps-satellite.jpg"
@@ -348,12 +370,12 @@ const PropertyDetailsPage = ({
             {searchStatus === 'found' && addressData && (
               <>
                 <div className="pd-s31__divider" ref={addressFormRef} />
-                <p className="pd-s31__sub-heading">Address of the Property</p>
+                <p className="pd-s31__sub-heading">{t('s31_address_sub')}</p>
 
                 {/* Row 1: 3 columns */}
                 <div className="pd-s31__addr-row pd-s31__addr-row--three">
                   <Input
-                    label="Door/ Plot No."
+                    label={t('s31_door_plot')}
                     value={addressData.doorPlotNo}
                     onChange={(e) => setAddressData((prev) => ({ ...prev, doorPlotNo: e.target.value }))}
                     frozen={!clearedFields.doorPlotNo}
@@ -364,7 +386,7 @@ const PropertyDetailsPage = ({
                     disabled={s31Saved}
                   />
                   <Input
-                    label="Building/ Land Name"
+                    label={t('s31_building_name')}
                     value={addressData.buildingName}
                     onChange={(e) => setAddressData((prev) => ({ ...prev, buildingName: e.target.value }))}
                     frozen={!clearedFields.buildingName}
@@ -375,7 +397,7 @@ const PropertyDetailsPage = ({
                     disabled={s31Saved}
                   />
                   <Input
-                    label="Area/ Locality"
+                    label={t('s31_area_locality')}
                     value={addressData.areaLocality}
                     onChange={(e) => setAddressData((prev) => ({ ...prev, areaLocality: e.target.value }))}
                     frozen={!clearedFields.areaLocality}
@@ -390,7 +412,7 @@ const PropertyDetailsPage = ({
                 {/* Row 2: 2 columns */}
                 <div className="pd-s31__addr-row pd-s31__addr-row--two">
                   <Input
-                    label="Latitude &amp; Longitude"
+                    label={t('s31_lat_lng')}
                     value={addressData.latLng}
                     onChange={(e) => setAddressData((prev) => ({ ...prev, latLng: e.target.value }))}
                     frozen={!clearedFields.latLng}
@@ -401,7 +423,7 @@ const PropertyDetailsPage = ({
                     disabled={s31Saved}
                   />
                   <Input
-                    label="Pincode"
+                    label={t('s31_pincode')}
                     value={addressData.pincode}
                     onChange={(e) => setAddressData((prev) => ({ ...prev, pincode: e.target.value }))}
                     frozen={!clearedFields.pincode}
@@ -418,24 +440,21 @@ const PropertyDetailsPage = ({
                 <div className="pd-s31__addr-row pd-s31__addr-row--two">
                   <div className="pd-s31__road-type-wrap">
                     <Dropdown
-                      label="What type of road does the property reside on"
-                      placeholder="Choose Road Type"
+                      label={t('s31_road_type_label')}
+                      placeholder={t('s31_road_type_placeholder')}
                       options={ROAD_TYPE_OPTIONS}
                       value={roadType}
                       onChange={(e) => setRoadType(e.target.value)}
                       required
                       disabled={s31Saved}
                     />
-                    <CaptionMessage variant="info">Please choose road type</CaptionMessage>
                   </div>
                   <Input
-                    label="Nearest Landmark"
+                    label={t('s31_landmark')}
                     placeholder=""
                     value={landmark}
                     onChange={(e) => setLandmark(e.target.value)}
                     required
-                    caption="Please enter the nearest landmark"
-                    captionVariant="info"
                     disabled={s31Saved}
                   />
                 </div>
@@ -443,7 +462,7 @@ const PropertyDetailsPage = ({
                 {/* Row 4: Property Image upload */}
                 <div className="pd-s31__upload-section">
                   <span className="pd-s31__upload-label">
-                    Property Image<span className="pd-s31__required">*</span>
+                    {t('s31_property_image')}<span className="pd-s31__required">*</span>
                   </span>
 
                   {imageFile ? (
@@ -473,22 +492,22 @@ const PropertyDetailsPage = ({
                       onClick={handleUploadClick}
                       disabled={s31Saved}
                     >
-                      Upload File
+                      {t('s31_upload_btn')}
                     </Button>
                   )}
 
                   {/* Caption swaps based on upload status */}
                   {!imageFile && (
                     <CaptionMessage variant="error">
-                      Click property photo with it&apos;s front elevation visible
+                      {t('s31_upload_caption')}
                     </CaptionMessage>
                   )}
                   {imageFile && imageFile.status === 'success' && (
-                    <CaptionMessage variant="success">Image uploaded successfully</CaptionMessage>
+                    <CaptionMessage variant="success">{t('s31_upload_success')}</CaptionMessage>
                   )}
                   {imageFile && imageFile.status === 'warning' && (
                     <CaptionMessage variant="warning">
-                      The uploaded image does not show the complete building. Please re-upload with full front elevation.
+                      {t('s31_upload_warning')}
                     </CaptionMessage>
                   )}
 
@@ -508,14 +527,14 @@ const PropertyDetailsPage = ({
                     disabled={!canSave31}
                     onClick={handleSave31}
                   >
-                    Save and Continue
+                    {t('s31_save_btn')}
                   </Button>
                   <Button
                     variant="error"
                     disabled={!s31Saved}
-                    onClick={handleEdit31}
+                    onClick={() => setShowEdit31Warn(true)}
                   >
-                    Edit
+                    {t('s31_edit_btn')}
                   </Button>
                 </div>
               </>
@@ -526,13 +545,15 @@ const PropertyDetailsPage = ({
         {/* ═══ SECTION 3.2 — Property boundary details ════ */}
         {s32Visible && (
           <InfoBox variant="outline">
-            Please keep the property sale deed ready for entering the correct property area details.
+            {hasKaveri
+              ? t('s32_infobox_kaveri')
+              : t('s32_infobox_no_kaveri')}
           </InfoBox>
         )}
         <div ref={s32Ref}>
         <SectionBox
           number="3.2"
-          title="Property boundary details"
+          title={t('s32_title')}
           open={s32Visible}
           className="pd-s32-box"
         >
@@ -540,9 +561,9 @@ const PropertyDetailsPage = ({
 
             {/* ── Subsection A: Area Details ─────────────── */}
             {hasKaveri ? (
-              <PropertyDetails_AreaDetails onAccept={handleAreaConfirm} />
+              <PropertyDetails_AreaDetails key={areaDetailsKey} onAccept={handleAreaConfirm} />
             ) : (
-              <PropertyDetails_AreaDetails_NoKaveri onAccept={handleAreaConfirm} />
+              <PropertyDetails_AreaDetails_NoKaveri key={areaDetailsKey} onAccept={handleAreaConfirm} />
             )}
 
             {/* ── Subsection B: Site Dimensions (skipped for Gunta/Acre/Cent) ── */}
@@ -566,7 +587,7 @@ const PropertyDetailsPage = ({
                     )}
                   </div>
                 ) : (
-                  <p className="pd-s32__placeholder-heading">Site Dimension Details</p>
+                  <p className="pd-s32__placeholder-heading">{t('s32_site_dim_placeholder')}</p>
                 )}
               </>
             )}
@@ -576,13 +597,21 @@ const PropertyDetailsPage = ({
             {(areaMatched || (areaAccepted && isGuntaFlow)) ? (
               <div ref={checkbandiRef}>
                 {hasKaveri ? (
-                  <PropertyDetails_Checkbandi onSaveAndProceed={handleS32Complete} />
+                  <PropertyDetails_Checkbandi
+                    onSaveAndProceed={handleS32Complete}
+                    saved={s32Saved}
+                    onEdit={handleEdit32}
+                  />
                 ) : (
-                  <PropertyDetails_Checkbandi_NoKaveri onSaveAndProceed={handleS32Complete} />
+                  <PropertyDetails_Checkbandi_NoKaveri
+                    onSaveAndProceed={handleS32Complete}
+                    saved={s32Saved}
+                    onEdit={handleEdit32}
+                  />
                 )}
               </div>
             ) : (
-              <p className="pd-s32__placeholder-heading">Checkbandi Details</p>
+              <p className="pd-s32__placeholder-heading">{t('s32_checkbandi_placeholder')}</p>
             )}
 
           </div>
@@ -594,7 +623,7 @@ const PropertyDetailsPage = ({
           <div ref={s33Ref}>
             <SectionBox
               number="3.3"
-              title="Review Details"
+              title={t('s33_title')}
               open
               className="pd-s33-box"
             >
@@ -614,14 +643,14 @@ const PropertyDetailsPage = ({
       {/* ═══ BOTTOM NAVIGATION ════════════════════════════ */}
       {s33Visible && (
         <div className="pd-page__bottom-nav">
-          <Button variant="error" onClick={handleEdit33}>
-            Edit
-          </Button>
           <Button
             variant="primary"
             onClick={() => { setIsPageComplete(true); onNext?.(); }}
           >
-            Save and Proceed to Property Classification
+            {t('save_and_proceed_btn')}
+          </Button>
+          <Button variant="error" onClick={handleEdit32}>
+            {t('s31_edit_btn')}
           </Button>
         </div>
       )}
@@ -636,11 +665,33 @@ const PropertyDetailsPage = ({
       {searchStatus === 'error' && (
         <div className="pd-page__overlay">
           <ErrorMessageCard
-            message="Your exact property location was not found. Please choose a landmark near your property and proceed to add address details."
+            message={t('error_not_found_msg')}
             onOk={handleErrorDismiss}
           />
         </div>
       )}
+
+      {/* ── Section 3.1 Edit warning modal ───────────────── */}
+      {showEdit31Warn && (() => {
+        const downstream = [];
+        if (completedBCSteps.includes(3)) downstream.push(t('step4_short'));
+        if (completedBCSteps.includes(4)) downstream.push(t('step5_short'));
+        const suffix = downstream.length ? `, ${downstream.join(', ')}` : '';
+        return (
+          <div className="pd-page__overlay" onClick={() => setShowEdit31Warn(false)}>
+            <div onClick={(e) => e.stopPropagation()}>
+              <ErrorMessageCard
+                message={`${t('edit31_warn_base')}${suffix}.`}
+                subMessage={t('edit31_warn_sub')}
+                actions={[
+                  { label: t('yes_edit_btn'), onClick: () => { setShowEdit31Warn(false); onResetDownstream?.(); handleEdit31(); } },
+                  { label: t('cancel_btn'),   onClick: () => setShowEdit31Warn(false) },
+                ]}
+              />
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

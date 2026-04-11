@@ -1,4 +1,5 @@
 import Button from '../../../components/Button/Button';
+import { useTranslation } from '../../../i18n';
 import './EKYCRedirectScreen.css';
 
 /**
@@ -11,6 +12,8 @@ import './EKYCRedirectScreen.css';
  *  - onCancel: () => void — called when user wants to go back without completing
  */
 const EKYCRedirectScreen = ({ ownerName = '', onComplete, onCancel }) => {
+  const { t } = useTranslation('step2');
+
   return (
     <div className="ekyc-redirect">
       <div className="ekyc-redirect__body">
@@ -28,10 +31,10 @@ const EKYCRedirectScreen = ({ ownerName = '', onComplete, onCancel }) => {
 
       <div className="ekyc-redirect__actions">
         <Button variant="primary" onClick={onComplete}>
-          Complete eKYC
+          {t('redirect_btn_complete')}
         </Button>
         <Button variant="error" onClick={onCancel}>
-          Cancel
+          {t('redirect_btn_cancel')}
         </Button>
       </div>
     </div>

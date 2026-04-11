@@ -7,13 +7,8 @@ import Table from '../../../components/Table/Table';
 import InfoBox from '../../../components/InfoBox/InfoBox';
 import Tooltip from '../../../components/Tooltip/Tooltip';
 import RadioButton from '../../../components/RadioButton/RadioButton';
+import { useTranslation } from '../../../i18n';
 import './BuildingDetails_GeneralFlow.css';
-
-/* ── Storeys 1–50 ──────────────────────────────────────────── */
-const STOREY_OPTIONS = Array.from({ length: 50 }, (_, i) => ({
-  value: String(i + 1),
-  label: String(i + 1),
-}));
 
 /* ── Per-floor dropdown options ────────────────────────────── */
 const FLOOR_PROPERTY_TYPE_OPTIONS = [
@@ -60,8 +55,7 @@ const WOOD_USED_OPTIONS = [
   { value: 'none',          label: 'None' },
 ];
 
-/* ── ESCOM / Water / Tenant options ───────────────────────── */
-// TODO: replace with actual domain list
+/* ── ESCOM options ─────────────────────────────────────────── */
 const ESCOM_TYPE_OPTIONS = [
   { value: 'bescom',        label: 'BESCOM' },
   { value: 'hescom',        label: 'HESCOM' },
@@ -70,7 +64,6 @@ const ESCOM_TYPE_OPTIONS = [
   { value: 'cescom',        label: 'CESCOM' },
 ];
 
-// TODO: replace with actual domain list
 const RELATIONSHIP_OPTIONS = [
   { value: 'friend',        label: 'Friend' },
   { value: 'relative',      label: 'Relative' },
@@ -101,6 +94,8 @@ const labelOf = (options, val) =>
    BuildingDetails_GeneralFlow
    ══════════════════════════════════════════════════════════════ */
 const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
+  const { t } = useTranslation('step4');
+
   /* ── Floor state ──────────────────────────────────────────── */
   const [plinthArea,        setPlinthArea]        = useState('');
   const [numStoreys,        setNumStoreys]         = useState('');
@@ -127,21 +122,20 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
 
   const collapseRef      = useRef(null);
   const escomSectionRef  = useRef(null);
-  const waterSectionRef  = useRef(null);
   const tenantSectionRef = useRef(null);
   const saveNextRef      = useRef(null);
 
   /* ── Derived ──────────────────────────────────────────────── */
   const allFloorsFilled  = floorData.length > 0 && floorData.every(isFloorFilled);
-  const escomRowsValid   = escomRows.some((r) => r.escomType && r.accountId);
+  const escomRowsValid   = escomRows.some((r) => r.escomType && r.accountId && r.rrNumber);
   const saveNextEnabled  = hasTenants !== null;
 
   /* ── Storeys handlers ─────────────────────────────────────── */
-  const handleStoreySelect = (e) => {
-    const val = e.target.value;
-    setNumStoreys(val);
+  const handleStoreyConfirm = () => {
+    const n = parseInt(numStoreys, 10);
+    if (!n || n < 1) return;
     setStoreysFrozen(true);
-    setFloorData(Array.from({ length: Number(val) }, initFloor));
+    setFloorData(Array.from({ length: n }, initFloor));
     setFloorCollapseOpen(true);
     setTimeout(
       () => collapseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
@@ -174,9 +168,8 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
   /* ── Floor save / edit ────────────────────────────────────── */
   const handleSaveFloorDetails = () => {
     setFloorDetailsSaved(true);
-    setFloorCollapseOpen(false);
     setTimeout(
-      () => escomSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      () => collapseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }),
       80
     );
   };
@@ -184,6 +177,17 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
   const handleEditFloorDetails = () => {
     setFloorDetailsSaved(false);
     setFloorCollapseOpen(true);
+    // Clear all downstream sections — editing floor details invalidates ESCOM, water, and tenant data
+    setEscomRows([initEscomRow()]);
+    setEscomFetching(false);
+    setEscomFetched(false);
+    setEscomFetchedRows([]);
+    setWaterRows([initWaterRow()]);
+    setWaterVerifying(false);
+    setWaterVerified(false);
+    setWaterFetchedRows([]);
+    setHasTenants(null);
+    setTenantRows([initTenantRow()]);
     onEdit?.();
   };
 
@@ -195,7 +199,6 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
 
   const handleFetchEscom = () => {
     setEscomFetching(true);
-    // TODO: replace with real API call
     setTimeout(() => {
       setEscomFetchedRows(
         escomRows
@@ -225,7 +228,6 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
 
   const handleVerifyWater = () => {
     setWaterVerifying(true);
-    // TODO: replace with real API call
     setTimeout(() => {
       setWaterFetchedRows(
         waterRows
@@ -257,7 +259,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
 
   const addTenantRow = () => setTenantRows((prev) => [...prev, initTenantRow()]);
 
-  /* ── Save and Next ────────────────────────────────────────── */
+  /* ── Save Building Details ────────────────────────────────── */
   const handleSaveAndNext = () => {
     onSave?.({ plinthArea, numStoreys: Number(numStoreys), floors: floorData });
     setTimeout(
@@ -273,13 +275,12 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
     <div className="bd-gf">
 
       {/* ── Building Area Details ────────────────────────────── */}
-      <p className="bd-gf__section-title">Building Area Details</p>
+      <p className="bd-gf__section-title">{t('bd_section_area_details')}</p>
       <div className="bd-gf__plinth-wrap">
         <Input
-          label="Plinth Area of the Building (in sq. metres)"
+          label={t('bd_plinth_area')}
           required
           placeholder="e.g. 2450"
-          caption="Enter Plinth Area of the Building"
           value={plinthArea}
           onChange={(e) => setPlinthArea(e.target.value)}
           inputType="numeric"
@@ -287,36 +288,45 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
       </div>
 
       {/* ── Usage Details ────────────────────────────────────── */}
-      <p className="bd-gf__section-title">Usage Details</p>
-      <div className="bd-gf__storeys-row">
-        {!storeysFrozen ? (
-          <div className="bd-gf__storeys-dropdown">
-            <Dropdown
-              label="Enter No. of Storeys"
+      <p className="bd-gf__section-title">{t('bd_section_usage_details')}</p>
+
+      {/* Enter No. of Storeys — numeric Input + Confirm button */}
+      {!storeysFrozen ? (
+        <div className="bd-gf__storeys-row">
+          <div className="bd-gf__storeys-input-wrap">
+            <Input
+              label={t('bd_num_storeys')}
               required
-              placeholder="Enter No. of Storeys"
-              options={STOREY_OPTIONS}
+              placeholder="e.g. 3"
               value={numStoreys}
-              onChange={handleStoreySelect}
+              onChange={(e) => setNumStoreys(e.target.value)}
+              inputType="numeric"
             />
           </div>
-        ) : (
-          <div className="bd-gf__frozen-storeys">
-            <div className="bd-gf__frozen-input-wrap">
-              <Input label="Enter No. of Storeys" value={numStoreys} frozen />
-            </div>
-            <button
-              type="button"
-              className="bd-gf__storeys-reset"
-              onClick={handleStoreyReset}
-              disabled={floorDetailsSaved}
-              aria-label="Reset number of storeys"
+          <div className="bd-gf__storeys-confirm-btn">
+            <Button
+              variant="primary"
+              disabled={!numStoreys || parseInt(numStoreys, 10) < 1}
+              onClick={handleStoreyConfirm}
             >
-              <span className="material-icons-outlined">close</span>
-            </button>
+              {t('bd_confirm_storeys')}
+            </Button>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="bd-gf__storeys-row">
+          <div className="bd-gf__frozen-storeys">
+            <Input
+              label={t('bd_num_storeys')}
+              value={numStoreys}
+              frozen
+              trailingIcon={!floorDetailsSaved ? 'close' : undefined}
+              onTrailingIconClick={!floorDetailsSaved ? handleStoreyReset : undefined}
+              trailingIconClassName="bd-gf__storeys-close-icon"
+            />
+          </div>
+        </div>
+      )}
 
       {/* ── Floor wise collapse ──────────────────────────────── */}
       {storeysFrozen && (
@@ -326,7 +336,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
             className="bd-gf__collapse-header"
             onClick={() => setFloorCollapseOpen((o) => !o)}
           >
-            <span className="bd-gf__collapse-title">Please add Floor wise Details</span>
+            <span className="bd-gf__collapse-title">{t('bd_floor_wise_title')}</span>
             <span
               className={`material-icons-outlined bd-gf__collapse-chevron${
                 floorCollapseOpen ? ' bd-gf__collapse-chevron--open' : ''
@@ -343,21 +353,20 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                 <>
                   {floorData.map((floor, idx) => (
                     <div key={idx} className="bd-gf__floor-box">
-                      <p className="bd-gf__floor-label">Floor {idx + 1}</p>
+                      <p className="bd-gf__floor-label">{t('bd_floor_prefix')} {idx + 1}</p>
 
                       {/* Row 1: Built Up Area + Property Type */}
                       <div className="bd-gf__floor-row bd-gf__floor-row--2col">
                         <Input
-                          label="Enter Built Up Area (in sq. metres)"
+                          label={t('bd_built_up_area')}
                           required
-                          placeholder="Enter Built Up Area (in sq. metres)"
+                          placeholder="e.g. 2450"
                           value={floor.builtUpArea}
                           onChange={(e) => updateFloor(idx, 'builtUpArea', e.target.value)}
                           inputType="numeric"
                         />
                         <Dropdown
-                          label="Property Type"
-                          required
+                          label={t('bd_property_type')}
                           placeholder="Choose Property Type"
                           options={FLOOR_PROPERTY_TYPE_OPTIONS}
                           value={floor.propertyType}
@@ -368,7 +377,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                       {/* Row 2: Usage Type + Year Construction + Year Demolition */}
                       <div className="bd-gf__floor-row bd-gf__floor-row--3col">
                         <Dropdown
-                          label="Usage Type"
+                          label={t('bd_usage_type')}
                           required
                           placeholder="Choose Usage Type"
                           options={USAGE_TYPE_OPTIONS}
@@ -376,16 +385,16 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                           onChange={(e) => updateFloor(idx, 'usageType', e.target.value)}
                         />
                         <Dropdown
-                          label="Year of Construction/ Usage Started"
+                          label={t('bd_year_construction')}
                           required
-                          placeholder="Year of Construction/ Usage Started"
+                          placeholder="Select year"
                           options={YEAR_OPTIONS}
                           value={floor.yearConstruction}
                           onChange={(e) => updateFloor(idx, 'yearConstruction', e.target.value)}
                         />
                         <Dropdown
-                          label="Year of Demolition"
-                          placeholder="Choose Year of Demolition"
+                          label={t('bd_year_demolition')}
+                          placeholder="Select year"
                           options={YEAR_OPTIONS}
                           value={floor.yearDemolition}
                           onChange={(e) => updateFloor(idx, 'yearDemolition', e.target.value)}
@@ -395,7 +404,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                       {/* Row 3: Floor Type + Roof Type + Wood Used */}
                       <div className="bd-gf__floor-row bd-gf__floor-row--3col">
                         <Dropdown
-                          label="Floor Type"
+                          label={t('bd_floor_type')}
                           required
                           placeholder="Choose Floor Type"
                           options={FLOOR_TYPE_OPTIONS}
@@ -403,7 +412,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                           onChange={(e) => updateFloor(idx, 'floorType', e.target.value)}
                         />
                         <Dropdown
-                          label="Roof Type"
+                          label={t('bd_roof_type')}
                           required
                           placeholder="Choose Roof Type"
                           options={ROOF_TYPE_OPTIONS}
@@ -411,7 +420,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                           onChange={(e) => updateFloor(idx, 'roofType', e.target.value)}
                         />
                         <Dropdown
-                          label="Wood Used"
+                          label={t('bd_wood_used')}
                           required
                           placeholder="Choose Wood Used"
                           options={WOOD_USED_OPTIONS}
@@ -423,7 +432,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                       {/* Row 4: Remarks (optional, full width) */}
                       <div className="bd-gf__floor-row bd-gf__floor-row--full">
                         <Input
-                          label="Remarks"
+                          label={t('bd_remarks')}
                           placeholder="(if any)"
                           value={floor.remarks}
                           onChange={(e) => updateFloor(idx, 'remarks', e.target.value)}
@@ -438,7 +447,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                       disabled={!allFloorsFilled}
                       onClick={handleSaveFloorDetails}
                     >
-                      Save Floor wise Details
+                      {t('bd_save_floor_details')}
                     </Button>
                     <Button variant="error" disabled>
                       Edit
@@ -450,45 +459,45 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                 <>
                   {floorData.map((floor, idx) => (
                     <div key={idx} className="bd-gf__storey-summary">
-                      <p className="bd-gf__storey-label">Storey {idx + 1}</p>
+                      <p className="bd-gf__storey-label">{t('bd_storey_prefix')} {idx + 1}</p>
                       <div className="bd-gf__kv-table">
                         <div className="bd-gf__kv-row">
-                          <span className="bd-gf__kv-label">Enter Built Up Area (in sq. metres)</span>
+                          <span className="bd-gf__kv-label">{t('bd_built_up_area')}</span>
                           <span className="bd-gf__kv-value">{floor.builtUpArea}</span>
-                          <span className="bd-gf__kv-label">Property Type</span>
+                          <span className="bd-gf__kv-label">{t('bd_property_type')}</span>
                           <span className="bd-gf__kv-value">
                             {labelOf(FLOOR_PROPERTY_TYPE_OPTIONS, floor.propertyType)}
                           </span>
                         </div>
                         <div className="bd-gf__kv-row">
-                          <span className="bd-gf__kv-label">Year of Construction/ Usage Started</span>
+                          <span className="bd-gf__kv-label">{t('bd_year_construction')}</span>
                           <span className="bd-gf__kv-value">{floor.yearConstruction}</span>
-                          <span className="bd-gf__kv-label">Year of Demolition</span>
+                          <span className="bd-gf__kv-label">{t('bd_year_demolition')}</span>
                           <span className="bd-gf__kv-value">{floor.yearDemolition || '—'}</span>
                         </div>
                         <div className="bd-gf__kv-row">
-                          <span className="bd-gf__kv-label">Usage Type</span>
+                          <span className="bd-gf__kv-label">{t('bd_usage_type')}</span>
                           <span className="bd-gf__kv-value">
                             {labelOf(USAGE_TYPE_OPTIONS, floor.usageType)}
                           </span>
-                          <span className="bd-gf__kv-label">Floor Type</span>
+                          <span className="bd-gf__kv-label">{t('bd_floor_type')}</span>
                           <span className="bd-gf__kv-value">
                             {labelOf(FLOOR_TYPE_OPTIONS, floor.floorType)}
                           </span>
                         </div>
                         <div className="bd-gf__kv-row">
-                          <span className="bd-gf__kv-label">Roof Type</span>
+                          <span className="bd-gf__kv-label">{t('bd_roof_type')}</span>
                           <span className="bd-gf__kv-value">
                             {labelOf(ROOF_TYPE_OPTIONS, floor.roofType)}
                           </span>
-                          <span className="bd-gf__kv-label">Wood Used</span>
+                          <span className="bd-gf__kv-label">{t('bd_wood_used')}</span>
                           <span className="bd-gf__kv-value">
                             {labelOf(WOOD_USED_OPTIONS, floor.woodUsed)}
                           </span>
                         </div>
                         {floor.remarks && (
                           <div className="bd-gf__kv-row">
-                            <span className="bd-gf__kv-label">Remarks (if any)</span>
+                            <span className="bd-gf__kv-label">{t('bd_remarks')}</span>
                             <span className="bd-gf__kv-value bd-gf__kv-value--span3">
                               {floor.remarks}
                             </span>
@@ -520,17 +529,22 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
           {/* ─────────────────────────────────────────────────── */}
           <div className="bd-gf__divider" />
           <div className="bd-gf__lower-section" ref={escomSectionRef}>
-            <p className="bd-gf__lower-title">Please add Details of All ESCOM Meters</p>
+            <p className="bd-gf__lower-title">{t('bd_escom_add_title')}</p>
 
             <div className="bd-gf__infobox-wrap">
               <InfoBox variant="outline">
-                If same property has multiple ESCOM meters, please add all of them
+                {t('bd_escom_multi_info')}
               </InfoBox>
             </div>
 
             <div className="bd-gf__table-outer">
               <Table
-                columns={['No.', 'ESCOM Type*', 'ESCOM 10-digit Account ID*', 'RR Number']}
+                columns={[
+                  t('bd_table_no'),
+                  <>{t('bd_escom_type')}<span style={{ color: 'var(--danger)' }}> *</span></>,
+                  <>{t('bd_escom_account_id')}<span style={{ color: 'var(--danger)' }}> *</span></>,
+                  <>{t('bd_rr_number')}<span style={{ color: 'var(--danger)' }}> *</span></>,
+                ]}
                 rows={escomRows.map((row, idx) => [
                   <span className="bd-gf__td-no">{idx + 1}</span>,
                   <Dropdown
@@ -541,7 +555,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                     disabled={escomFetched}
                   />,
                   <Input
-                    placeholder="Enter 10-digit Account ID"
+                    placeholder="Enter Account ID"
                     value={row.accountId}
                     onChange={(e) => updateEscomRow(idx, 'accountId', e.target.value)}
                     inputType="numeric"
@@ -569,29 +583,33 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                   disabled={!escomRowsValid || escomFetching || escomFetched}
                   onClick={handleFetchEscom}
                 >
-                  {escomFetching ? 'Verifying…' : 'Verify ESCOM meter/s'}
+                  {escomFetching ? t('bd_escom_verifying') : t('bd_escom_verify_btn')}
                 </Button>
                 <Button
                   variant="white"
                   disabled={!escomRowsValid || escomFetching || escomFetched}
                   onClick={handleFetchEscom}
                 >
-                  Get updated details from ESCOM
+                  {t('bd_escom_get_updated')}
                 </Button>
               </div>
               <Tooltip
-                label="Where to find your Account ID and RR number"
-                caption="Click to view sample"
+                label={t('bd_escom_where_tooltip')}
+                caption={t('bd_tooltip_click')}
               />
             </div>
 
             {escomFetched && escomFetchedRows.length > 0 && (
               <div className="bd-gf__fetched-wrap">
-                <p className="bd-gf__fetched-title">
-                  Please check the fetched ESCOM meter Details
-                </p>
+                <p className="bd-gf__fetched-title">{t('bd_escom_fetched_title')}</p>
                 <Table
-                  columns={['No.', 'Owner Name', 'ESCOM Account ID', 'Address', 'Cancel bill']}
+                  columns={[
+                    t('bd_table_no'),
+                    t('bd_owner_name'),
+                    t('bd_escom_account_id'),
+                    t('bd_address'),
+                    t('bd_cancel'),
+                  ]}
                   rows={escomFetchedRows.map((row, idx) => [
                     <span className="bd-gf__td-no">{idx + 1}</span>,
                     row.ownerName,
@@ -614,20 +632,18 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
           {/* Water Meters                                        */}
           {/* ─────────────────────────────────────────────────── */}
           <div className="bd-gf__divider" />
-          <div className="bd-gf__lower-section" ref={waterSectionRef}>
-            <p className="bd-gf__lower-title">
-              Please add Details of All Water Meters (if applicable to you)
-            </p>
+          <div className="bd-gf__lower-section">
+            <p className="bd-gf__lower-title">{t('bd_water_section_title')}</p>
 
             <div className="bd-gf__infobox-wrap">
               <InfoBox variant="outline">
-                If same property has multiple water meters, please add all of them
+                {t('bd_water_multi_info')}
               </InfoBox>
             </div>
 
             <div className="bd-gf__table-outer bd-gf__table-outer--narrow">
               <Table
-                columns={['No.', 'Water Meter Number']}
+                columns={[t('bd_table_no'), t('bd_water_meter_number')]}
                 rows={waterRows.map((row, idx) => [
                   <span className="bd-gf__td-no">{idx + 1}</span>,
                   <Input
@@ -645,24 +661,27 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
               />
             </div>
 
-            {/* Verify button — always enabled (section is not mandatory) */}
             <div className="bd-gf__lower-actions">
               <Button
                 variant="primary"
                 disabled={waterVerifying || waterVerified}
                 onClick={handleVerifyWater}
               >
-                {waterVerifying ? 'Verifying…' : 'Verify Water meter/s'}
+                {waterVerifying ? t('bd_water_verifying') : t('bd_water_verify_btn')}
               </Button>
             </div>
 
             {waterVerified && waterFetchedRows.length > 0 && (
               <div className="bd-gf__fetched-wrap">
-                <p className="bd-gf__fetched-title">
-                  Please check the fetched Water Meter Details
-                </p>
+                <p className="bd-gf__fetched-title">{t('bd_water_fetched_title')}</p>
                 <Table
-                  columns={['No.', 'Owner Name', 'Water Meter No.', 'Address', 'Cancel bill']}
+                  columns={[
+                    t('bd_table_no'),
+                    t('bd_owner_name'),
+                    t('bd_water_meter_number'),
+                    t('bd_address'),
+                    t('bd_cancel'),
+                  ]}
                   rows={waterFetchedRows.map((row, idx) => [
                     <span className="bd-gf__td-no">{idx + 1}</span>,
                     row.ownerName,
@@ -686,13 +705,11 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
           {/* ─────────────────────────────────────────────────── */}
           <div className="bd-gf__divider" />
           <div className="bd-gf__lower-section" ref={tenantSectionRef}>
-            <p className="bd-gf__lower-title">
-              Please add Details of All Tenants (if applicable for your property)
-            </p>
+            <p className="bd-gf__lower-title">{t('bd_tenants_section_title')}</p>
 
             <div className="bd-gf__tenant-q">
               <p className="bd-gf__tenant-q-label">
-                Are there Tenants living in the building?
+                {t('bd_are_tenants')}
                 <span className="bd-gf__required">*</span>
               </p>
               <div className="bd-gf__radio-row">
@@ -719,7 +736,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
                 <div className="bd-gf__table-outer">
                   <Table
                     columns={[
-                      'No.',
+                      t('bd_table_no'),
                       'Tenant Name',
                       'Relationship type',
                       'Tenant Relation Name',
@@ -762,7 +779,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
           </div>
 
           {/* ─────────────────────────────────────────────────── */}
-          {/* Save and Next — opens section 4.3                  */}
+          {/* Save Building Details — triggers 4.3               */}
           {/* ─────────────────────────────────────────────────── */}
           <div className="bd-gf__save-next-wrap" ref={saveNextRef}>
             <Button
@@ -770,7 +787,7 @@ const BuildingDetails_GeneralFlow = ({ onSave, onEdit }) => {
               disabled={!saveNextEnabled}
               onClick={handleSaveAndNext}
             >
-              Save and Next
+              {t('bd_save_building_details')}
             </Button>
           </div>
         </>

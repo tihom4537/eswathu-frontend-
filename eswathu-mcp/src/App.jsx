@@ -15,6 +15,7 @@ import ECStep from './pages/NewApplicationPage/steps/ECStep';
 import GlossaryPage from './pages/GlossaryPage/GlossaryPage';
 import HomePagePopup from './components/HomePagePopup/HomePagePopup';
 import POPUP_CONTENT, { loc } from './pages/HomePage/homePopupContent';
+import common from './i18n/namespaces/common';
 
 /* ─── New Application flow config ───────────────────────────── */
 
@@ -31,14 +32,17 @@ const ROUTE_ORDER = [
   { key: 'new-application-step7', bcIdx: 4 }, // Upload EC
 ];
 
-/** Step names shown in the Breadcrumb — matches Stepper DEFAULT_STEPS */
-const BC_STEP_NAMES = [
-  'Sale Deed Details',
-  'Owner KYC',
-  'Property Details',
-  'Property Classification',
-  'Upload EC',
-];
+/** Step names shown in the Stepper/Breadcrumb — language-aware */
+const getBCStepNames = (lang) => {
+  const t = (key) => common[lang]?.[key] ?? common.en[key];
+  return [
+    t('bcSaleDeedDetails'),
+    t('bcOwnerKYC'),
+    t('bcPropertyDetails'),
+    t('bcPropertyClassification'),
+    t('bcUploadEC'),
+  ];
+};
 
 /**
  * Breadcrumb click → navigate to the first route page in that BC group.
@@ -205,7 +209,7 @@ function App() {
     currentBCStep: ROUTE_ORDER[routeIdx].bcIdx,
     completedBCSteps: Array.from(completedBCSteps),
     onBCStepClick: handleBCStepClick,
-    bcStepNames: BC_STEP_NAMES,
+    bcStepNames: getBCStepNames(lang),
     completionResetKey: pageResetKeys[routeIdx] ?? 0,
   });
 
@@ -231,12 +235,22 @@ function App() {
           )}
           {mountedSteps.has('new-application-step2') && (
             <div style={{ display: page === 'new-application-step2' ? 'block' : 'none' }}>
-              <OwnerEKYCPage onNavigate={handleNavigate} hasKaveri={step1HasKaveri} {...navProps(1)} />
+              <OwnerEKYCPage
+                onNavigate={handleNavigate}
+                hasKaveri={step1HasKaveri}
+                onResetDownstream={() => resetStepsFrom(2)}
+                {...navProps(1)}
+              />
             </div>
           )}
           {mountedSteps.has('new-application-step3') && (
             <div style={{ display: page === 'new-application-step3' ? 'block' : 'none' }}>
-              <PropertyDetailsPage onNavigate={handleNavigate} hasKaveri={step1HasKaveri} {...navProps(2)} />
+              <PropertyDetailsPage
+                onNavigate={handleNavigate}
+                hasKaveri={step1HasKaveri}
+                onResetDownstream={() => resetStepsFrom(3)}
+                {...navProps(2)}
+              />
             </div>
           )}
           {mountedSteps.has('new-application-step4') && (
@@ -245,13 +259,19 @@ function App() {
                 onNavigate={handleNavigate}
                 step1Village={step1Village}
                 step0Classification={step0Classification}
+                onResetDownstream={() => resetStepsFrom(4)}
                 {...navProps(3)}
               />
             </div>
           )}
           {mountedSteps.has('new-application-step7') && (
             <div style={{ display: page === 'new-application-step7' ? 'block' : 'none' }}>
-              <ECStep onNavigate={handleNavigate} {...navProps(4)} />
+              <ECStep
+                onNavigate={handleNavigate}
+                hasKaveri={step1HasKaveri}
+                registrationDeedNo={step1HasKaveri ? 'KA-BLR-2024-12345' : ''}
+                {...navProps(4)}
+              />
             </div>
           )}
         </div>

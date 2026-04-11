@@ -462,6 +462,40 @@
 .pc-doc-table__td .input-field        { width: 100%; }
 .pc-doc-table__td .input-field__box   { width: 100%; }
 
+/* ── Add-row action bar (Other Documents) ────────────────── */
+.pc-doc-table__action {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  height: 30px;
+  background: var(--primary-100);
+  border-radius: var(--radius-md);
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.pc-doc__add-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pc-doc__add-icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pc-doc__add-icon-btn .material-icons-outlined {
+  font-size: 24px;
+  color: var(--text-dark);
+}
+
 /* ══ SECTION 4.1 — Survey Number sub-section ══════════════ */
 
 /* Village + Survey stacked with tight gap */
@@ -505,7 +539,7 @@
 /* Tooltip fixed width */
 .pc-s42__tooltip {
   flex-shrink: 0;
-  width: 352px;
+  width: 420px;
   align-self: flex-start;
 }
 
@@ -532,9 +566,29 @@
 
 .pc-s42__surnoc-tooltip {
   flex-shrink: 0;
-  width: 352px;
+  width: 420px;
   align-self: flex-start;
 }
+
+/* No-fetch flow: Surnoc frozen + Hissa input + Tooltip in one row */
+.pc-s42__no-fetch-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.pc-s42__no-fetch-inputs {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.pc-s42__hissa-input-wrap {
+  width: 200px;
+}
+
+.pc-s42__hissa-input-wrap .input-field      { width: 100%; }
+.pc-s42__hissa-input-wrap .input-field__box { width: 100%; }
 
 /* Fetch RTC row — button(s) below dropdowns */
 .pc-s42__fetch-row {
@@ -608,10 +662,10 @@
 }
 
 /* Column widths */
-.pc-rtc-table__th--cb          { width: 45px;  text-align: center; }
+.pc-rtc-table__th--cb          { width: 70px;  text-align: center; }
 .pc-rtc-table__th--ownerNo     { width: 80px;  }
 .pc-rtc-table__th--mainOwnerNo { width: 100px; }
-.pc-rtc-table__th--ownerName   { width: 200px; }
+.pc-rtc-table__th--ownerName   { width: 175px; }
 .pc-rtc-table__th--fatherName  { width: 160px; }
 .pc-rtc-table__th--landCode    { width: 80px;  }
 .pc-rtc-table__th--acre        { width: 70px;  }
@@ -727,7 +781,7 @@
 }
 
 .pc-addowner-table__add-btn:hover {
-  background: #c8dff8;
+  background: var(--primary-100);
 }
 
 /* ── "No" flow: Re-entry fields ──────────────────────────── */
@@ -1072,6 +1126,10 @@
 .pc-s43__table-wrap {
   padding-left: 15px;
   padding-right: 15px;
+}
+
+.pc-s43__eligibility-caption {
+  margin-top: 12px;
 }
 
 /* ── Save and Proceed button wrap ────────────────────────── */

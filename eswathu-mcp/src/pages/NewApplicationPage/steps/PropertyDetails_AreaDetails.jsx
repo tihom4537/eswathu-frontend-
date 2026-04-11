@@ -4,43 +4,33 @@ import Button from '../../../components/Button/Button';
 import RadioButton from '../../../components/RadioButton/RadioButton';
 import InfoBox from '../../../components/InfoBox/InfoBox';
 import CaptionMessage from '../../../components/CaptionMessage/CaptionMessage';
+import { useTranslation } from '../../../i18n';
 import './PropertyDetails_AreaDetails.css';
 
-/* ── Mock Kaveri area values (one per unit) ────────────────── */
-const MOCK_KAVERI_AREA = {
-  sqft:  '2400',
-  sqmt:  '222.97',
-  gunta: '2.20',
-  acre:  '0.055',
-  cent:  '5.51',
-};
+/* ── Single value fetched from Kaveri ──────────────────────── */
+const MOCK_KAVERI_VALUE = '2400';
 
-const UNIT_OPTIONS = [
-  { value: 'sqft',  label: 'Sq.Ft'  },
-  { value: 'sqmt',  label: 'Sq.Mt'  },
-  { value: 'gunta', label: 'Gunta'  },
-  { value: 'acre',  label: 'Acre'   },
-  { value: 'cent',  label: 'Cent'   },
-];
+/*
+ * Toggle to false to simulate Kaveri returning no area value.
+ * When false: Total Area pill is empty and accept/reject is
+ * replaced by a direct entry form.
+ */
+const MOCK_KAVERI_AREA_FETCHED = true;
 
 /* Conversion factors → Sq.Mt */
 const TO_SQMT = { sqft: 0.0929, sqmt: 1, gunta: 101.17, acre: 4046.86, cent: 40.47 };
 
-/* Units that show an inline Sq.Mt conversion field */
-const needsConversion = (unit) => unit && unit !== 'sqmt';
-
 /*
  * IS_GUNTA_FLOW — exported so PropertyDetailsPage can determine
  * whether to skip the Site Dimensions subsection.
- * Gunta, Acre, and Cent flows go directly from Area → Checkbandi.
  */
 export const IS_GUNTA_FLOW = (unit) => ['gunta', 'acre', 'cent'].includes(unit);
 
-/* Convert a value in a given unit to Sq.Mt (string, 2dp) */
+/* Silent Sq.Mt conversion — used for onAccept and blue pill */
 const toSqmt = (val, unit) => {
   const num = parseFloat(val);
-  if (isNaN(num) || num <= 0) return '';
-  return (num * (TO_SQMT[unit] || 1)).toFixed(2);
+  if (isNaN(num) || num <= 0) return 0;
+  return num * (TO_SQMT[unit] || 1);
 };
 
 /* ─────────────────────────────────────────────────────────────
@@ -48,85 +38,71 @@ const toSqmt = (val, unit) => {
  *   onAccept(sqmt: number, wasRejected: boolean, unit: string)
  * ───────────────────────────────────────────────────────────── */
 const PropertyDetails_AreaDetails = ({ onAccept }) => {
-  /* Selected unit */
-  const [unit, setUnit] = useState('');
+  const { t } = useTranslation('step3');
 
-  /* Area values in selected unit + Sq.Mt equivalent */
-  const [areaInUnit, setAreaInUnit] = useState('');
-  const [areaSqmt, setAreaSqmt]     = useState('');
+  /* Unit options built from translations */
+  const UNIT_OPTIONS = [
+    { value: 'sqft',  label: t('unit_sqft')  },
+    { value: 'sqmt',  label: t('unit_sqmt')  },
+    { value: 'gunta', label: t('unit_gunta') },
+    { value: 'acre',  label: t('unit_acre')  },
+    { value: 'cent',  label: t('unit_cent')  },
+  ];
 
-  /* Accept / Reject radio */
-  const [choice, setChoice] = useState(''); // '' | 'accept' | 'reject'
+  const [unit, setUnit]         = useState('');
+  const [areaSqmt, setAreaSqmt] = useState(''); // Sq.Mt conversion shown in blue pill
 
-  /* Reject-flow: new area entry */
-  const [rejectVal, setRejectVal]               = useState('');
-  const [rejectSqmt, setRejectSqmt]             = useState('');
-  const [rejectConfirmed, setRejectConfirmed]   = useState(false);
+  const [choice, setChoice]             = useState(''); // '' | 'accept' | 'reject'
+  const [entryVal, setEntryVal]         = useState('');
+  const [entryConfirmed, setEntryConfirmed] = useState(false);
 
-  /* ── Unit change — pre-fill from Kaveri mock ────────────── */
+  /* ── Unit change ─────────────────────────────────────────── */
   const handleUnitChange = (sel) => {
     setUnit(sel);
+    setAreaSqmt(toSqmt(MOCK_KAVERI_VALUE, sel).toFixed(2));
     setChoice('');
-    setRejectVal('');
-    setRejectSqmt('');
-    setRejectConfirmed(false);
-    const mock = MOCK_KAVERI_AREA[sel] || '';
-    setAreaInUnit(mock);
-    setAreaSqmt(needsConversion(sel) ? toSqmt(mock, sel) : mock);
+    setEntryVal('');
+    setEntryConfirmed(false);
+    /* Notify parent immediately so isGuntaFlow updates before user clicks accept */
+    onAccept(0, false, sel);
   };
 
-  /* ── Accept / Reject radio ───────────────────────────────── */
+  /* ── Accept / Reject ────────────────────────────────────── */
   const handleChoiceChange = (val) => {
     setChoice(val);
-    setRejectVal('');
-    setRejectSqmt('');
-    setRejectConfirmed(false);
+    setEntryVal('');
+    setEntryConfirmed(false);
     if (val === 'accept') {
-      const sqmt = parseFloat(areaSqmt) || 0;
-      onAccept(sqmt, false, unit);
+      onAccept(toSqmt(MOCK_KAVERI_VALUE, unit), false, unit);
     }
   };
 
-  /* ── Reject flow input ───────────────────────────────────── */
-  const handleRejectValChange = (e) => {
-    const val = e.target.value;
-    setRejectVal(val);
-    setRejectSqmt(needsConversion(unit) ? toSqmt(val, unit) : val);
-  };
+  const handleEntryValChange = (e) => setEntryVal(e.target.value);
 
   const handleConfirmArea = () => {
-    /* Use rejectSqmt when conversion exists, else rejectVal directly */
-    const sqmt = parseFloat(needsConversion(unit) ? rejectSqmt : rejectVal) || 0;
-    setRejectConfirmed(true);
-    onAccept(sqmt, true, unit);
+    setEntryConfirmed(true);
+    onAccept(toSqmt(entryVal, unit), MOCK_KAVERI_AREA_FETCHED, unit);
   };
 
   /* ── Derived ─────────────────────────────────────────────── */
-  const unitLabel = UNIT_OPTIONS.find((u) => u.value === unit)?.label || '';
+  const canConfirmEntry =
+    entryVal.trim() !== '' && parseFloat(entryVal) > 0 && !entryConfirmed;
 
-  const canConfirmReject =
-    rejectVal.trim() !== '' && parseFloat(rejectVal) > 0 && !rejectConfirmed;
+  /* Area-in-unit pill label — uses per-unit key for correct Kannada grammar */
+  const areaInUnitLabel = unit ? (t(`ad_area_in_${unit}`) || t('ad_area_in_default')) : '';
 
   return (
     <div className="pd-ad">
-      <p className="pd-ad__heading">Area Details</p>
+      <p className="pd-ad__heading">{t('ad_heading')}</p>
 
-      {/* ── Unit selector row ──────────────────────────────── */}
+      {/* ── Row: Total Area pill + unit radios ─────────────── */}
       <div className="pd-ad__unit-section">
-        <p className="pd-ad__label">
-          Please choose a unit <span className="pd-ad__required">*</span>
-        </p>
+        <p className="pd-ad__label">{t('ad_choose_unit')}</p>
         <div className="pd-ad__unit-row">
-          {/* Total Area from Kaveri — frozen, updates when unit changes */}
-          <div className="pd-ad__total-area-wrap">
-            <Input
-              label="Total Area"
-              value={unit ? (MOCK_KAVERI_AREA[unit] || '') : ''}
-              frozen
-              required
-              inputType="numeric"
-              className="pd-ad__area-input"
-            />
+          {/* Total Area key-value pill */}
+          <div className="pd-ad__pill pd-ad__pill--grey pd-ad__total-area-pill">
+            <span>{t('ad_total_area')}</span>
+            <span>{MOCK_KAVERI_AREA_FETCHED ? MOCK_KAVERI_VALUE : ''}</span>
           </div>
 
           {/* Unit radios */}
@@ -145,112 +121,131 @@ const PropertyDetails_AreaDetails = ({ onAccept }) => {
         </div>
       </div>
 
-      {/* ── InfoBox + compact area pills — shown after unit selected ── */}
-      {unit && (
+      {/* ════ FETCHED FLOW ════════════════════════════════════
+          Full section visible on load — pills empty until unit chosen */}
+      {MOCK_KAVERI_AREA_FETCHED && (
         <>
-          {unit === 'sqmt' && (
-            <InfoBox variant="outline">
-              The area is already in Sq.Mt — no unit conversion required.
-            </InfoBox>
-          )}
-          {unit === 'sqft' && (
-            <InfoBox variant="outline">
-              The area you enter in Sq.Ft, Gunta, Acre or cent will be converted to Sq.Mt
-              for displaying in E-Khata
-            </InfoBox>
-          )}
-          {IS_GUNTA_FLOW(unit) && (
-            <InfoBox variant="outline">
-              The area you enter in Sq.Ft, Gunta, Acre or cent will be converted to Sq.Mt
-              for displaying in E-Khata
+          {/* Section heading */}
+          <p className="pd-ad__final-heading">{t('ad_final_area_heading')}</p>
+
+          {/* InfoBox — only relevant when a conversion is needed */}
+          {unit !== 'sqmt' && unit !== '' && (
+            <InfoBox variant="error">
+              {t('ad_conversion_infobox')}
             </InfoBox>
           )}
 
-          {/* Compact key-value pills */}
+          {/* Pills — grey+blue for conversion units; blue only for Sq.Mt (no conversion needed) */}
           <div className="pd-ad__area-pills">
-            <div className="pd-ad__pill pd-ad__pill--grey">
-              <span>Area in {unitLabel}</span>
-              <span>{areaInUnit}</span>
+            {unit !== 'sqmt' && unit !== '' && (
+              <div className="pd-ad__pill pd-ad__pill--grey">
+                <span>{areaInUnitLabel}</span>
+                <span>{MOCK_KAVERI_VALUE}</span>
+              </div>
+            )}
+            <div className="pd-ad__pill pd-ad__pill--blue">
+              <span>{t('ad_area_in_sqmtr_pill')}</span>
+              <span>{areaSqmt}</span>
             </div>
-            {needsConversion(unit) && (
-              <div className="pd-ad__pill pd-ad__pill--blue">
-                <span>Area in Sq.Mtr</span>
-                <span>{areaSqmt}</span>
+          </div>
+
+          {/* Accept / Reject — visible on load, no asterisk */}
+          <div className="pd-ad__group">
+            <p className="pd-ad__label">
+              {t('ad_accept_q')}
+            </p>
+            <div className="pd-ad__radio-row">
+              <RadioButton
+                name="area-choice"
+                value="accept"
+                label={t('ad_accept_yes')}
+                checked={choice === 'accept'}
+                onChange={() => handleChoiceChange('accept')}
+              />
+              <RadioButton
+                name="area-choice"
+                value="reject"
+                label={t('ad_accept_no')}
+                checked={choice === 'reject'}
+                onChange={() => handleChoiceChange('reject')}
+              />
+            </div>
+
+            {/* Reject sub-flow */}
+            {choice === 'reject' && (
+              <div className="pd-ad__reject-section">
+                <InfoBox variant="outline">
+                  {t('ad_pdo_infobox')}
+                </InfoBox>
+
+                <div className="pd-ad__reject-body">
+                  <p className="pd-ad__subheading">{t('ad_enter_new_dims')}</p>
+
+                  <div className="pd-ad__conv-row">
+                    <Input
+                      label={areaInUnitLabel || t('ad_area_in_default')}
+                      value={entryVal}
+                      onChange={handleEntryValChange}
+                      required
+                      disabled={entryConfirmed}
+                      inputType="decimal"
+                    />
+                  </div>
+
+                  {!entryConfirmed && (
+                    <Button
+                      variant="primary"
+                      disabled={!canConfirmEntry}
+                      onClick={handleConfirmArea}
+                      className="pd-ad__confirm-btn"
+                    >
+                      {t('ad_confirm_area_btn')}
+                    </Button>
+                  )}
+
+                  {entryConfirmed && (
+                    <CaptionMessage variant="success">
+                      {t('ad_new_area_entered')}
+                    </CaptionMessage>
+                  )}
+                </div>
               </div>
             )}
           </div>
         </>
       )}
 
-      {/* ── Accept / Reject ──────────────────────────────────── */}
-      {unit && (
+      {/* ════ NOT-FETCHED FLOW: direct entry after unit chosen ═══ */}
+      {!MOCK_KAVERI_AREA_FETCHED && unit && (
         <div className="pd-ad__group">
-          <p className="pd-ad__label">
-            Do you accept the property area dimensions shown above (as per the Kaveri
-            System)?{' '}
-            <span className="pd-ad__required">*</span>
-          </p>
-          <div className="pd-ad__radio-row">
-            <RadioButton
-              name="area-choice"
-              value="accept"
-              label="I Accept"
-              checked={choice === 'accept'}
-              onChange={() => handleChoiceChange('accept')}
-            />
-            <RadioButton
-              name="area-choice"
-              value="reject"
-              label="No, I want to change the area dimensions"
-              checked={choice === 'reject'}
-              onChange={() => handleChoiceChange('reject')}
+          <p className="pd-ad__subheading">{t('ad_enter_property_area')}</p>
+
+          <div className="pd-ad__conv-row">
+            <Input
+              label={areaInUnitLabel || t('ad_area_in_default')}
+              value={entryVal}
+              onChange={handleEntryValChange}
+              required
+              disabled={entryConfirmed}
+              inputType="decimal"
             />
           </div>
 
-          {/* ── REJECT FLOW ────────────────────────────────── */}
-          {choice === 'reject' && (
-            <div className="pd-ad__reject-section">
-              <InfoBox variant="outline">
-                If the applicant disagrees with the area shown and enters a different
-                area, the application will be sent to the Panchayat Development
-                Officer (PDO) for approval.
-              </InfoBox>
+          {!entryConfirmed && (
+            <Button
+              variant="primary"
+              disabled={!canConfirmEntry}
+              onClick={handleConfirmArea}
+              className="pd-ad__confirm-btn"
+            >
+              {t('ad_confirm_area_btn')}
+            </Button>
+          )}
 
-              <div className="pd-ad__reject-body">
-                <p className="pd-ad__subheading">Please enter the new area dimensions</p>
-
-                <div className="pd-ad__conv-row">
-                  <Input
-                    label={`Area in ${unitLabel}`}
-                    value={rejectVal}
-                    onChange={handleRejectValChange}
-                    required
-                    disabled={rejectConfirmed}
-                    inputType="numeric"
-                  />
-                  {needsConversion(unit) && (
-                    <Input label="Area in Sq.Mtr" value={rejectSqmt} frozenBlue required />
-                  )}
-                </div>
-
-                {!rejectConfirmed && (
-                  <Button
-                    variant="primary"
-                    disabled={!canConfirmReject}
-                    onClick={handleConfirmArea}
-                    className="pd-ad__confirm-btn"
-                  >
-                    Confirm Area
-                  </Button>
-                )}
-
-                {rejectConfirmed && (
-                  <CaptionMessage variant="success">
-                    New Area Entered. Please proceed.
-                  </CaptionMessage>
-                )}
-              </div>
-            </div>
+          {entryConfirmed && (
+            <CaptionMessage variant="success">
+              {t('ad_area_entered_caption')}
+            </CaptionMessage>
           )}
         </div>
       )}

@@ -6,6 +6,7 @@ import SectionBox from '../../../components/SectionBox/SectionBox';
 import InfoBox from '../../../components/InfoBox/InfoBox';
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import Button from '../../../components/Button/Button';
+import BuildingDetails_GeneralFlow from './BuildingDetails_GeneralFlow';
 import BuildingDetails_AreaDetails from './BuildingDetails_AreaDetails';
 import BuildingDetails_MultiStoreyUsage from './BuildingDetails_MultiStoreyUsage';
 import BuildingDetails_ParkingDetails from './BuildingDetails_ParkingDetails';
@@ -55,18 +56,32 @@ const CORNER_SITE_OPTIONS = [
   { value: 'no',  label: 'No' },
 ];
 
-/* ── Helpers ───────────────────────────────────────────────── */
+/* ── Flow classifiers ──────────────────────────────────────── */
 
-// Currently building only the Building + Apartment flow.
-// Other type/category combinations are scaffolded below.
-const isBuildingApartmentFlow = (type, category) => {
-  const buildingTypes = ['building'];
-  const apartmentCategories = [
-    'apartment', 'villament', 'tenement', 'row-house',
-    'multi-storied', 'service-apartment', 'villa',
-  ];
-  return buildingTypes.includes(type) && apartmentCategories.includes(category);
-};
+/**
+ * Apartment/flat flow — Building Type 2 in spec:
+ * Apartment, Row House, Villa, Villament, Multi-storey, Multi-ownership
+ * (plus service-apartment and tenement which follow the same sections)
+ */
+const APARTMENT_CATEGORIES = new Set([
+  'apartment', 'villament', 'tenement', 'row-house',
+  'multi-storied', 'service-apartment', 'villa', 'multi-ownership',
+]);
+
+/**
+ * General building flow — Building Type 1 in spec:
+ * All other building categories (residential, commercial, mixed-use, etc.)
+ */
+const GENERAL_BUILDING_CATEGORIES = new Set([
+  'residential', 'commercial', 'parks', 'roads', 'civil-facilities',
+  'industry', 'non-residential', 'agro-manufacturing',
+  'res-commercial', 'res-non-residential', 'commercial-non-residential',
+  'res-comm-non-res', 'res-industrial', 'commercial-industry',
+  'res-comm-industrial', 'govt-property', 'mall-multiplex',
+]);
+
+const isApartmentFlow       = (type, cat) => type === 'building' && APARTMENT_CATEGORIES.has(cat);
+const isGeneralBuildingFlow = (type, cat) => type === 'building' && GENERAL_BUILDING_CATEGORIES.has(cat);
 
 export default function BuildingDetailsPage({
   onNavigate,
@@ -85,31 +100,44 @@ export default function BuildingDetailsPage({
   useEffect(() => {
     if (completionResetKey > 0) setIsPageComplete(false);
   }, [completionResetKey]);
+
   /* ── Opening dropdowns ───────────────────────────────────── */
-  const [propertyType, setPropertyType] = useState('');
+  const [propertyType,     setPropertyType]     = useState('');
   const [propertyCategory, setPropertyCategory] = useState('');
-  const [isCornerSite, setIsCornerSite] = useState('');
+  const [isCornerSite,     setIsCornerSite]      = useState('');
 
-  const allDropdownsSelected = propertyType && propertyCategory && isCornerSite;
-  const showBuildingApartmentFlow =
-    allDropdownsSelected && isBuildingApartmentFlow(propertyType, propertyCategory);
+  const allDropdownsSelected  = propertyType && propertyCategory && isCornerSite;
+  const showApartmentFlow     = allDropdownsSelected && isApartmentFlow(propertyType, propertyCategory);
+  const showGeneralFlow       = allDropdownsSelected && isGeneralBuildingFlow(propertyType, propertyCategory);
 
-  /* ── Sequential subsection state ────────────────────────── */
-  const [areaData, setAreaData] = useState(null);
-  const [areaSaved, setAreaSaved] = useState(false);
+  /* ── General flow state ─────────────────────────────────── */
+  const [generalFlowSaved, setGeneralFlowSaved] = useState(false);
 
-  const [multiStoreyFilled, setMultiStoreyFilled] = useState(false);
-
-  const [parkingFilled, setParkingFilled] = useState(false);
-
-  const [undividedFilled, setUndividedFilled] = useState(false);
-
-  const [escomSaved, setEscomSaved] = useState(false);
-
-  const [tenantSaved, setTenantSaved] = useState(false);
+  /* ── Apartment flow sequential subsection state ─────────── */
+  const [areaSaved,          setAreaSaved]         = useState(false);
+  const [multiStoreyFilled,  setMultiStoreyFilled]  = useState(false);
+  const [parkingFilled,      setParkingFilled]      = useState(false);
+  const [undividedFilled,    setUndividedFilled]    = useState(false);
+  const [escomSaved,         setEscomSaved]         = useState(false);
+  const [tenantSaved,        setTenantSaved]        = useState(false);
 
   const aboveEscomComplete = multiStoreyFilled && parkingFilled && undividedFilled;
-  const allSaved = tenantSaved;
+
+  /* ── Derived: page save enabled ─────────────────────────── */
+  const allSaved =
+    (showGeneralFlow  && generalFlowSaved) ||
+    (showApartmentFlow && tenantSaved);
+
+  /* ── Reset subsections when dropdowns change ─────────────── */
+  const resetSubsections = () => {
+    setGeneralFlowSaved(false);
+    setAreaSaved(false);
+    setMultiStoreyFilled(false);
+    setParkingFilled(false);
+    setUndividedFilled(false);
+    setEscomSaved(false);
+    setTenantSaved(false);
+  };
 
   /* ── Scroll refs ─────────────────────────────────────────── */
   const areaRef      = useRef(null);
@@ -118,6 +146,7 @@ export default function BuildingDetailsPage({
   const undividedRef = useRef(null);
   const escomRef     = useRef(null);
   const tenantRef    = useRef(null);
+  const generalRef   = useRef(null);
   const saveRef      = useRef(null);
 
   const scrollTo = (ref) => {
@@ -127,13 +156,16 @@ export default function BuildingDetailsPage({
   };
 
   /* Scroll when new sections appear */
-  useEffect(() => { if (allDropdownsSelected && areaRef.current) scrollTo(areaRef); }, [allDropdownsSelected]);
-  useEffect(() => { if (areaSaved && multiRef.current) scrollTo(multiRef); }, [areaSaved]);
-  useEffect(() => { if (multiStoreyFilled && parkingRef.current) scrollTo(parkingRef); }, [multiStoreyFilled]);
-  useEffect(() => { if (parkingFilled && undividedRef.current) scrollTo(undividedRef); }, [parkingFilled]);
-  useEffect(() => { if (undividedFilled && escomRef.current) scrollTo(escomRef); }, [undividedFilled]);
-  useEffect(() => { if (escomSaved && tenantRef.current) scrollTo(tenantRef); }, [escomSaved]);
-  useEffect(() => { if (tenantSaved && saveRef.current) scrollTo(saveRef); }, [tenantSaved]);
+  useEffect(() => {
+    if (showApartmentFlow && areaRef.current)  scrollTo(areaRef);
+    if (showGeneralFlow   && generalRef.current) scrollTo(generalRef);
+  }, [showApartmentFlow, showGeneralFlow]); // eslint-disable-line
+  useEffect(() => { if (areaSaved        && multiRef.current)     scrollTo(multiRef);     }, [areaSaved]);
+  useEffect(() => { if (multiStoreyFilled && parkingRef.current)  scrollTo(parkingRef);   }, [multiStoreyFilled]);
+  useEffect(() => { if (parkingFilled    && undividedRef.current) scrollTo(undividedRef); }, [parkingFilled]);
+  useEffect(() => { if (undividedFilled  && escomRef.current)     scrollTo(escomRef);     }, [undividedFilled]);
+  useEffect(() => { if (escomSaved       && tenantRef.current)    scrollTo(tenantRef);    }, [escomSaved]);
+  useEffect(() => { if (allSaved         && saveRef.current)      scrollTo(saveRef);      }, [allSaved]);
 
   /* ── Edit handlers ───────────────────────────────────────── */
   const handleAreaEdit = () => {
@@ -144,13 +176,8 @@ export default function BuildingDetailsPage({
     setEscomSaved(false);
     setTenantSaved(false);
   };
-  const handleEscomEdit = () => {
-    setEscomSaved(false);
-    setTenantSaved(false);
-  };
-  const handleTenantEdit = () => {
-    setTenantSaved(false);
-  };
+  const handleEscomEdit  = () => { setEscomSaved(false); setTenantSaved(false); };
+  const handleTenantEdit = () => { setTenantSaved(false); };
 
   return (
     <div className="bd-page">
@@ -183,12 +210,7 @@ export default function BuildingDetailsPage({
                 value={propertyType}
                 onChange={(e) => {
                   setPropertyType(e.target.value);
-                  setAreaSaved(false);
-                  setMultiStoreyFilled(false);
-                  setParkingFilled(false);
-                  setUndividedFilled(false);
-                  setEscomSaved(false);
-                  setTenantSaved(false);
+                  resetSubsections();
                 }}
                 placeholder="Select"
                 className="bd-page__dropdown"
@@ -200,12 +222,7 @@ export default function BuildingDetailsPage({
                 value={propertyCategory}
                 onChange={(e) => {
                   setPropertyCategory(e.target.value);
-                  setAreaSaved(false);
-                  setMultiStoreyFilled(false);
-                  setParkingFilled(false);
-                  setUndividedFilled(false);
-                  setEscomSaved(false);
-                  setTenantSaved(false);
+                  resetSubsections();
                 }}
                 placeholder="Select"
                 className="bd-page__dropdown"
@@ -221,30 +238,52 @@ export default function BuildingDetailsPage({
               />
             </div>
 
-            {/* ── Building + Apartment flow ────────────────────── */}
-            {showBuildingApartmentFlow && (
+            {/* ════════════════════════════════════════════════
+                GENERAL BUILDING FLOW
+                Categories: residential, commercial, parks,
+                roads, industry, govt, mall/multiplex, etc.
+                ════════════════════════════════════════════════ */}
+            {showGeneralFlow && (
               <>
-                {/* InfoBox */}
                 <InfoBox variant="blue">
                   Please keep sale deed document ready for entering the correct Building Details.
                 </InfoBox>
 
-                {/* Building Area Details — always active once flow shown */}
+                <div ref={generalRef} className="bd-page__section">
+                  <BuildingDetails_GeneralFlow
+                    onSave={() => setGeneralFlowSaved(true)}
+                    onEdit={() => setGeneralFlowSaved(false)}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* ════════════════════════════════════════════════
+                APARTMENT / FLAT FLOW
+                Categories: apartment, row-house, villa,
+                villament, multi-storied, multi-ownership, etc.
+                ════════════════════════════════════════════════ */}
+            {showApartmentFlow && (
+              <>
+                <InfoBox variant="blue">
+                  Please keep sale deed document ready for entering the correct Building Details.
+                </InfoBox>
+
+                {/* Section 1 — Building Area Details */}
                 <div ref={areaRef} className="bd-page__section">
                   <p className="bd-page__section-title">Building Area Details</p>
                   <BuildingDetails_AreaDetails
-                    onSave={(data) => { setAreaData(data); setAreaSaved(true); }}
+                    onSave={() => setAreaSaved(true)}
                     onEdit={handleAreaEdit}
                   />
                 </div>
 
-                {/* Details of Usage of Multi-Storey Flat */}
+                {/* Section 2 — Details of Usage of Multi-Storey Flat */}
                 <div className="bd-page__divider" />
                 {areaSaved ? (
                   <div ref={multiRef} className="bd-page__section">
                     <p className="bd-page__section-title">Details of Usage of Multi-Storey Flat</p>
                     <BuildingDetails_MultiStoreyUsage
-                      superBuiltArea={areaData?.plinthArea ?? ''}
                       onChange={setMultiStoreyFilled}
                     />
                   </div>
@@ -252,7 +291,7 @@ export default function BuildingDetailsPage({
                   <p className="bd-page__placeholder-heading">Details of Usage of Multi-Storey Flat</p>
                 )}
 
-                {/* Parking Details */}
+                {/* Section 3 — Parking Details */}
                 <div className="bd-page__divider" />
                 {multiStoreyFilled ? (
                   <div ref={parkingRef} className="bd-page__section">
@@ -263,7 +302,7 @@ export default function BuildingDetailsPage({
                   <p className="bd-page__placeholder-heading">Parking Details</p>
                 )}
 
-                {/* Undivided Land Details */}
+                {/* Section 4 — Undivided Land Details */}
                 <div className="bd-page__divider" />
                 {parkingFilled ? (
                   <div ref={undividedRef} className="bd-page__section">
@@ -274,7 +313,7 @@ export default function BuildingDetailsPage({
                   <p className="bd-page__placeholder-heading">Undivided Land Details</p>
                 )}
 
-                {/* ESCOM Details */}
+                {/* Section 5 — ESCOM Details */}
                 <div className="bd-page__divider" />
                 {undividedFilled ? (
                   <div ref={escomRef} className="bd-page__section">
@@ -304,10 +343,9 @@ export default function BuildingDetailsPage({
               </>
             )}
 
-            {/* FLOW: Other type/category combinations — to be implemented later */}
-            {allDropdownsSelected && !showBuildingApartmentFlow && (
+            {/* ── Site / Land to be Converted — placeholder ────── */}
+            {allDropdownsSelected && !showGeneralFlow && !showApartmentFlow && (
               <div className="bd-page__placeholder">
-                {/* Placeholder: Other property type/category flow — to be built */}
                 <p className="bd-page__placeholder-text">
                   Details form for selected type and category — coming soon.
                 </p>
@@ -319,7 +357,6 @@ export default function BuildingDetailsPage({
 
         {/* ── Placeholder: Section 4.3 Avail Rebates ─────────── */}
         <div className="bd-page__accordion-placeholder">
-          {/* FLOW: 4.3 Avail Rebates — to be implemented */}
           <div className="bd-page__accordion-stub">
             <span className="bd-page__accordion-num">4.3</span>
             <span className="bd-page__accordion-label">Avail Rebates</span>

@@ -33,26 +33,6 @@
   margin-bottom: 30px;
 }
 
-.error-card__ok {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 24px;
-  border-radius: var(--radius-md);
-  border: none;
-  background: #727272;
-  color: var(--primary-50);
-  font-family: var(--font-family);
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: 0.1px;
-  cursor: pointer;
-}
-
-.error-card__ok:hover {
-  opacity: 0.85;
-}
 
 .error-card__actions {
   display: flex;

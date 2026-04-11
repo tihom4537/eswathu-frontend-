@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import NavigationBar from '../../../components/NavigationBar/NavigationBar';
 import StepHeader from '../../../components/StepHeader/StepHeader';
+import Stepper from '../../../components/Stepper/Stepper';
 import SectionBox from '../../../components/SectionBox/SectionBox';
 import RadioButton from '../../../components/RadioButton/RadioButton';
 import Button from '../../../components/Button/Button';
 import InfoBox from '../../../components/InfoBox/InfoBox';
+import ErrorMessageCard from '../../../components/ErrorMessageCard/ErrorMessageCard';
 import Input from '../../../components/Input/Input';
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import DatePicker from '../../../components/DatePicker/DatePicker';
@@ -12,6 +14,7 @@ import CaptionMessage from '../../../components/CaptionMessage/CaptionMessage';
 import OwnerTable from '../../../components/OwnerTable/OwnerTable';
 import Table from '../../../components/Table/Table';
 import EKYCRedirectScreen from './EKYCRedirectScreen';
+import { useTranslation } from '../../../i18n';
 import './OwnerEKYCPage.css';
 
 /* ── Mock data (pre-fetched from Kaveri) ───────────────── */
@@ -30,13 +33,6 @@ const MOCK_EKYC_DATA = {
     'No. 6, 5th main, Vidhana Soudha, Bengaluru, Karnataka- 560043',
 };
 
-const RELATIONSHIP_OPTIONS = [
-  { value: 'son', label: 'Son of' },
-  { value: 'daughter', label: 'Daughter of' },
-  { value: 'spouse', label: 'Spouse of' },
-  { value: 'care', label: 'Care of' },
-];
-
 /* Maps relationship value to prefix for display */
 const REL_PREFIX = { son: 'S/o', daughter: 'D/o', spouse: 'W/o', care: 'C/o' };
 
@@ -46,52 +42,32 @@ const MOCK_EKYC_NAMES = {
   2: 'Mohit Singh',
 };
 
-/* ── Mismatch reason options — Kaveri vs eKYC ───────────── */
-const MISMATCH_REASON_OPTIONS = [
-  { value: 'name_spelling_mismatch', label: 'Name Spelling Mismatch' },
-  { value: 'sale_transferred',       label: 'Sale/Transferred' },
-  { value: 'unregistered_will',      label: 'Unregistered Will' },
-  { value: 'inheritance_succession', label: 'Inheritance/Succession' },
-  { value: 'court_order',            label: 'Court Order' },
-  { value: 'bank_fi_sale_certificate', label: 'Bank/FI Sale Certificate' },
-];
-
-/* ── Mismatch reason options — Added owner vs eKYC ─────── */
-/* Name Spelling Mismatch removed — not applicable for new owners */
-const NEW_OWNER_MISMATCH_REASON_OPTIONS = [
-  { value: 'sale_transferred',       label: 'Sale/Transferred' },
-  { value: 'unregistered_will',      label: 'Unregistered Will' },
-  { value: 'inheritance_succession', label: 'Inheritance/Succession' },
-  { value: 'court_order',            label: 'Court Order' },
-  { value: 'bank_fi_sale_certificate', label: 'Bank/FI Sale Certificate' },
-];
-
-/* ── Document upload config per reason ─────────────────── */
-const DOCS_BY_REASON = {
+/* ── Document upload config per reason (keys only) ──────── */
+const DOCS_BY_REASON_KEYS = {
   sale_transferred: [
-    { key: 'division_letter', label: 'Division Letter', mandatory: true },
-    { key: 'death_certificate', label: 'Death certificate', mandatory: true },
-    { key: 'will', label: 'Will', mandatory: false },
+    { key: 'division_letter', labelKey: 'doc_division_letter', mandatory: true },
+    { key: 'death_certificate', labelKey: 'doc_death_certificate', mandatory: true },
+    { key: 'will', labelKey: 'doc_will', mandatory: false },
   ],
   unregistered_will: [
-    { key: 'division_letter', label: 'Division Letter', mandatory: true },
-    { key: 'death_certificate', label: 'Death certificate', mandatory: true },
-    { key: 'will', label: 'Will', mandatory: false },
+    { key: 'division_letter', labelKey: 'doc_division_letter', mandatory: true },
+    { key: 'death_certificate', labelKey: 'doc_death_certificate', mandatory: true },
+    { key: 'will', labelKey: 'doc_will', mandatory: false },
   ],
   inheritance_succession: [
-    { key: 'division_letter', label: 'Division Letter', mandatory: true },
-    { key: 'death_certificate', label: 'Death certificate', mandatory: true },
-    { key: 'will', label: 'Will', mandatory: false },
+    { key: 'division_letter', labelKey: 'doc_division_letter', mandatory: true },
+    { key: 'death_certificate', labelKey: 'doc_death_certificate', mandatory: true },
+    { key: 'will', labelKey: 'doc_will', mandatory: false },
   ],
   court_order: [
-    { key: 'division_letter', label: 'Division Letter', mandatory: true },
-    { key: 'death_certificate', label: 'Death certificate', mandatory: true },
-    { key: 'will', label: 'Will', mandatory: false },
+    { key: 'division_letter', labelKey: 'doc_division_letter', mandatory: true },
+    { key: 'death_certificate', labelKey: 'doc_death_certificate', mandatory: true },
+    { key: 'will', labelKey: 'doc_will', mandatory: false },
   ],
   bank_fi_sale_certificate: [
-    { key: 'division_letter', label: 'Division Letter', mandatory: true },
-    { key: 'death_certificate', label: 'Death certificate', mandatory: true },
-    { key: 'will', label: 'Will', mandatory: false },
+    { key: 'division_letter', labelKey: 'doc_division_letter', mandatory: true },
+    { key: 'death_certificate', labelKey: 'doc_death_certificate', mandatory: true },
+    { key: 'will', labelKey: 'doc_will', mandatory: false },
   ],
 };
 
@@ -107,16 +83,81 @@ const OwnerEKYCPage = ({
   onBCStepClick,
   bcStepNames = [],
   completionResetKey = 0,
+  onResetDownstream,
 }) => {
+  const { t } = useTranslation('step2');
+
+  /* ── Translated option arrays (built fresh each render so lang changes are instant) ── */
+  const RELATIONSHIP_OPTIONS = [
+    { value: 'son',      label: t('rel_son') },
+    { value: 'daughter', label: t('rel_daughter') },
+    { value: 'spouse',   label: t('rel_spouse') },
+    { value: 'care',     label: t('rel_care') },
+  ];
+
+  const MISMATCH_REASON_OPTIONS = [
+    { value: 'name_spelling_mismatch',   label: t('reason_name_spelling') },
+    { value: 'sale_transferred',         label: t('reason_sale_transferred') },
+    { value: 'unregistered_will',        label: t('reason_unregistered_will') },
+    { value: 'inheritance_succession',   label: t('reason_inheritance') },
+    { value: 'court_order',             label: t('reason_court_order') },
+    { value: 'bank_fi_sale_certificate', label: t('reason_bank_sale_cert') },
+  ];
+
+  const NEW_OWNER_MISMATCH_REASON_OPTIONS = [
+    { value: 'sale_transferred',         label: t('reason_sale_transferred') },
+    { value: 'unregistered_will',        label: t('reason_unregistered_will') },
+    { value: 'inheritance_succession',   label: t('reason_inheritance') },
+    { value: 'court_order',             label: t('reason_court_order') },
+    { value: 'bank_fi_sale_certificate', label: t('reason_bank_sale_cert') },
+  ];
+
+  /* Build docs config with translated labels */
+  const getDocsByReason = (reason) => {
+    const entries = DOCS_BY_REASON_KEYS[reason] || [];
+    return entries.map((e) => ({ ...e, label: t(e.labelKey) }));
+  };
+
   /* ── Page-level completion (enables forward arrow) ──────── */
   const [isPageComplete, setIsPageComplete] = useState(false);
 
   useEffect(() => {
-    if (completionResetKey > 0) setIsPageComplete(false);
+    if (completionResetKey > 0) {
+      setIsPageComplete(false);
+      setIsCompany(false);
+      setCompanyName('');
+      setAddNewOwner(false);
+      setNewOwnerNames(['']);
+      setOwnerNameErrors(['']);
+      setS21Submitted(false);
+      setS22Visible(false);
+      setS22Verified(false);
+      setEkycStatus({});
+      setCompletedEkycData({});
+      setEkycOwnerIdx(null);
+      setEkycAttempts({});
+      setEkycFailedOwners(new Set());
+      setPopupOwnerIdx(null);
+      setRelationshipType('');
+      setRelatedPersonName('');
+      setMobileNumber('');
+      setOtp('');
+      setOtpSent(false);
+      setOtpVerified(false);
+      setOtpError(false);
+      setOtpCountdown(0);
+      clearInterval(otpTimerRef.current);
+      setS23Visible(false);
+      setMismatchReasons({});
+      setS23Submitted(false);
+      setDocUploads({});
+      setViewFileKey(null);
+    }
   }, [completionResetKey]);
 
   /* ── Section 2.1 State ──────────────────────────────── */
   const [isCompany, setIsCompany] = useState(false);
+  const [companyName, setCompanyName] = useState('');
   const [addNewOwner, setAddNewOwner] = useState(false);
   const [newOwnerNames, setNewOwnerNames] = useState(['']);
   const [ownerNameErrors, setOwnerNameErrors] = useState(['']);
@@ -158,12 +199,13 @@ const OwnerEKYCPage = ({
   const s22Ref = useRef(null);
   const s23Ref = useRef(null);
 
+  /* ── Section 2.1 edit warning ───────────────────────── */
+  const [showS21EditWarn, setShowS21EditWarn] = useState(false);
+
   /* ── Section 2.3 State — Mismatch ───────────────────── */
   const [s23Visible, setS23Visible] = useState(false);
   const [mismatchReasons, setMismatchReasons] = useState({}); // { [ownerId]: reason value }
   const [s23Submitted, setS23Submitted] = useState(false);
-  // Document upload state: { [docKey]: { docNo, issuedDate, fileName, uploadStatus } }
-  // uploadStatus: undefined | 'success' | 'error'
   const [docUploads, setDocUploads] = useState({});
 
   /* ── View file popup state ───────────────────────────── */
@@ -175,7 +217,6 @@ const OwnerEKYCPage = ({
   /* ── Helper: eKYC name per owner source ──────────────── */
   const getEkycName = (owner) => {
     if (owner.source === 'kaveri') return MOCK_EKYC_NAMES[owner.id];
-    // New owners: mock eKYC returns name with "Sri. " prefix to simulate mismatch
     return `Sri. ${owner.name}`;
   };
 
@@ -194,8 +235,6 @@ const OwnerEKYCPage = ({
   const needsDocUpload = (reason) => reason && reason !== 'name_spelling_mismatch';
 
   /* ── Derived: owners shown in the active mismatch table ── */
-  // Kaveri: show all owners (table lists everyone)
-  // New owner: show only the new owners that mismatched
   const mismatchTableOwners = hasMismatchKaveri
     ? allOwners
     : mismatchedOwners.filter((o) => o.source === 'new');
@@ -207,7 +246,7 @@ const OwnerEKYCPage = ({
     for (const owner of mismatchTableOwners) {
       const reason = mismatchReasons[owner.id];
       if (!needsDocUpload(reason)) continue;
-      const docs = DOCS_BY_REASON[reason] || [];
+      const docs = getDocsByReason(reason);
       for (const doc of docs) {
         if (!seen.has(doc.key)) {
           seen.add(doc.key);
@@ -227,7 +266,6 @@ const OwnerEKYCPage = ({
   /* ── Derived: can Save and Proceed (bottom)? ──────────── */
   const canS23Proceed = (() => {
     if (!allReasonsSelected) return false;
-    // Kaveri spelling-only path: no doc upload needed
     if (allSpellingOnly) return true;
     if (!s23Submitted) return false;
     for (const doc of mergedDocs) {
@@ -248,10 +286,10 @@ const OwnerEKYCPage = ({
 
   const handleS21Edit = () => {
     setS21Submitted(false);
+    setCompanyName('');
     setS22Visible(false);
     setS22Verified(false);
     setS23Visible(false);
-    // Invalidate ALL completed KYC + mismatch data
     setEkycStatus({});
     setCompletedEkycData({});
     setEkycAttempts({});
@@ -276,8 +314,6 @@ const OwnerEKYCPage = ({
     const owner = allOwners[ekycOwnerIdx];
     const attempts = ekycAttempts[owner.id] || 0;
 
-    // Simulate UIDAI failure: first attempt for second owner (index 1)
-    // — redirect happened but popup doesn't open, meaning eKYC failed
     if (ekycOwnerIdx === 1 && attempts === 1) {
       setEkycStatus((prev) => ({ ...prev, [owner.id]: 'pending' }));
       setEkycOwnerIdx(null);
@@ -286,14 +322,11 @@ const OwnerEKYCPage = ({
       return;
     }
 
-    // Normal success flow
     setEkycStatus((prev) => ({ ...prev, [owner.id]: 'done' }));
     setPopupOwnerIdx(ekycOwnerIdx);
     setEkycOwnerIdx(null);
     setEkycFailedOwners((prev) => { const s = new Set(prev); s.delete(owner.id); return s; });
-    // Restore scroll position so user sees the detail card area
     requestAnimationFrame(() => window.scrollTo(0, scrollPosRef.current));
-    // Reset popup form
     setRelationshipType('');
     setRelatedPersonName('');
     setMobileNumber('');
@@ -327,14 +360,12 @@ const OwnerEKYCPage = ({
     }, 1000);
   };
 
-  /* Auto-fill related person name from UIDAI when popup opens */
   useEffect(() => {
     if (popupOwnerIdx !== null) {
       setRelatedPersonName(MOCK_EKYC_DATA.panchatantraName);
     }
   }, [popupOwnerIdx]);
 
-  /* Cleanup OTP timer on unmount */
   useEffect(() => {
     return () => clearInterval(otpTimerRef.current);
   }, []);
@@ -353,9 +384,9 @@ const OwnerEKYCPage = ({
   }, [s23Visible]);
 
   const handleCompleteEkyc = () => {
-    // Validate OTP — correct OTP is 1234
     if (otp !== '1234') {
       setOtpError(true);
+      setOtp('');
       return;
     }
     setOtpVerified(true);
@@ -375,7 +406,6 @@ const OwnerEKYCPage = ({
   };
 
   const handleClosePopup = () => {
-    // If popup is closed without completing, revert to pending
     const owner = allOwners[popupOwnerIdx];
     if (!completedEkycData[owner.id]) {
       setEkycStatus((prev) => ({ ...prev, [owner.id]: 'pending' }));
@@ -394,7 +424,6 @@ const OwnerEKYCPage = ({
   /* ── Handlers: Section 2.3 — Mismatch ──────────────── */
   const handleMismatchReasonChange = (ownerId, value) => {
     setMismatchReasons((prev) => ({ ...prev, [ownerId]: value }));
-    // Clear all doc uploads when any reason changes
     setDocUploads({});
   };
 
@@ -461,10 +490,12 @@ const OwnerEKYCPage = ({
         onLogout={() => onNavigate('login')}
       />
 
+      <Stepper steps={bcStepNames} activeStep={currentBCStep} completedBCSteps={completedBCSteps} onStepClick={onBCStepClick} />
+
       {/* ── Step Header ─────────────────────────────────── */}
       <StepHeader
-        step="Step 2"
-        title="Owner KYC"
+        step={t('step_label')}
+        title={t('step_title')}
         onBack={onBack}
         onNext={onNext}
         isBackEnabled={isBackEnabled}
@@ -479,49 +510,61 @@ const OwnerEKYCPage = ({
         {/* No-Kaveri: info notice above section box */}
         {!hasKaveri && (
           <InfoBox variant="info">
-            Please keep the property ownership document used in the previous stage ready for entering the correct owner's details.
+            {t('s21_no_kaveri_infobox')}
           </InfoBox>
         )}
 
         <SectionBox
           number="2.1"
-          title={hasKaveri ? 'Owner details' : 'Ownership Details (As mentioned in your property ownership document)'}
+          title={hasKaveri ? t('s21_title_kaveri') : t('s21_title_no_kaveri')}
           open
           className="ekyc-s21-box"
         >
           {hasKaveri ? (
-            /* ── Kaveri flow: existing 2.1 UI ────────────── */
+            /* ── Kaveri flow ────────────── */
             <div className="ekyc-s21">
 
               <div className="ekyc-s21__subsection">
-                <h3 className="ekyc-s21__subtitle">Company details</h3>
+                <h3 className="ekyc-s21__subtitle">{t('s21_company_subtitle')}</h3>
                 <div className="ekyc-s21__question">
                   <p className="ekyc-s21__question-text">
-                    Is this property owned by a company/ organisation?
+                    {t('s21_company_question')}
                   </p>
                   <div className="ekyc-s21__radio-row">
-                    <RadioButton name="isCompany" value="yes" label="Yes"
+                    <RadioButton name="isCompany" value="yes" label={t('s21_yes')}
                       checked={isCompany === true}
                       onChange={() => !s21Submitted && setIsCompany(true)}
                       disabled={s21Submitted}
                     />
-                    <RadioButton name="isCompany" value="no" label="No"
+                    <RadioButton name="isCompany" value="no" label={t('s21_no')}
                       checked={isCompany === false}
                       onChange={() => !s21Submitted && setIsCompany(false)}
                       disabled={s21Submitted}
                     />
                   </div>
                 </div>
+                {isCompany && (
+                  <div className="ekyc-s21__company-name">
+                    <Input
+                      label={t('s21_company_name_label')}
+                      placeholder={t('s21_company_name_placeholder')}
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      disabled={s21Submitted}
+                      required
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="ekyc-s21__subsection">
-                <h3 className="ekyc-s21__subtitle">Owner Name details</h3>
+                <h3 className="ekyc-s21__subtitle">{t('s21_owner_name_subtitle')}</h3>
                 <div className="ekyc-s21__owner-table-wrap">
                   <table className="ekyc-s21__owner-table">
                     <thead>
                       <tr>
-                        <th className="ekyc-s21__th ekyc-s21__th--no">No.</th>
-                        <th className="ekyc-s21__th">Owner name</th>
+                        <th className="ekyc-s21__th ekyc-s21__th--no">{t('s21_col_no')}</th>
+                        <th className="ekyc-s21__th">{t('s21_col_owner_name')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -537,20 +580,20 @@ const OwnerEKYCPage = ({
               </div>
 
               <InfoBox variant="warning">
-                If owner name is spelled wrong, missing, clubbed together by mistake or there are new owner/s to be added, please add them below.
+                {t('s21_infobox_name_wrong')}
               </InfoBox>
 
               <div className="ekyc-s21__question">
                 <p className="ekyc-s21__question-text">
-                  Do you want to add new owners?
+                  {t('s21_add_new_owners_question')}
                 </p>
                 <div className="ekyc-s21__radio-row">
-                  <RadioButton name="addNewOwner" value="yes" label="Yes"
+                  <RadioButton name="addNewOwner" value="yes" label={t('s21_yes')}
                     checked={addNewOwner === true}
                     onChange={() => !s21Submitted && setAddNewOwner(true)}
                     disabled={s21Submitted}
                   />
-                  <RadioButton name="addNewOwner" value="no" label="No"
+                  <RadioButton name="addNewOwner" value="no" label={t('s21_no')}
                     checked={addNewOwner === false}
                     onChange={() => !s21Submitted && setAddNewOwner(false)}
                     disabled={s21Submitted}
@@ -560,7 +603,7 @@ const OwnerEKYCPage = ({
 
               {addNewOwner && (
                 <InfoBox variant="warning">
-                  When you add new owners, these names will be considered by ekyc (not the ones fetched from Kaveri Deed Details)
+                  {t('s21_infobox_add_new')}
                 </InfoBox>
               )}
 
@@ -568,12 +611,12 @@ const OwnerEKYCPage = ({
                 <div className="ekyc-s21__new-owner-section">
                   <Table
                     className="ekyc-s21__new-owner-table"
-                    columns={['No.', 'Owner name', '']}
+                    columns={[t('s21_col_no'), t('s21_col_owner_name'), '']}
                     rows={newOwnerNames.map((name, i) => [
                       i + 1,
                       <Input
                         key={`input-${i}`}
-                        placeholder="Please type owner name"
+                        placeholder={t('s21_owner_name_placeholder')}
                         value={name}
                         onChange={(e) => {
                           const updated = [...newOwnerNames];
@@ -586,7 +629,7 @@ const OwnerEKYCPage = ({
                         onBlur={() => {
                           if (name.trim() && !/^[a-zA-Z\s.]+$/.test(name.trim())) {
                             const errs = [...ownerNameErrors];
-                            errs[i] = 'Name should contain only letters';
+                            errs[i] = t('s21_name_validation_error');
                             setOwnerNameErrors(errs);
                           }
                         }}
@@ -600,14 +643,12 @@ const OwnerEKYCPage = ({
                         key={`remove-${i}`}
                         type="button"
                         className="ekyc-s21__remove-row-btn"
-                        disabled={s21Submitted || !name.trim()}
+                        disabled={s21Submitted || (i === 0 && !name.trim())}
                         onClick={() => {
                           if (i === 0) {
-                            /* First row: clear the field, keep the row */
                             setNewOwnerNames(['', ...newOwnerNames.slice(1)]);
                             setOwnerNameErrors(['', ...ownerNameErrors.slice(1)]);
                           } else {
-                            /* Extra rows: remove entirely */
                             setNewOwnerNames(newOwnerNames.filter((_, j) => j !== i));
                             setOwnerNameErrors(ownerNameErrors.filter((_, j) => j !== i));
                           }
@@ -638,13 +679,13 @@ const OwnerEKYCPage = ({
               <div className="ekyc-s21__actions">
                 <Button
                   variant="primary"
-                  disabled={s21Submitted || (addNewOwner && newOwnerNames.every((n) => !n.trim()))}
+                  disabled={s21Submitted || (isCompany && !companyName.trim()) || (addNewOwner && newOwnerNames.every((n) => !n.trim()))}
                   onClick={handleS21Submit}
                 >
-                  Save and Proceed to KYC
+                  {t('s21_btn_save')}
                 </Button>
-                <Button variant="error" disabled={!s21Submitted} onClick={handleS21Edit}>
-                  Edit
+                <Button variant="error" disabled={!s21Submitted} onClick={() => setShowS21EditWarn(true)}>
+                  {t('s21_btn_edit')}
                 </Button>
               </div>
 
@@ -652,51 +693,63 @@ const OwnerEKYCPage = ({
                 <div className="ekyc-s21__success-msg">
                   <span className="material-icons-outlined ekyc-s21__success-icon">check_circle_outline</span>
                   <span className="ekyc-s21__success-text">
-                    Owners have been added. Please proceed to next step to complete eKYC.
+                    {t('s21_owners_added_success')}
                   </span>
                 </div>
               )}
 
             </div>
           ) : (
-            /* ── No-Kaveri flow: direct owner entry ───────── */
+            /* ── No-Kaveri flow ───────── */
             <div className="ekyc-s21">
 
               <div className="ekyc-s21__subsection">
-                <h3 className="ekyc-s21__subtitle">Company details</h3>
+                <h3 className="ekyc-s21__subtitle">{t('s21_company_subtitle')}</h3>
                 <div className="ekyc-s21__question">
                   <p className="ekyc-s21__question-text">
-                    Is this property owned by a company/ organisation?
+                    {t('s21_company_question')}
                   </p>
                   <div className="ekyc-s21__radio-row">
-                    <RadioButton name="isCompany" value="yes" label="Yes"
+                    <RadioButton name="isCompany" value="yes" label={t('s21_yes')}
                       checked={isCompany === true}
                       onChange={() => !s21Submitted && setIsCompany(true)}
                       disabled={s21Submitted}
                     />
-                    <RadioButton name="isCompany" value="no" label="No"
+                    <RadioButton name="isCompany" value="no" label={t('s21_no')}
                       checked={isCompany === false}
                       onChange={() => !s21Submitted && setIsCompany(false)}
                       disabled={s21Submitted}
                     />
                   </div>
                 </div>
+                {isCompany && (
+                  <div className="ekyc-s21__company-name">
+                    <Input
+                      label={t('s21_company_name_label')}
+                      placeholder={t('s21_company_name_placeholder')}
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      disabled={s21Submitted}
+                      required
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="ekyc-s21__subsection">
-                <h3 className="ekyc-s21__subtitle">Owner Name details</h3>
+                <h3 className="ekyc-s21__subtitle">{t('s21_owner_name_subtitle')}</h3>
                 <InfoBox variant="error">
-                  Please enter names of all owners of the land you are applying e-khata
+                  {t('s21_no_kaveri_infobox_error')}
                 </InfoBox>
 
                 <Table
                   className="ekyc-s21__new-owner-table"
-                  columns={['No.', 'Owner name', '']}
+                  columns={[t('s21_col_no'), t('s21_col_owner_name'), '']}
                   rows={newOwnerNames.map((name, i) => [
                     i + 1,
                     <Input
                       key={`input-${i}`}
-                      placeholder="Please type owner name"
+                      placeholder={t('s21_owner_name_placeholder')}
                       value={name}
                       onChange={(e) => {
                         const updated = [...newOwnerNames];
@@ -709,7 +762,7 @@ const OwnerEKYCPage = ({
                       onBlur={() => {
                         if (name.trim() && !/^[a-zA-Z\s.]+$/.test(name.trim())) {
                           const errs = [...ownerNameErrors];
-                          errs[i] = 'Name should contain only letters';
+                          errs[i] = t('s21_name_validation_error');
                           setOwnerNameErrors(errs);
                         }
                       }}
@@ -723,7 +776,7 @@ const OwnerEKYCPage = ({
                       key={`remove-${i}`}
                       type="button"
                       className="ekyc-s21__remove-row-btn"
-                      disabled={s21Submitted || !name.trim()}
+                      disabled={s21Submitted || (i === 0 && !name.trim())}
                       onClick={() => {
                         if (i === 0) {
                           setNewOwnerNames(['', ...newOwnerNames.slice(1)]);
@@ -758,13 +811,13 @@ const OwnerEKYCPage = ({
               <div className="ekyc-s21__actions">
                 <Button
                   variant="primary"
-                  disabled={s21Submitted || newOwnerNames.every((n) => !n.trim())}
+                  disabled={s21Submitted || (isCompany && !companyName.trim()) || newOwnerNames.every((n) => !n.trim())}
                   onClick={handleS21Submit}
                 >
-                  Save and Proceed to KYC
+                  {t('s21_btn_save')}
                 </Button>
-                <Button variant="error" disabled={!s21Submitted} onClick={handleS21Edit}>
-                  Edit
+                <Button variant="error" disabled={!s21Submitted} onClick={() => setShowS21EditWarn(true)}>
+                  {t('s21_btn_edit')}
                 </Button>
               </div>
 
@@ -778,12 +831,12 @@ const OwnerEKYCPage = ({
         <div ref={s22Ref}>
         <SectionBox
           number="2.2"
-          title="Do eKYC for all land owners"
+          title={t('s22_title')}
           open={s22Visible}
           className="ekyc-s22-box"
         >
           <p className="ekyc-s22__instruction">
-            Kindly do Aadhar ekyc for all the owners
+            {t('s22_instruction')}
           </p>
 
           <div className="ekyc-s22__owner-list">
@@ -792,7 +845,6 @@ const OwnerEKYCPage = ({
               const data = completedEkycData[owner.id];
               return (
                 <div key={owner.id} className="ekyc-s22__owner-block">
-                  {/* Owner row: number + name + button/badge */}
                   <div className="ekyc-s22__owner-card">
                     <div className="ekyc-s22__owner-info">
                       <span className="ekyc-s22__owner-num">{idx + 1}.</span>
@@ -804,11 +856,11 @@ const OwnerEKYCPage = ({
                           variant="primary"
                           disabled
                         >
-                          Do eKYC
+                          {t('s22_btn_do_ekyc')}
                         </Button>
                         <span className="ekyc-s22__done-badge">
                           <span className="material-icons-outlined ekyc-s22__done-icon">check_circle_outline</span>
-                          eKYC successful
+                          {t('s22_ekyc_successful')}
                         </span>
                       </div>
                     ) : (
@@ -816,34 +868,35 @@ const OwnerEKYCPage = ({
                         variant="primary"
                         onClick={() => handleDoEkyc(idx)}
                       >
-                        Do eKYC
+                        {t('s22_btn_do_ekyc')}
                       </Button>
                     )}
                   </div>
 
-                  {/* UIDAI failure message — shown after redirect returns without opening popup */}
+                  {/* UIDAI failure message */}
                   {ekycFailedOwners.has(owner.id) && (
-                    <InfoBox variant="warning">
-                      There was an error in completing eKYC due to UIDAI server issues. Please try again after 15–20 minutes.
-                    </InfoBox>
+                    <div className="ekyc-popup__overlay">
+                      <ErrorMessageCard
+                        message={t('s22_uidai_error')}
+                        onOk={() => setEkycFailedOwners((prev) => { const s = new Set(prev); s.delete(owner.id); return s; })}
+                      />
+                    </div>
                   )}
 
                   {/* Completed eKYC details card */}
                   {status === 'done' && data && (
                     <div className="ekyc-s22__detail-card">
                       <div className="ekyc-s22__detail-photo">
-                        <div className="ekyc-s22__detail-photo-label">Owner photograph</div>
+                        <div className="ekyc-s22__detail-photo-label">{t('s22_detail_photo')}</div>
                         <div className="ekyc-s22__detail-photo-placeholder" />
                       </div>
                       <div className="ekyc-s22__detail-table">
-                        {/* Header row */}
                         <div className="ekyc-s22__detail-row ekyc-s22__detail-row--header">
-                          <div className="ekyc-s22__detail-cell">Owner Name</div>
-                          <div className="ekyc-s22__detail-cell">Father/Mother/ Guardian/ Spouse/ Name</div>
-                          <div className="ekyc-s22__detail-cell">Owner&apos;s Identification Document No.</div>
-                          <div className="ekyc-s22__detail-cell">Owner&apos;s Address</div>
+                          <div className="ekyc-s22__detail-cell">{t('s22_detail_owner_name')}</div>
+                          <div className="ekyc-s22__detail-cell">{t('s22_detail_rel_name')}</div>
+                          <div className="ekyc-s22__detail-cell">{t('s22_detail_doc_no')}</div>
+                          <div className="ekyc-s22__detail-cell">{t('s22_detail_address')}</div>
                         </div>
-                        {/* Value row */}
                         <div className="ekyc-s22__detail-row ekyc-s22__detail-row--value">
                           <div className="ekyc-s22__detail-cell">{data.ownerName}</div>
                           <div className="ekyc-s22__detail-cell">{data.relPrefix} {data.relatedPersonName}</div>
@@ -862,7 +915,7 @@ const OwnerEKYCPage = ({
           {allDone && (
             <div className="ekyc-s22__review-info">
               <InfoBox variant="outline">
-                Please review all your details before you proceed to the next stage. If there are any errors, go back and click edit to make changes to the owners added.
+                {t('s22_review_infobox')}
               </InfoBox>
             </div>
           )}
@@ -871,7 +924,7 @@ const OwnerEKYCPage = ({
           {allDone && !s22Verified && (
             <div className="ekyc-s22__verify-action">
               <Button variant="primary" onClick={handleVerifyAndProceed}>
-                Verify and Proceed
+                {t('s22_btn_verify')}
               </Button>
             </div>
           )}
@@ -885,12 +938,12 @@ const OwnerEKYCPage = ({
         {hasMismatch && (
         <SectionBox
           number="2.3"
-          title="Owner Details Mismatch"
+          title={t('s23_title')}
           open={s23Visible}
           className="ekyc-s23-box"
         >
           <InfoBox variant="warning">
-            There is a mismatch in the Owner Name Details. Please select the reason for the mismatch.
+            {t('s23_infobox_warning')}
           </InfoBox>
 
           {/* ── Case 1: Kaveri owners vs eKYC mismatch ─── */}
@@ -900,10 +953,10 @@ const OwnerEKYCPage = ({
                 <table className="ekyc-s23__table">
                   <thead>
                     <tr>
-                      <th className="ekyc-s23__th ekyc-s23__th--no">No.</th>
-                      <th className="ekyc-s23__th ekyc-s23__th--kaveri">Owner name as per Kaveri</th>
-                      <th className="ekyc-s23__th ekyc-s23__th--ekyc">Name as per eKYC</th>
-                      <th className="ekyc-s23__th ekyc-s23__th--reason">Reason for not matching</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--no">{t('s21_col_no')}</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--kaveri">{t('s23_col_kaveri_name')}</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--ekyc">{t('s23_col_ekyc_name')}</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--reason">{t('s23_col_reason')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -914,11 +967,12 @@ const OwnerEKYCPage = ({
                         <td className="ekyc-s23__td">{getEkycName(owner)}</td>
                         <td className="ekyc-s23__td ekyc-s23__td--reason">
                           <Dropdown
-                            placeholder="Select reason"
+                            placeholder={t('s23_reason_placeholder')}
                             options={MISMATCH_REASON_OPTIONS}
                             value={mismatchReasons[owner.id] || ''}
                             onChange={(e) => handleMismatchReasonChange(owner.id, e.target.value)}
                             disabled={s23Submitted}
+                            state={!s23Submitted && !mismatchReasons[owner.id] && allOwners.slice(0, idx).every((o) => mismatchReasons[o.id]) ? 'pressed' : ''}
                           />
                         </td>
                       </tr>
@@ -933,14 +987,14 @@ const OwnerEKYCPage = ({
                   disabled={!allReasonsSelected || s23Submitted}
                   onClick={handleS23Save}
                 >
-                  Save and Next
+                  {t('s23_btn_save')}
                 </Button>
                 <Button
                   variant="error"
                   disabled={!s23Submitted}
                   onClick={handleS23Edit}
                 >
-                  Edit
+                  {t('s23_btn_edit')}
                 </Button>
               </div>
             </>
@@ -953,10 +1007,10 @@ const OwnerEKYCPage = ({
                 <table className="ekyc-s23__table">
                   <thead>
                     <tr>
-                      <th className="ekyc-s23__th ekyc-s23__th--no">No.</th>
-                      <th className="ekyc-s23__th ekyc-s23__th--kaveri">Added Owner Name</th>
-                      <th className="ekyc-s23__th ekyc-s23__th--ekyc">Name as per eKYC</th>
-                      <th className="ekyc-s23__th ekyc-s23__th--reason">Reason for not matching</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--no">{t('s21_col_no')}</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--kaveri">{t('s23_col_added_name')}</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--ekyc">{t('s23_col_ekyc_name')}</th>
+                      <th className="ekyc-s23__th ekyc-s23__th--reason">{t('s23_col_reason')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -967,11 +1021,12 @@ const OwnerEKYCPage = ({
                         <td className="ekyc-s23__td">{getEkycName(owner)}</td>
                         <td className="ekyc-s23__td ekyc-s23__td--reason">
                           <Dropdown
-                            placeholder="Select reason"
+                            placeholder={t('s23_reason_placeholder')}
                             options={NEW_OWNER_MISMATCH_REASON_OPTIONS}
                             value={mismatchReasons[owner.id] || ''}
                             onChange={(e) => handleMismatchReasonChange(owner.id, e.target.value)}
                             disabled={s23Submitted}
+                            state={!s23Submitted && !mismatchReasons[owner.id] && mismatchTableOwners.slice(0, idx).every((o) => mismatchReasons[o.id]) ? 'pressed' : ''}
                           />
                         </td>
                       </tr>
@@ -986,14 +1041,14 @@ const OwnerEKYCPage = ({
                   disabled={!allReasonsSelected || s23Submitted}
                   onClick={handleS23Save}
                 >
-                  Save and Next
+                  {t('s23_btn_save')}
                 </Button>
                 <Button
                   variant="error"
                   disabled={!s23Submitted}
                   onClick={handleS23Edit}
                 >
-                  Edit
+                  {t('s23_btn_edit')}
                 </Button>
               </div>
             </>
@@ -1003,18 +1058,18 @@ const OwnerEKYCPage = ({
           {s23Submitted && mergedDocs.length > 0 && (
             <div className="ekyc-s23__doc-section">
               <p className="ekyc-s23__doc-title">
-                Please upload the documents mentioned below for the mismatch reason
+                {t('s23_doc_title')}
               </p>
               <div className="ekyc-s23__doc-table-wrap">
                 <table className="ekyc-s23__doc-table">
                   <thead>
                     <tr>
-                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--sl">Sl No.</th>
-                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--type">Document Type</th>
-                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--docno">Document No.</th>
-                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--date">Issued Date</th>
-                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--upload">Upload File</th>
-                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--view">View file</th>
+                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--sl">{t('s23_col_sl_no')}</th>
+                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--type">{t('s23_col_doc_type')}</th>
+                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--docno">{t('s23_col_doc_no')}</th>
+                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--date">{t('s23_col_issued_date')}</th>
+                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--upload">{t('s23_col_upload')}</th>
+                      <th className="ekyc-s23__doc-th ekyc-s23__doc-th--view">{t('s23_col_view')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1029,7 +1084,7 @@ const OwnerEKYCPage = ({
                           </td>
                           <td className="ekyc-s23__doc-td ekyc-s23__doc-td--docno">
                             <Input
-                              placeholder="Enter document no."
+                              placeholder={t('s23_doc_no_placeholder')}
                               value={d.docNo || ''}
                               onChange={(e) => handleDocFieldChange(doc.key, 'docNo', e.target.value)}
                               inputType="alphanumeric-code"
@@ -1058,9 +1113,9 @@ const OwnerEKYCPage = ({
                                   const baseName = d.fileName.replace(/\.[^/.]+$/, '').toLowerCase();
                                   const docLabel = doc.label.toLowerCase();
                                   if (!baseName.includes(docLabel) && !docLabel.includes(baseName)) {
-                                    return <CaptionMessage variant="warning">Please check and re-upload the document</CaptionMessage>;
+                                    return <CaptionMessage variant="warning">{t('s23_caption_reupload')}</CaptionMessage>;
                                   }
-                                  return <CaptionMessage variant="success">Document uploaded successfully</CaptionMessage>;
+                                  return <CaptionMessage variant="success">{t('s23_caption_upload_success')}</CaptionMessage>;
                                 })()}
                               </div>
                             ) : (
@@ -1070,12 +1125,12 @@ const OwnerEKYCPage = ({
                                   icon="upload_file"
                                   onClick={() => handleFileUpload(doc.key)}
                                 >
-                                  Upload File
+                                  {t('s23_btn_upload_file')}
                                 </Button>
                                 {d.uploadStatus === 'error' ? (
-                                  <CaptionMessage variant="error">Document exceeds 5MB</CaptionMessage>
+                                  <CaptionMessage variant="error">{t('s23_caption_file_too_large')}</CaptionMessage>
                                 ) : (
-                                  <CaptionMessage variant="info">Only PDF size up-to 5MB allowed</CaptionMessage>
+                                  <CaptionMessage variant="info">{t('s23_caption_pdf_only')}</CaptionMessage>
                                 )}
                               </div>
                             )}
@@ -1110,7 +1165,7 @@ const OwnerEKYCPage = ({
               disabled={hasMismatch && !canS23Proceed}
               onClick={() => { setIsPageComplete(true); onNext?.(); }}
             >
-              Save and Proceed
+              {t('btn_save_proceed')}
             </Button>
           </div>
         )}
@@ -1124,7 +1179,7 @@ const OwnerEKYCPage = ({
         <div className="ekyc-popup__overlay" onClick={() => setViewFileKey(null)}>
           <div className="ekyc-viewfile-popup" onClick={(e) => e.stopPropagation()}>
             <div className="ekyc-popup__header">
-              <h2 className="ekyc-popup__title">View Document</h2>
+              <h2 className="ekyc-popup__title">{t('popup_view_doc_title')}</h2>
               <button
                 className="ekyc-popup__close"
                 onClick={() => setViewFileKey(null)}
@@ -1139,7 +1194,7 @@ const OwnerEKYCPage = ({
               </p>
               <div className="ekyc-viewfile-popup__preview">
                 <span className="material-icons-outlined ekyc-viewfile-popup__icon">picture_as_pdf</span>
-                <p>PDF preview not available in prototype</p>
+                <p>{t('popup_view_doc_pdf_preview')}</p>
               </div>
             </div>
           </div>
@@ -1154,7 +1209,7 @@ const OwnerEKYCPage = ({
           <div className="ekyc-popup" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
             <div className="ekyc-popup__header">
-              <h2 className="ekyc-popup__title">Complete eKYC</h2>
+              <h2 className="ekyc-popup__title">{t('popup_ekyc_title')}</h2>
               <button
                 className="ekyc-popup__close"
                 onClick={handleClosePopup}
@@ -1166,7 +1221,7 @@ const OwnerEKYCPage = ({
 
             {/* Aadhar details table */}
             <div className="ekyc-popup__section">
-              <p className="ekyc-popup__section-label">Aadhar details:</p>
+              <p className="ekyc-popup__section-label">{t('popup_aadhar_details')}</p>
               <OwnerTable
                 identityDocNo={MOCK_EKYC_DATA.identityDocNo}
                 panchatantraName={MOCK_EKYC_DATA.panchatantraName}
@@ -1180,17 +1235,17 @@ const OwnerEKYCPage = ({
             {/* Fill details section */}
             <div className="ekyc-popup__section">
               <p className="ekyc-popup__section-title">
-                Kindly complete Aadhar ekyc by filling these details
+                {t('popup_fill_details')}
               </p>
 
               <InfoBox variant="outline">
-                Please enter name of the related person as per your Aadhar
+                {t('popup_rel_person_infobox')}
               </InfoBox>
 
               <div className="ekyc-popup__fields-row">
                 <Dropdown
-                  label="Relationship Type"
-                  placeholder="Choose Relationship Type"
+                  label={t('popup_rel_type_label')}
+                  placeholder={t('popup_rel_type_placeholder')}
                   options={RELATIONSHIP_OPTIONS}
                   value={relationshipType}
                   onChange={(e) => setRelationshipType(e.target.value)}
@@ -1198,7 +1253,7 @@ const OwnerEKYCPage = ({
                   className="ekyc-popup__field"
                 />
                 <Input
-                  label="Name of the Related Person"
+                  label={t('popup_rel_name_label')}
                   value={relatedPersonName}
                   required
                   frozen
@@ -1208,31 +1263,30 @@ const OwnerEKYCPage = ({
 
               {/* Mobile + OTP section */}
               <div className="ekyc-popup__mobile-section">
-                {/* Phone + Get OTP row */}
                 <div className="ekyc-popup__mobile-row">
                   <Input
-                    label="Mobile number"
-                    placeholder="XXXXXXXXXXXX"
+                    label={t('popup_mobile_label')}
+                    placeholder={t('popup_mobile_placeholder')}
                     value={mobileNumber}
                     onChange={(e) => setMobileNumber(e.target.value)}
                     required
                     inputType="phone"
+                    maxLength={10}
                     className="ekyc-popup__field--mobile"
                   />
                   <Button
                     variant="primary"
-                    disabled={!mobileNumber.trim() || (otpSent && otpCountdown > 0)}
+                    disabled={mobileNumber.trim().length !== 10 || (otpSent && otpCountdown > 0 && !otpError)}
                     onClick={handleGetOtp}
                     className="ekyc-popup__get-otp-btn"
                   >
-                    Get OTP
+                    {t('popup_btn_get_otp')}
                   </Button>
                 </div>
 
-                {/* OTP row — below phone row */}
                 <div className="ekyc-popup__otp-wrap">
                   <Input
-                    label="Enter OTP"
+                    label={t('popup_otp_label')}
                     placeholder=""
                     value={otp}
                     onChange={(e) => { setOtp(e.target.value); setOtpError(false); }}
@@ -1240,7 +1294,13 @@ const OwnerEKYCPage = ({
                     disabled={!otpSent}
                     inputType="otp"
                     state={otpError ? 'error' : undefined}
-                    caption={otpError ? 'Wrong OTP, please click on Get OTP and re-try' : (otpSent && otpCountdown > 0 ? `Please enter within ${otpCountdown} seconds` : '')}
+                    caption={
+                      otpError
+                        ? t('popup_otp_error')
+                        : (otpSent && otpCountdown > 0
+                            ? t('popup_otp_countdown').replace('{n}', otpCountdown)
+                            : '')
+                    }
                     captionVariant={otpError ? 'error' : (otpSent && otpCountdown > 0 ? 'error' : undefined)}
                     className="ekyc-popup__field--otp"
                   />
@@ -1248,25 +1308,48 @@ const OwnerEKYCPage = ({
               </div>
             </div>
 
-            {/* Complete eKYC button — disabled until ALL mandatory fields filled */}
+            {/* Complete eKYC button */}
             <div className="ekyc-popup__footer">
               <Button
                 variant="primary"
-                disabled={!relationshipType || !mobileNumber.trim() || !otpSent || !otp.trim()}
+                disabled={!relationshipType || !mobileNumber.trim() || !otpSent || !otp.trim() || otpError}
                 onClick={handleCompleteEkyc}
               >
-                Complete eKYC
+                {t('popup_btn_complete_ekyc')}
               </Button>
               {otpVerified && (
                 <span className="ekyc-popup__otp-success">
                   <span className="material-icons-outlined">check_circle_outline</span>
-                  OTP verified successfully
+                  {t('popup_otp_verified')}
                 </span>
               )}
             </div>
           </div>
         </div>
       )}
+
+      {/* ── Section 2.1 Edit warning modal ─────────────── */}
+      {showS21EditWarn && (() => {
+        const downstream = [];
+        if (completedBCSteps.includes(2)) downstream.push(t('s21_warn_step3'));
+        if (completedBCSteps.includes(3)) downstream.push(t('s21_warn_step4'));
+        if (completedBCSteps.includes(4)) downstream.push(t('s21_warn_step5'));
+        const suffix = downstream.length ? `, ${downstream.join(', ')}` : '';
+        return (
+          <div className="ekyc-popup__overlay" onClick={() => setShowS21EditWarn(false)}>
+            <div onClick={(e) => e.stopPropagation()}>
+              <ErrorMessageCard
+                message={`${t('s21_warn_message')}${suffix}.`}
+                subMessage={t('s21_warn_sub')}
+                actions={[
+                  { label: t('s21_warn_yes'),    onClick: () => { setShowS21EditWarn(false); onResetDownstream?.(); handleS21Edit(); } },
+                  { label: t('s21_warn_cancel'), onClick: () => setShowS21EditWarn(false) },
+                ]}
+              />
+            </div>
+          </div>
+        );
+      })()}
 
     </div>
   );

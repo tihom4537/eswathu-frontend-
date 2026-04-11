@@ -1,93 +1,149 @@
-﻿/* ── Stepper ───────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   Stepper — horizontal step progress indicator
+   Figma node 249-71979 / 248-76506
+   ══════════════════════════════════════════════════════════════ */
 
+/* ── Outer band: full-width, 30px top/bottom padding ─────────── */
 .stepper {
   width: 100%;
   background: var(--white);
-  padding: 18px 0;
+  padding: 30px 0;
   border-bottom: 1px solid var(--neutral-100);
+  box-sizing: border-box;
 }
 
+/* ── Inner 1200px centred row — matches NavBar + page section padding ── */
 .stepper__inner {
-  max-width: 1200px;
-  margin: 0 auto;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.5rem; /* same 24px as .navbar__*-inner and .sd-page__sections */
 }
 
+/* ── Each step item = [step content] + [connector]
+       W=FILL grow=1 in Figma → flex: 1 here
+       Items share the 1200px equally                           ── */
+.stepper__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Last step: no connector, no grow, no shrink — use natural/auto width.
+   IMPORTANT: flex:0 sets flex-basis:0 which collapses the item to 0px.
+   flex:none = flex: 0 0 auto = natural width, stays exactly as wide as its content. */
+.stepper__item--last {
+  flex: none;
+}
+
+/* ── Step content: [circle] [label] in a row ────────────────── */
 .stepper__step {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: 8px;        /* Figma: gap=8 inside progress steps frame */
+  padding: 4px;    /* Figma: pad=4/4/4/4 on progress steps frame */
+  flex-shrink: 0;  /* natural width; line-broken labels keep it within 1200px */
 }
 
-/* Connector line */
-.stepper__line {
-  width: 60px;
-  height: 2px;
-  background: var(--neutral-300);
-  margin-right: 8px;
-}
-.stepper__line--filled {
-  background: var(--success);
+/* Clickable completed step */
+.stepper__step--clickable {
+  cursor: pointer;
 }
 
-/* Circle */
+.stepper__step--clickable:hover .stepper__circle--completed {
+  opacity: 0.85;
+}
+
+.stepper__step--clickable:hover .stepper__label {
+  text-decoration: underline;
+}
+
+/* ── Connector: W=FILL grow=1 inside the item ───────────────── */
+.stepper__connector {
+  flex: 1;
+  min-width: 8px;  /* reduced so connectors can compress on smaller viewports */
+  height: 1px;                      /* Figma: divider is 1px */
+  background: var(--neutral-400);   /* rgba(198,198,198) = #C6C6C6 */
+}
+
+.stepper__connector--filled {
+  background: var(--success);       /* rgba(60,151,24) = #3C9718 */
+}
+
+/* ── Circle: 32×32, fully round ─────────────────────────────── */
 .stepper__circle {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
+/* Incomplete — white bg, 1px grey border */
 .stepper__circle--upcoming {
-  border: 2px solid var(--neutral-300);
   background: var(--white);
+  border: 1px solid var(--neutral-300);   /* rgba(176,176,176) ≈ #B0B0B0 */
 }
 
+/* Active/current — white bg, 2px solid green border (matches Figma node 249:71714)
+   Circle is outlined in --success green; number stays dark */
 .stepper__circle--active {
-  border: 2px solid var(--success);
   background: var(--white);
+  border: 2px solid var(--success);
 }
 
+/* Completed — solid green, no border */
 .stepper__circle--completed {
   background: var(--success);
-  border: 2px solid var(--success);
+  border: none;
 }
 
+/* ── Number inside circle ────────────────────────────────────── */
 .stepper__number {
   font-family: var(--font-family);
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--neutral-300);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  text-align: center;
 }
 
+/* Incomplete: mid-grey number */
+.stepper__circle--upcoming .stepper__number {
+  color: var(--neutral-600);   /* rgba(114,114,114) = #727272 */
+}
+
+/* Active: dark number (border is the blue indicator) */
 .stepper__circle--active .stepper__number {
-  color: var(--success);
+  color: var(--text-dark);
 }
 
+/* ── Check icon inside completed circle ─────────────────────── */
 .stepper__check {
-  font-size: 16px;
-  color: var(--text-light);
+  font-size: 20px;
+  color: var(--text-light);   /* white */
 }
 
-/* Label */
+/* ── Label: W=HUG H=HUG in Figma → auto width, auto height ──── */
+/* fs=22 fw=500 lh=28px — same for ALL states                    */
 .stepper__label {
   font-family: var(--font-family);
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--neutral-300);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 28px;
+  color: var(--text-dark);
+  white-space: pre-line; /* renders \n as a real line break — matches Figma's 2-line labels */
 }
 
-.stepper__label--active {
-  font-weight: 600;
-  color: var(--text-dark);
-}
-
-.stepper__label--completed {
-  color: var(--text-dark);
-}
+/* All three states share the same label style */
+.stepper__label--upcoming  { color: var(--text-dark); font-weight: 500; }
+.stepper__label--active    { color: var(--text-dark); font-weight: 500; }
+.stepper__label--completed { color: var(--text-dark); font-weight: 500; }

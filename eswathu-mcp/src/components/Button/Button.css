@@ -125,6 +125,26 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* ── Modal / error-card button (grey bg, light-blue text) ── */
+.btn--modal {
+  background: var(--neutral-600);
+  color: var(--primary-50);
+}
+.btn--modal:hover:not(:disabled) {
+  opacity: 0.85;
+}
+.btn--modal:active:not(:disabled) {
+  opacity: 0.75;
+}
+.btn--modal:focus-visible {
+  box-shadow: 0 0 0 4px rgba(114, 114, 114, 0.35);
+}
+.btn--modal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* ── Homepage CTA — outlined (transparent on blue hero) ──── */
 .btn--cta-outlined {
   background: transparent;

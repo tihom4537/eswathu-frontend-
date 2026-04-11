@@ -126,6 +126,13 @@
   color: var(--text-dark);
 }
 
+/* ── Company name input ────────────────────────────────── */
+
+.ekyc-s21__company-name {
+  padding-left: 15px;
+  max-width: 400px;
+}
+
 /* ── InfoBoxes ─────────────────────────────────────────── */
 
 .ekyc-s21__info-boxes {
@@ -147,6 +154,14 @@
   max-width: 766px;
 }
 
+/* 30px header to match Figma design */
+.ekyc-s21__new-owner-table .data-table__header {
+  height: 30px;
+}
+.ekyc-s21__new-owner-table .data-table__th {
+  padding: 5px 10px;
+}
+
 .ekyc-s21__new-owner-table .data-table__th:first-child,
 .ekyc-s21__new-owner-table .data-table__td:first-child {
   width: 56px;
@@ -157,6 +172,11 @@
 .ekyc-s21__new-owner-table .data-table__td:last-child {
   width: 50px;
   text-align: center;
+}
+
+/* Remove-column header: transparent bg, keep borders for complete table outline */
+.ekyc-s21__new-owner-table .data-table__th:last-child {
+  background: transparent;
 }
 
 /* Remove row button (inside the 3rd cell) */
@@ -188,7 +208,7 @@
   background: var(--danger-50, #fdeaea);
 }
 
-/* Add row icon button — sits inside Table's data-table__action bar (already blue/styled) */
+/* Add row icon button — fills the entire action bar so the whole bar is clickable */
 .ekyc-s21__add-icon-btn {
   background: none;
   border: none;
@@ -197,6 +217,8 @@
   align-items: center;
   justify-content: center;
   padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .ekyc-s21__add-icon-btn:disabled {
@@ -585,7 +607,7 @@
 }
 
 .ekyc-popup__field--otp {
-  width: 369px;
+  width: 440px;
   flex-shrink: 0;
 }
 

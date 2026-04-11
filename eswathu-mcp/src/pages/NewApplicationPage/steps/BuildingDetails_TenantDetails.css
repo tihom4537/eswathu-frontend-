@@ -6,10 +6,40 @@
   gap: 24px;
 }
 
-.bd-tenant__desc {
-  font-size: 16px;
+/* ── Yes / No question ───────────────────────────────────────── */
+.bd-tenant__yesno {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bd-tenant__yesno-label {
+  font-family: var(--font-family);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.5;
   color: var(--text-dark);
-  font-weight: 400;
+  margin: 0;
+}
+
+.bd-tenant__required {
+  color: var(--danger, #b7131a);
+  margin-left: 2px;
+}
+
+.bd-tenant__radio-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+/* Title shown inside the Yes flow */
+.bd-tenant__title {
+  font-family: var(--font-family);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-dark);
   margin: 0;
 }
 

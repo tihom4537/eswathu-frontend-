@@ -23,7 +23,7 @@
 }
 
 .ec-page__notice-link {
-  color: var(--danger);
+  color: var(--primary);
   font-weight: 500;
   text-decoration: underline;
 }
@@ -34,6 +34,18 @@
   display: flex;
   justify-content: center;
   padding: 8px 0 24px;
+}
+
+/* ── Final Save confirmation modal backdrop ──────────────────── */
+
+.ec-page__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 /* ── Loading overlay ─────────────────────────────────────────── */
@@ -125,11 +137,13 @@
   flex-direction: row;
   align-items: flex-start;
   gap: 20px;
-  flex: 0 0 auto;
+  flex: 1;
+  min-width: 0;
 }
 
 .ec-s51__input-wrap {
-  width: 358px;
+  flex: 1;
+  min-width: 0;
 }
 
 .ec-s51__fetch-actions {
@@ -141,6 +155,7 @@
 
 .ec-s51__tooltip {
   flex-shrink: 0;
+  max-width: 340px;
 }
 
 /* ── Kaveri EC data section ─────────────────────────────────── */
@@ -352,7 +367,7 @@
 
 .ec-s54__scroll-frame {
   width: 100%;
-  height: 600px;
+  height: 640px;
   overflow-y: auto;
   border: 1px solid var(--neutral-300);
   border-radius: var(--radius-xs);
@@ -398,12 +413,46 @@
   text-decoration: underline;
 }
 
-/* ── Action buttons ──────────────────────────────────────── */
+/* ── Download button row (centered, below viewer) ────────── */
 
-.ec-s54__actions {
+.ec-s54__download-row {
   display: flex;
-  gap: 16px;
+  justify-content: center;
+}
+
+/* ── Final Save + Previous and Edit row ──────────────────── */
+
+.ec-s54__main-actions {
+  display: flex;
+  gap: 20px;
   align-items: center;
   justify-content: center;
-  padding-bottom: 8px;
+}
+
+/* Larger font on the main action buttons */
+.ec-s54__big-btn {
+  font-size: 20px !important;
+  padding: 10px 28px !important;
+}
+
+/* ── Success caption wrap (centered) ─────────────────────── */
+
+.ec-s54__caption-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.ec-s54__caption-wrap .caption-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ec-s54__caption-wrap .caption-msg__icon {
+  font-size: 20px;
+}
+
+.ec-s54__caption-wrap .caption-msg__text {
+  font-size: 17px;
+  font-weight: 500;
 }

@@ -3,11 +3,11 @@
 .info-box {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  width: 100%;
+  gap: 10px;
+  width: fit-content;
   padding: 8px 10px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--warning);
+  border: 1px solid rgba(183, 114, 36, 0.7);
 }
 
 .info-box__icon {
@@ -39,7 +39,17 @@
   color: var(--primary);
 }
 
-/* Warning (light yellow background) */
+/* Warning (white background with amber border) */
 .info-box--warning {
-  background: var(--warning-50);
+  background: var(--white);
+}
+
+/* Error (white background, red border) */
+.info-box--error {
+  background: var(--white);
+  border-color: var(--danger);
+}
+
+.info-box--error .info-box__icon {
+  color: var(--danger);
 }

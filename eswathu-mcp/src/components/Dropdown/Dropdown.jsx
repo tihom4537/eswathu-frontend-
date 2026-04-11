@@ -9,7 +9,9 @@ const Dropdown = ({
   onChange,
   required = false,
   disabled = false,
+  readOnly = false,
   frozen = false,
+  state = '',
   className = '',
 }) => {
   const [open, setOpen] = useState(false);
@@ -28,7 +30,7 @@ const Dropdown = ({
   const selected = options.find((o) => o.value === value);
 
   return (
-    <div className={`dropdown ${open ? 'dropdown--open' : ''} ${disabled ? 'dropdown--disabled' : ''} ${isFrozen ? 'dropdown--frozen' : ''} ${className}`} ref={ref}>
+    <div className={`dropdown ${open ? 'dropdown--open' : ''} ${disabled ? 'dropdown--disabled' : ''} ${readOnly ? 'dropdown--readonly' : ''} ${isFrozen ? 'dropdown--frozen' : ''} ${state ? `dropdown--${state}` : ''} ${className}`} ref={ref}>
       {label && (
         <label className="dropdown__label">
           {label}
@@ -38,10 +40,10 @@ const Dropdown = ({
 
       <div
         role="button"
-        tabIndex={disabled ? -1 : 0}
+        tabIndex={disabled || readOnly ? -1 : 0}
         className="dropdown__trigger"
-        onClick={() => !disabled && !isFrozen && setOpen((o) => !o)}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); !disabled && !isFrozen && setOpen((o) => !o); } }}
+        onClick={() => !disabled && !readOnly && !isFrozen && setOpen((o) => !o)}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); !disabled && !readOnly && !isFrozen && setOpen((o) => !o); } }}
         aria-disabled={disabled}
       >
         <span className={`dropdown__value ${!selected ? 'dropdown__value--placeholder' : ''}`}>

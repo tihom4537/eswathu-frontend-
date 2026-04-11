@@ -3,7 +3,7 @@
 .hcl {
   width: 100%;
   padding: 30px;
-  border: 1px solid #CDE5FE;
+  border: 1px solid var(--primary-100);
   border-radius: var(--radius-md);
   background: var(--white);
   overflow: hidden;

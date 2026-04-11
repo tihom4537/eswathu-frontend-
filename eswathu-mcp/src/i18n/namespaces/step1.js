@@ -69,7 +69,7 @@ const step1 = {
 
     /* Yes flow */
     s12_reg_label: 'Registration Number',
-    s12_reg_placeholder: 'Enter your Kaveri Registration Number',
+    s12_reg_placeholder: 'e.g. XXX-1-12345-2003-04',
     s12_tooltip_reg_label: 'Where to find your Registration Number',
     s12_fetch_btn: 'Fetch Property Details',
     s12_fetch_success: 'Kaveri details fetched successfully. Please proceed to next step.',
@@ -152,7 +152,7 @@ const step1 = {
 
     /* ── Error / warning messages ── */
     err_kaveri_fetch: 'Error in fetching details from Kaveri. Please Retry or Contact Kaveri helpline XXXXXXXXXX.',
-    err_kaveri_warn: 'Editing the Kaveri Registration Number will cause you to lose progress in multiple sections of the form including Owner KYC, Property Details and Property Classification. Are you sure you want to proceed?',
+    err_kaveri_warn: 'You will lose progress in Steps 2, 3, 4, and 5 — Owner KYC, Property Details, Property Classification, and Upload EC.',
     err_kaveri_warn_sub: 'This action cannot be undone.',
     err_kaveri_yes_edit: 'Yes, Edit',
     err_kaveri_cancel: 'Cancel',
