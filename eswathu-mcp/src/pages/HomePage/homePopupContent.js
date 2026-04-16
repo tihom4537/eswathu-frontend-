@@ -172,8 +172,8 @@ const POPUP_CONTENT = {
 
   conv11ATo11B: {
     title: {
-      en: 'Conversion of Form 11A to Form 11B',
-      kn: 'ನಮೂನೆ ೧೧ಎ ನಿಂದ ನಮೂನೆ ೧೧ಬಿ ಗೆ ಪರಿವರ್ತನೆ',
+      en: 'Conversion of Form 11B to Form 11A',
+      kn: 'ನಮೂನೆ ೧೧ಬಿ ನಿಂದ ನಮೂನೆ ೧೧ಎ ಗೆ ಪರಿವರ್ತನೆ',
     },
     intro: {
       en: 'Properties are classified under Form 11B when they do not meet the legal or technical criteria for Form 9 or Form 11A. A property may be recorded in Form 11B under the following conditions:',

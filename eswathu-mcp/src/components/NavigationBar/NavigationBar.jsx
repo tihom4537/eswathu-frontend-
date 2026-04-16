@@ -16,7 +16,7 @@ const CITIZEN_SERVICES = [
   { key: 'newLayouts',          labelEn: 'e-Khata for New Layouts',                                 labelKn: 'ಹೊಸ ವಿನ್ಯಾಸ ನಕ್ಷೆ ನಿವೇಶನಗಳಿಗೆ ಇ-ಖಾತಾ' },
   { key: 'newApartments',       labelEn: 'e-Khata for New Apartments',                              labelKn: 'ಹೊಸ ಅಪಾರ್ಟ್‌ಮೆಂಟ್‌ಗಳಿಗೆ ಇ-ಖಾತಾ' },
   { key: 'reportObjection',     labelEn: 'Report an Objection',                                     labelKn: 'ಆಕ್ಷೇಪಣೆ ಸಲ್ಲಿಸಿ' },
-  { key: 'conv11ATo11B',        labelEn: 'Form 11A to Form 11B',                                    labelKn: 'ನಮೂನೆ ೧೧ಎ ನಿಂದ ನಮೂನೆ ೧೧ಬಿ ಗೆ' },
+  { key: 'conv11ATo11B',        labelEn: 'Form 11B to Form 11A',                                    labelKn: 'ನಮೂನೆ ೧೧ಬಿ ನಿಂದ ನಮೂನೆ ೧೧ಎ ಗೆ' },
   { key: 'convApartments',      labelEn: 'Form 11A/11B to Apartment/Flats',                        labelKn: 'ನಮೂನೆ ೧೧ಎ / ೧೧ಬಿ ನಿಂದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ / ಫ್ಲ್ಯಾಟ್‌ಗಳಿಗೆ' },
   { key: 'conv11BTransactable', labelEn: 'Form 11B from Non-Transactable to Transactable',         labelKn: 'ನಮೂನೆ ೧೧ಬಿ – ವ್ಯವಹಾರಯೋಗ್ಯವಲ್ಲದ ಸ್ಥಿತಿಯಿಂದ ವ್ಯವಹಾರಯೋಗ್ಯ ಸ್ಥಿತಿಗೆ' },
   { key: 'mutation',            labelEn: 'Mutation and Transfer',                                   labelKn: 'ಮ್ಯುಟೇಷನ್ ಮತ್ತು ವರ್ಗಾವಣೆ' },

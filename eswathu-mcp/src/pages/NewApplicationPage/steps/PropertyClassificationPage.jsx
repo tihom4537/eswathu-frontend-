@@ -67,38 +67,69 @@ const MOCK_RTC_OWNERS = [
 
 /* ── Section 4.2 dropdown options ──────────────────────── */
 const TYPE_OPTIONS = [
-  { value: 'site',      label: 'Site',                  labelKn: 'ನಿವೇಶನ' },
-  { value: 'building',  label: 'Building',              labelKn: 'ಕಟ್ಟಡ' },
-  { value: 'converted', label: 'Land to be Converted',  labelKn: 'ಪರಿವರ್ತನೆ ಮಾಡಬೇಕಾದ ಜಮೀನು' },
+  { value: 'site',      label: 'Site' },
+  { value: 'building',  label: 'Building' },
+  { value: 'converted', label: 'Land to be Converted' },
 ];
 
 const CATEGORY_OPTIONS = [
-  { value: 'residential',            label: 'Residential',                                            labelKn: 'ವಸತಿ' },
-  { value: 'commercial',             label: 'Commercial',                                             labelKn: 'ವಾಣಿಜ್ಯ' },
-  { value: 'parks',                  label: 'Parks',                                                  labelKn: 'ಉದ್ಯಾನವನ' },
-  { value: 'roads',                  label: 'Roads',                                                  labelKn: 'ರಸ್ತೆಗಳು' },
-  { value: 'civil-facilities',       label: 'Civil Facilities Area (CA Sites)',                       labelKn: 'ನಾಗರಿಕ ಸೌಕರ್ಯ ಪ್ರದೇಶ (CA ನಿವೇಶನಗಳು)' },
-  { value: 'industry',               label: 'Industry',                                               labelKn: 'ಕೈಗಾರಿಕೆ' },
-  { value: 'multi-ownership',        label: 'Multi-Ownership Building',                               labelKn: 'ಬಹು-ಮಾಲೀಕತ್ವ ಕಟ್ಟಡ' },
-  { value: 'non-residential',        label: 'Non-residential',                                        labelKn: 'ವಾಣಿಜ್ಯೇತರ' },
-  { value: 'agro-manufacturing',     label: 'An agro-based manufacturing unit',                       labelKn: 'ಕೃಷಿ ಆಧಾರಿತ ಉತ್ಪಾದನಾ ಘಟಕ' },
-  { value: 'res-commercial',         label: 'Residential and Commercial',                             labelKn: 'ವಸತಿ ಮತ್ತು ವಾಣಿಜ್ಯ' },
-  { value: 'res-non-residential',    label: 'Residential and Non-Residential',                        labelKn: 'ವಸತಿ ಮತ್ತು ವಾಣಿಜ್ಯೇತರ' },
-  { value: 'comm-non-residential',   label: 'Commercial and Non-Residential',                         labelKn: 'ವಾಣಿಜ್ಯ ಮತ್ತು ವಾಣಿಜ್ಯೇತರ' },
-  { value: 'res-comm-non-res',       label: 'Residential, commercial and non-residential',            labelKn: 'ವಸತಿ, ವಾಣಿಜ್ಯ ಮತ್ತು ವಾಣಿಜ್ಯೇತರ' },
-  { value: 'res-industrial',         label: 'Residential and Industrial',                             labelKn: 'ವಸತಿ ಮತ್ತು ಕೈಗಾರಿಕಾ' },
-  { value: 'comm-industry',          label: 'Commercial and Industry',                                labelKn: 'ವಾಣಿಜ್ಯ ಮತ್ತು ಕೈಗಾರಿಕಾ' },
-  { value: 'res-comm-industrial',    label: 'Residential, Commercial and Industrial',                 labelKn: 'ವಸತಿ, ವಾಣಿಜ್ಯ ಮತ್ತು ಕೈಗಾರಿಕಾ' },
-  { value: 'apartment',              label: 'Apartment/ flat',                                        labelKn: 'ಅಪಾರ್ಟ್‌ಮೆಂಟ್/ಫ್ಲ್ಯಾಟ್' },
-  { value: 'villament',              label: 'Villament',                                              labelKn: 'ವಿಲ್ಲಾಮೆಂಟ್' },
-  { value: 'tenement',               label: 'Tenement',                                               labelKn: 'ಟೆನಮೆಂಟ್' },
-  { value: 'row-house',              label: 'Row House',                                              labelKn: 'ರೋ ಹೌಸ್' },
-  { value: 'multi-storied',          label: 'Multi-storied building',                                 labelKn: 'ಬಹು ಮಹಡಿ ಕಟ್ಟಡ' },
-  { value: 'service-apartment',      label: 'Service apartment/ flat',                                labelKn: 'ಸರ್ವಿಸ್ ಅಪಾರ್ಟ್‌ಮೆಂಟ್/ಫ್ಲ್ಯಾಟ್' },
-  { value: 'mall-multiplex',         label: 'Mall/Multiplex',                                         labelKn: 'ಮಾಲ್/ಮಲ್ಟಿಪ್ಲೆಕ್ಸ್' },
-  { value: 'villa',                  label: 'Villa',                                                  labelKn: 'ವಿಲ್ಲಾ' },
-  { value: 'govt-property',          label: 'Central Government/State Government/Local Body Property', labelKn: 'ಕೇಂದ್ರ ಸರ್ಕಾರ/ರಾಜ್ಯ ಸರ್ಕಾರ/ಸ್ಥಳೀಯ ಸಂಸ್ಥೆ ಆಸ್ತಿ' },
+  { value: 'residential',            label: 'Residential' },
+  { value: 'commercial',             label: 'Commercial' },
+  { value: 'parks',                  label: 'Parks' },
+  { value: 'roads',                  label: 'Roads' },
+  { value: 'civil-facilities',       label: 'Civil Facilities Area (CA Sites)' },
+  { value: 'industry',               label: 'Industry' },
+  { value: 'multi-ownership',        label: 'Multi-Ownership Building' },
+  { value: 'non-residential',        label: 'Non-residential' },
+  { value: 'agro-manufacturing',     label: 'An agro-based manufacturing unit' },
+  { value: 'res-commercial',         label: 'Residential and Commercial' },
+  { value: 'res-non-residential',    label: 'Residential and Non-Residential' },
+  { value: 'comm-non-residential',   label: 'Commercial and Non-Residential' },
+  { value: 'res-comm-non-res',       label: 'Residential, commercial and non-residential' },
+  { value: 'res-industrial',         label: 'Residential and Industrial' },
+  { value: 'comm-industry',          label: 'Commercial and Industry' },
+  { value: 'res-comm-industrial',    label: 'Residential, Commercial and Industrial' },
+  { value: 'apartment',              label: 'Apartment/ flat' },
+  { value: 'villament',              label: 'Villament' },
+  { value: 'tenement',               label: 'Tenement' },
+  { value: 'row-house',              label: 'Row House' },
+  { value: 'multi-storied',          label: 'Multi-storied building' },
+  { value: 'service-apartment',      label: 'Service apartment/ flat' },
+  { value: 'mall-multiplex',         label: 'Mall/Multiplex' },
+  { value: 'villa',                  label: 'Villa' },
+  { value: 'govt-property',          label: 'Central Government/State Government/Local Body Property' },
 ];
+
+/* Allowed categories per property type (from mapping.md) */
+const CATEGORY_BY_TYPE = {
+  site: [
+    'residential', 'commercial', 'industry', 'non-residential',
+    'res-commercial', 'res-non-residential', 'comm-non-residential',
+    'res-comm-non-res', 'res-industrial', 'comm-industry',
+    'res-comm-industrial', 'govt-property',
+  ],
+  building: [
+    'residential', 'commercial', 'industry', 'multi-ownership',
+    'non-residential', 'agro-manufacturing',
+    'res-commercial', 'res-non-residential', 'comm-non-residential',
+    'res-comm-non-res', 'res-industrial', 'comm-industry',
+    'res-comm-industrial', 'apartment', 'villament', 'tenement',
+    'row-house', 'multi-storied', 'service-apartment', 'mall-multiplex',
+    'villa', 'govt-property',
+  ],
+  converted: [
+    'residential', 'commercial', 'industry', 'non-residential',
+    'res-commercial', 'res-non-residential', 'comm-non-residential',
+    'res-comm-non-res', 'res-industrial', 'comm-industry',
+    'res-comm-industrial', 'govt-property',
+  ],
+};
+
+/* Classifications where Parks, Roads and CA Sites categories are available */
+const PARKS_ROADS_CA_CLASSIFICATIONS = new Set([
+  '11A-3', '11A-4', '11A-5', '11A-7', '11A-12',
+  '11B-4', '11B-5',
+]);
 
 const CORNER_SITE_OPTIONS = [
   { value: 'yes', label: 'Yes', labelKn: 'ಹೌದು' },
@@ -148,8 +179,21 @@ const PropertyClassificationPage = ({
 
   /* Lang-aware option arrays */
   const classificationOptions = CLASSIFICATION_OPTIONS.map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
-  const typeOptions     = TYPE_OPTIONS.map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
-  const categoryOptions = CATEGORY_OPTIONS.map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
+  const typeOptions     = TYPE_OPTIONS;
+  const categoryOptions = (() => {
+    const base = propertyType
+      ? (CATEGORY_BY_TYPE[propertyType] || [])
+          .map(v => CATEGORY_OPTIONS.find(o => o.value === v))
+          .filter(Boolean)
+      : CATEGORY_OPTIONS;
+    if (!PARKS_ROADS_CA_CLASSIFICATIONS.has(classification)) return base;
+    const existing = new Set(base.map(o => o.value));
+    const extra = ['parks', 'roads', 'civil-facilities']
+      .filter(v => !existing.has(v))
+      .map(v => CATEGORY_OPTIONS.find(o => o.value === v))
+      .filter(Boolean);
+    return [...base, ...extra];
+  })();
   const cornerOptions   = CORNER_SITE_OPTIONS.map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
   const rebateTypeOptions = REBATE_PROPERTY_TYPE_OPTIONS.map(o => ({ ...o, label: lang === 'kn' ? o.labelKn : o.label }));
   const rebateCategoryOptions = (type) =>
@@ -1062,6 +1106,7 @@ const PropertyClassificationPage = ({
                         setShowTypeWarn(true);
                       } else {
                         setPropertyType(newVal);
+                        setPropertyCategory('');
                         setAreaSaved(false); setMultiStoreySaved(false); setParkingSaved(false);
                         setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
                         setS42SavedNonApt(false); setGeneralBuildingSaved(false);
@@ -1559,6 +1604,7 @@ const PropertyClassificationPage = ({
                   onClick: () => {
                     onResetDownstream?.();
                     setPropertyType(pendingType);
+                    setPropertyCategory('');
                     setAreaSaved(false); setMultiStoreySaved(false); setParkingSaved(false);
                     setUndividedSaved(false); setEscomSaved(false); setTenantSaved(false);
                     setS42SavedNonApt(false); setGeneralBuildingSaved(false);

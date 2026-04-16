@@ -38,7 +38,7 @@ const home = {
     card_returnApps_desc: 'If your property tax is not being paid at present, you must obtain a new e-Khata to make the payments',
 
     /* ── Conversions ── */
-    card_conv11ATo11B_title: 'Conversion of Form 11A to Form 11B',
+    card_conv11ATo11B_title: 'Conversion of Form 11B to Form 11A',
     card_convApartments_title: 'Conversion of Form 11A/11B to Apartment/Flats',
     card_conv11BTransactable_title: 'Conversion of Form 11B from Non-Transactable to Transactable',
 
@@ -206,7 +206,7 @@ const home = {
     card_returnApps_desc: 'ಪ್ರಸ್ತುತ ಆಸ್ತಿ ತೆರಿಗೆ ಪಾವತಿಯಾಗದಿದ್ದರೆ, ಪಾವತಿ ಮಾಡಲು ಹೊಸ ಇ-ಖಾತಾ ಪಡೆಯಬೇಕು.',
 
     /* ── Conversions (sourced from e-khata-processes.md) ── */
-    card_conv11ATo11B_title: 'ನಮೂನೆ ೧೧ಎ ನಿಂದ ನಮೂನೆ ೧೧ಬಿ ಗೆ ಪರಿವರ್ತನೆ',
+    card_conv11ATo11B_title: 'ನಮೂನೆ ೧೧ಬಿ ನಿಂದ ನಮೂನೆ ೧೧ಎ ಗೆ ಪರಿವರ್ತನೆ',
     card_convApartments_title: 'ನಮೂನೆ ೧೧ಎ / ೧೧ಬಿ ನಿಂದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ / ಫ್ಲ್ಯಾಟ್‌ಗಳಿಗೆ ಪರಿವರ್ತನೆ',
     card_conv11BTransactable_title: 'ನಮೂನೆ ೧೧ಬಿ – ವ್ಯವಹಾರಯೋಗ್ಯವಲ್ಲದ ಸ್ಥಿತಿಯಿಂದ ವ್ಯವಹಾರಯೋಗ್ಯ ಸ್ಥಿತಿಗೆ ಪರಿವರ್ತನೆ',
 

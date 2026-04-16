@@ -157,7 +157,7 @@ const step4 = {
 
     // Apartment/flat — Section 2 fields
     bd_super_built_area:        'Super Built Area (in sq. metres)',
-    bd_carpet_area:             'Carpet Area — Roughly 70% of built-up area (in sq. metres)',
+    bd_carpet_area:             'Carpet Area \u2014 Roughly 70% of built-up area (in sq. metres)',
     bd_additional_area:         'Additional Area (in sq. metres)',
     bd_block_name:              'Block Name',
     bd_flat_number:             'Flat Number',
